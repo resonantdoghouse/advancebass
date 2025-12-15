@@ -2,7 +2,7 @@
 
 import { useState, useRef, useEffect } from "react";
 import { Button } from "@/components/ui/button";
-import { ZoomIn, ZoomOut, RotateCcw, Moon, Sun, Crop, Download, X, Wand2, Maximize2, Minimize2, ChevronLeft, ChevronRight } from "lucide-react";
+import { ZoomIn, ZoomOut, RotateCcw, Moon, Sun, Crop, Download, X, Wand2, Maximize2, Minimize2, ChevronLeft, ChevronRight, Move } from "lucide-react";
 import ReactCrop, { Crop as CropType, PixelCrop } from "react-image-crop";
 import "react-image-crop/dist/ReactCrop.css";
 
@@ -13,6 +13,10 @@ interface TranscriptionImageViewerProps {
 export function TranscriptionImageViewer({ images }: TranscriptionImageViewerProps) {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [zoom, setZoom] = useState(1);
+  const [pan, setPan] = useState({ x: 0, y: 0 });
+  const [isDragging, setIsDragging] = useState(false);
+  const [dragStart, setDragStart] = useState({ x: 0, y: 0 });
+
   const [isDarkMode, setIsDarkMode] = useState(false);
   const [isSharpened, setIsSharpened] = useState(false);
   const [isFullscreen, setIsFullscreen] = useState(false);
@@ -47,18 +51,30 @@ export function TranscriptionImageViewer({ images }: TranscriptionImageViewerPro
   }, [isCropMode, isFullscreen, currentIndex, images.length]);
 
   const handleZoomIn = () => setZoom((prev) => Math.min(prev + 0.25, 3));
-  const handleZoomOut = () => setZoom((prev) => Math.max(prev - 0.25, 0.5));
+  const handleZoomOut = () => {
+    setZoom((prev) => {
+      const newZoom = Math.max(prev - 0.25, 0.5);
+      if (newZoom <= 1) setPan({ x: 0, y: 0 }); // Reset pan if zoomed out
+      return newZoom;
+    });
+  };
   const handleReset = () => {
     setZoom(1);
+    setPan({ x: 0, y: 0 });
     setIsSharpened(false);
     setCrop(undefined);
     setCompletedCrop(undefined);
+  };
+
+  const handleRecenter = () => {
+    setPan({ x: 0, y: 0 });
   };
 
   const handlePrev = () => {
     if (currentIndex > 0) {
       setCurrentIndex(prev => prev - 1);
       setZoom(1);
+      setPan({ x: 0, y: 0 });
       setCrop(undefined);
     }
   };
@@ -67,6 +83,7 @@ export function TranscriptionImageViewer({ images }: TranscriptionImageViewerPro
     if (currentIndex < images.length - 1) {
       setCurrentIndex(prev => prev + 1);
       setZoom(1);
+      setPan({ x: 0, y: 0 });
       setCrop(undefined);
     }
   };
@@ -92,7 +109,6 @@ export function TranscriptionImageViewer({ images }: TranscriptionImageViewerPro
 
   const toggleCropMode = () => {
     if (isFullscreen) {
-      // Exit fullscreen if cropping because standard crop UI might behave weirdly
       document.exitFullscreen().catch(() => { });
     }
     setIsCropMode(!isCropMode);
@@ -100,7 +116,30 @@ export function TranscriptionImageViewer({ images }: TranscriptionImageViewerPro
     setCompletedCrop(undefined);
     if (!isCropMode) {
       setZoom(1);
+      setPan({ x: 0, y: 0 });
     }
+  };
+
+  // Panning Event Handlers
+  const handlePointerDown = (e: React.PointerEvent) => {
+    if (isCropMode) return;
+    setIsDragging(true);
+    setDragStart({ x: e.clientX - pan.x, y: e.clientY - pan.y });
+    // Capture pointer to track movement outside container
+    (e.target as Element).setPointerCapture(e.pointerId);
+  };
+
+  const handlePointerMove = (e: React.PointerEvent) => {
+    if (!isDragging || isCropMode) return;
+    setPan({
+      x: e.clientX - dragStart.x,
+      y: e.clientY - dragStart.y
+    });
+  };
+
+  const handlePointerUp = (e: React.PointerEvent) => {
+    setIsDragging(false);
+    (e.target as Element).releasePointerCapture(e.pointerId);
   };
 
   const downloadCroppedImage = async () => {
@@ -117,11 +156,6 @@ export function TranscriptionImageViewer({ images }: TranscriptionImageViewerPro
 
     canvas.width = completedCrop.width * scaleX;
     canvas.height = completedCrop.height * scaleY;
-
-    // Apply sharpening filter to canvas context if needed?
-    // Sharpening is CSS-based so it won't be in the canvas drawImage by default.
-    // Implementing convolution filter manually on canvas is heavy.
-    // For now, allow exporting the RAW pixels is safer.
 
     ctx.drawImage(
       image,
@@ -198,6 +232,11 @@ export function TranscriptionImageViewer({ images }: TranscriptionImageViewerPro
             <Button variant="outline" size="icon" onClick={handleZoomIn} disabled={isCropMode} title="Zoom In">
               <ZoomIn className="h-4 w-4" />
             </Button>
+
+            <Button variant="ghost" size="icon" onClick={handleRecenter} disabled={isCropMode || (pan.x === 0 && pan.y === 0)} title="Recenter Image">
+              <Move className="h-4 w-4" />
+            </Button>
+
             <Button variant="ghost" size="icon" onClick={handleReset} title="Reset View">
               <RotateCcw className="h-4 w-4" />
             </Button>
@@ -253,12 +292,19 @@ export function TranscriptionImageViewer({ images }: TranscriptionImageViewerPro
         </div>
       </div>
 
-      <div className={`relative overflow-hidden flex justify-center bg-muted/20 rounded p-4 ${isFullscreen ? 'flex-1 items-center bg-black/90' : 'min-h-[200px]'}`}>
+      <div
+        className={`relative overflow-hidden flex justify-center bg-muted/20 rounded p-4 touch-none ${isFullscreen ? 'flex-1 items-center bg-black/90' : 'min-h-[200px]'}`}
+        style={{ cursor: isCropMode ? 'default' : isDragging ? 'grabbing' : 'grab' }}
+        onPointerDown={handlePointerDown}
+        onPointerMove={handlePointerMove}
+        onPointerUp={handlePointerUp}
+        onPointerLeave={handlePointerUp}
+      >
         <div
           style={{
-            transform: `scale(${zoom})`,
+            transform: `translate(${pan.x}px, ${pan.y}px) scale(${zoom})`,
             transformOrigin: 'top center',
-            transition: isCropMode ? 'none' : 'transform 0.2s ease-out',
+            transition: isDragging ? 'none' : isCropMode ? 'none' : 'transform 0.2s ease-out',
             filter: [
               isDarkMode ? 'invert(1) hue-rotate(180deg)' : '',
               isSharpened ? 'url(#sharpen)' : ''
@@ -284,7 +330,8 @@ export function TranscriptionImageViewer({ images }: TranscriptionImageViewerPro
             <img
               src={currentImage.src}
               alt={currentImage.alt}
-              className="max-w-full h-auto shadow-sm"
+              className="max-w-full h-auto shadow-sm pointer-events-none select-none"
+              draggable={false}
             />
           )}
         </div>
