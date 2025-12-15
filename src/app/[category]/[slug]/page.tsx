@@ -5,6 +5,8 @@ import { Button } from "@/components/ui/button";
 import { ArrowLeft, Calendar, User, Tag } from "lucide-react";
 import { notFound, redirect } from "next/navigation";
 import { Metadata } from "next";
+import parse, { Element } from "html-react-parser";
+import { TranscriptionImageViewer } from "@/components/content/TranscriptionImageViewer";
 
 type Props = {
     params: Promise<{ category: string; slug: string }>;
@@ -75,7 +77,44 @@ export default async function ArticlePage({ params }: Props) {
                       For now we just render the raw HTML content if available, or placeholder.
                     */}
                     {article.content ? (
-                        <div dangerouslySetInnerHTML={{ __html: article.content }} />
+                        <div className="prose-img:my-0">
+                            {(() => {
+                                // Extract all images from the content string first
+                                // This is a simple regex extraction. For more robustness we could parse the full tree first.
+                                // Given we are using 'remark-html', the output is predictable.
+                                const imgRegex = /<img[^>]+src="([^">]+)"[^>]+alt="([^">]*)"[^>]*>/g;
+                                const images: { src: string; alt: string }[] = [];
+                                let match;
+                                while ((match = imgRegex.exec(article.content || '')) !== null) {
+                                    images.push({ src: match[1], alt: match[2] });
+                                }
+
+                                let isFirstImageRendered = false;
+
+                                return parse(article.content || '', {
+                                    replace: (domNode) => {
+                                        // Helper to check if node is an image
+                                        const isImage = (node: any) => node instanceof Element && node.name === 'img';
+
+                                        // Helper to check if node is a link wrapping an image
+                                        const isImageLink = (node: any) =>
+                                            node instanceof Element &&
+                                            node.name === 'a' &&
+                                            node.children.some((child: any) => isImage(child));
+
+                                        if (isImage(domNode) || isImageLink(domNode)) {
+                                            if (!isFirstImageRendered && images.length > 0) {
+                                                isFirstImageRendered = true;
+                                                return <TranscriptionImageViewer images={images} />;
+                                            } else {
+                                                // Suppress subsequent images as they are now in the viewer
+                                                return <></>;
+                                            }
+                                        }
+                                    }
+                                });
+                            })()}
+                        </div>
                     ) : (
                         <p className="text-muted-foreground italic">No content available for this article.</p>
                     )}
