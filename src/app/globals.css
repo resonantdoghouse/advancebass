@@ -1,102 +1,92 @@
 @import "tailwindcss";
 
-:root {
-  /* Base Colors - HSL for easier manipulation */
-  --background: 0 0% 100%;
-  --foreground: 220 14% 3.9%;
-
-  --card: 0 0% 100%;
-  --card-foreground: 220 14% 3.9%;
- 
-  --popover: 0 0% 100%;
-  --popover-foreground: 220 14% 3.9%;
- 
-  --primary: 45 60% 50%; /* Goldish */
-  --primary-foreground: 220 14% 3.9%;
- 
-  --secondary: 0 0% 10%; /* Dark */
-  --secondary-foreground: 0 0% 98%;
- 
-  --muted: 220 14% 96%;
-  --muted-foreground: 220 8.9% 46.1%;
- 
-  --accent: 220 14% 96%;
-  --accent-foreground: 220 14% 3.9%;
- 
-  --destructive: 0 84.2% 60.2%;
-  --destructive-foreground: 0 0% 98%;
-
-  --border: 220 13% 91%;
-  --input: 220 13% 91%;
-  --ring: 224 71% 4%;
- 
-  --radius: 0.5rem;
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: 224 71% 4%; /* Deep dark blue-black */
-    --foreground: 0 0% 98%;
- 
-    --card: 224 71% 4%;
-    --card-foreground: 0 0% 98%;
- 
-    --popover: 224 71% 4%;
-    --popover-foreground: 0 0% 98%;
- 
-    --primary: 46 93% 54%; /* Vibrant Gold */
-    --primary-foreground: 224 71% 4%;
- 
-    --secondary: 220 14% 90%; /* Light silver? */
-    --secondary-foreground: 224 71% 4%;
- 
-    --muted: 215 27.9% 16.9%;
-    --muted-foreground: 217.9 10.6% 64.9%;
- 
-    --accent: 215 27.9% 16.9%;
-    --accent-foreground: 0 0% 98%;
- 
-    --destructive: 0 62.8% 30.6%;
-    --destructive-foreground: 0 85.7% 97.3%;
- 
-    --border: 215 27.9% 16.9%;
-    --input: 215 27.9% 16.9%;
-    --ring: 216 34% 17%;
-  }
-}
-
 @theme inline {
   --color-background: hsl(var(--background));
   --color-foreground: hsl(var(--foreground));
-  
   --color-card: hsl(var(--card));
   --color-card-foreground: hsl(var(--card-foreground));
-  
   --color-popover: hsl(var(--popover));
   --color-popover-foreground: hsl(var(--popover-foreground));
-  
   --color-primary: hsl(var(--primary));
   --color-primary-foreground: hsl(var(--primary-foreground));
-  
   --color-secondary: hsl(var(--secondary));
   --color-secondary-foreground: hsl(var(--secondary-foreground));
-  
   --color-muted: hsl(var(--muted));
   --color-muted-foreground: hsl(var(--muted-foreground));
-  
   --color-accent: hsl(var(--accent));
   --color-accent-foreground: hsl(var(--accent-foreground));
-  
   --color-destructive: hsl(var(--destructive));
   --color-destructive-foreground: hsl(var(--destructive-foreground));
-  
   --color-border: hsl(var(--border));
   --color-input: hsl(var(--input));
   --color-ring: hsl(var(--ring));
-  
   --radius-lg: var(--radius);
   --radius-md: calc(var(--radius) - 2px);
   --radius-sm: calc(var(--radius) - 4px);
+}
+
+:root {
+  /* Default to dark mode vibes even in light definition sometimes, but let's stick to standard structure */
+  --background: 240 10% 3.9%;
+  /* Very dark background by default for modern vibe */
+  --foreground: 0 0% 98%;
+
+  --card: 240 10% 4%;
+  /* Slightly lighter than bg */
+  --card-foreground: 0 0% 98%;
+
+  --popover: 240 10% 3.9%;
+  --popover-foreground: 0 0% 98%;
+
+  --primary: 47 95% 57%;
+  /* Golden Yellow - punchy for bass */
+  --primary-foreground: 240 10% 3.9%;
+
+  --secondary: 240 4% 16%;
+  --secondary-foreground: 0 0% 98%;
+
+  --muted: 240 4% 16%;
+  --muted-foreground: 240 5% 64.9%;
+
+  --accent: 240 4% 16%;
+  --accent-foreground: 0 0% 98%;
+
+  --destructive: 0 62.8% 30.6%;
+  --destructive-foreground: 0 0% 98%;
+
+  --border: 240 4% 16%;
+  --input: 240 4% 16%;
+  --ring: 47 95% 57%;
+
+  --radius: 0.5rem;
+}
+
+@media (prefers-color-scheme: light) {
+
+  /* Invert for light mode if user really insists, but user wants 'visually interesting' which usually implies dark mode for music sites */
+  /* Let's keep a nice high contrast light mode just in case system preference forces it */
+  :root {
+    --background: 0 0% 100%;
+    --foreground: 240 10% 3.9%;
+    --card: 0 0% 100%;
+    --card-foreground: 240 10% 3.9%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 240 10% 3.9%;
+    --primary: 47 95% 45%;
+    /* Darker gold for light background */
+    --primary-foreground: 0 0% 98%;
+    --secondary: 240 4.8% 95.9%;
+    --secondary-foreground: 240 5.9% 10%;
+    --muted: 240 4.8% 95.9%;
+    --muted-foreground: 240 3.8% 46.1%;
+    --accent: 240 4.8% 95.9%;
+    --accent-foreground: 240 5.9% 10%;
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 240 5.9% 90%;
+    --input: 240 5.9% 90%;
+    --ring: 47 95% 45%;
+  }
 }
 
 body {
@@ -110,9 +100,11 @@ body {
 ::-webkit-scrollbar {
   width: 10px;
 }
+
 ::-webkit-scrollbar-track {
   @apply bg-background;
 }
+
 ::-webkit-scrollbar-thumb {
   @apply bg-muted rounded-full hover:bg-muted-foreground/50 transition-colors;
 }

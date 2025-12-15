@@ -14,22 +14,10 @@ export function Header() {
                     </Link>
                     <nav className="flex items-center gap-6 text-sm">
                         <Link
-                            href="/articles"
-                            className="transition-colors hover:text-foreground/80 text-foreground/60"
-                        >
-                            Articles
-                        </Link>
-                        <Link
                             href="/transcriptions"
                             className="transition-colors hover:text-foreground/80 text-foreground/60"
                         >
                             Transcriptions
-                        </Link>
-                        <Link
-                            href="/tools"
-                            className="transition-colors hover:text-foreground/80 text-foreground/60"
-                        >
-                            Tools
                         </Link>
                     </nav>
                 </div>
