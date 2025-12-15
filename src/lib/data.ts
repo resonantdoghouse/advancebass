@@ -10,6 +10,35 @@ export type Article = {
     category: "Transcription" | "Technique" | "Gear" | "Theory";
 };
 
+export function getCategorySlug(category: Article['category']): string {
+    switch (category) {
+        case 'Transcription': return 'transcriptions';
+        // Keep others simple for now, can adjust if needed
+        default: return category.toLowerCase();
+    }
+}
+
+export function getCategoryFromSlug(slug: string): Article['category'] | undefined {
+    switch (slug) {
+        case 'transcriptions': return 'Transcription';
+        case 'technique': return 'Technique';
+        case 'gear': return 'Gear';
+        case 'theory': return 'Theory';
+        default: return undefined;
+    }
+}
+
+export function getArticleUrl(article: Article): string {
+    return `/${getCategorySlug(article.category)}/${article.slug}`;
+}
+
+import scrapedArticlesRaw from "./scraped_articles.json";
+
+const scrapedArticles = scrapedArticlesRaw.map(article => ({
+    ...article,
+    category: article.category as Article["category"],
+}));
+
 export const articles: Article[] = [
     {
         id: "1",
@@ -55,4 +84,5 @@ export const articles: Article[] = [
         category: "Theory",
         content: "Content placeholder for theory...",
     },
+    ...scrapedArticles,
 ];
