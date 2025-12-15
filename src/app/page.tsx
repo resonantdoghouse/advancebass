@@ -22,7 +22,7 @@ export default function Home() {
               Start Reading <ArrowRight className="ml-2 h-4 w-4" />
             </Link>
           </Button>
-          <Button variant="outline" size="lg" className="rounded-full">
+          <Button variant="outline" size="lg" className="rounded-full" asChild>
             <Link href="/transcriptions">Browse Transcriptions</Link>
           </Button>
         </div>
