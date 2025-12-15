@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { articles, getCategoryFromSlug, getArticleUrl } from "@/lib/data";
+import { getAllArticles, getCategoryFromSlug, getArticleUrl } from "@/lib/data";
 import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Calendar } from "lucide-react";
@@ -40,7 +40,8 @@ export default async function CategoryPage({ params }: Props) {
         notFound();
     }
 
-    const categoryArticles = articles.filter(a => a.category === categoryName);
+    const allArticles = await getAllArticles();
+    const categoryArticles = allArticles.filter(a => a.category === categoryName);
 
     return (
         <div className="container py-12 mx-auto px-4 md:px-8">

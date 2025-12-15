@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { articles, getCategoryFromSlug, getCategorySlug } from "@/lib/data";
+import { getArticleBySlug, getCategorySlug } from "@/lib/data";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft, Calendar, User, Tag } from "lucide-react";
@@ -12,7 +12,7 @@ type Props = {
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
     const { category: categorySlug, slug } = await params;
-    const article = articles.find((a) => a.slug === slug);
+    const article = await getArticleBySlug(slug);
 
     // Check if category matches
     const expectedCategorySlug = article ? getCategorySlug(article.category) : null;
@@ -31,7 +31,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
 export default async function ArticlePage({ params }: Props) {
     const { category: categorySlug, slug } = await params;
-    const article = articles.find((a) => a.slug === slug);
+    const article = await getArticleBySlug(slug);
 
     if (!article) {
         notFound();
@@ -71,25 +71,13 @@ export default async function ArticlePage({ params }: Props) {
 
                 <div className="prose prose-invert max-w-none border-t pt-8">
                     {/* 
-                  In a real app, this would be MDX. 
-                  For now we just render the raw HTML content if available, or placeholder.
-                */}
-                    {article.content && article.content.includes('<') ? (
+                      In a real app, this would be MDX. 
+                      For now we just render the raw HTML content if available, or placeholder.
+                    */}
+                    {article.content ? (
                         <div dangerouslySetInnerHTML={{ __html: article.content }} />
                     ) : (
-                        <p>{article.content}</p>
-                    )}
-                    { /* Render filler text only if it's a placeholder article */}
-                    {!article.id.startsWith('scraped') && (
-                        <>
-                            <p>
-                                Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
-                            </p>
-                            <h3>Why this technique works</h3>
-                            <p>
-                                Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
-                            </p>
-                        </>
+                        <p className="text-muted-foreground italic">No content available for this article.</p>
                     )}
                 </div>
 
