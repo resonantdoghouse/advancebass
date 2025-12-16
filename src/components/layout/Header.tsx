@@ -1,5 +1,6 @@
 import Link from "next/link"
 import { Music4 } from "lucide-react"
+import { ThemeToggle } from "@/components/ThemeToggle"
 
 export function Header() {
     return (
@@ -26,7 +27,7 @@ export function Header() {
                         {/* Search placeholder */}
                     </div>
                     <nav className="flex items-center">
-                        {/* Auth or extra links could go here */}
+                        <ThemeToggle />
                     </nav>
                 </div>
             </div>

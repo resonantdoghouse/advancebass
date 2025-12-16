@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { ZoomIn, ZoomOut, RotateCcw, Moon, Sun, Crop, Download, X, Wand2, Maximize2, Minimize2, ChevronLeft, ChevronRight, Move } from "lucide-react";
 import ReactCrop, { Crop as CropType, PixelCrop } from "react-image-crop";
 import "react-image-crop/dist/ReactCrop.css";
+import { useTheme } from "next-themes";
 
 interface TranscriptionImageViewerProps {
   images: { src: string; alt: string }[];
@@ -26,8 +27,18 @@ export function TranscriptionImageViewer({ images }: TranscriptionImageViewerPro
 
   const containerRef = useRef<HTMLDivElement>(null);
   const imgRef = useRef<HTMLImageElement>(null);
+  const { resolvedTheme } = useTheme();
 
   const currentImage = images[currentIndex] || { src: '', alt: '' };
+
+  // Initialize dark mode based on global theme
+  useEffect(() => {
+    if (resolvedTheme === 'dark') {
+      setIsDarkMode(true);
+    } else {
+      setIsDarkMode(false);
+    }
+  }, [resolvedTheme]);
 
   // Handle fullscreen changes
   useEffect(() => {
