@@ -1,4 +1,4 @@
-import { getArticleBySlug, getAllArticles } from './src/lib/data';
+import { getAllArticles } from './src/lib/data';
 import { remark } from 'remark';
 import html from 'remark-html';
 

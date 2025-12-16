@@ -1,7 +1,6 @@
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
-import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card";
-import { ArrowRight, Music, Mic2, Wrench } from "lucide-react";
+import { ArrowRight } from "lucide-react";
 
 export default function Home() {
   return (
