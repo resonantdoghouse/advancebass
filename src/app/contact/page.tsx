@@ -1,5 +1,6 @@
 import { Mail, Music2, Mic2, GraduationCap } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { ObfuscatedMailto } from "@/components/ui/obfuscated-mailto";
 
 export default function ContactPage() {
     return (
@@ -24,9 +25,9 @@ export default function ContactPage() {
                         Private instruction tailored to your goals. From beginner fundamentals to advanced theory and technique. Available in-person or online.
                     </p>
                     <Button asChild variant="outline" className="mt-auto">
-                        <a href="mailto:jim@advancebass.com?subject=Bass Lesson Inquiry">
+                        <ObfuscatedMailto user="jim" domain="advancebass.com" subject="Bass Lesson Inquiry">
                             Inquire About Lessons
-                        </a>
+                        </ObfuscatedMailto>
                     </Button>
                 </div>
 
@@ -40,9 +41,9 @@ export default function ContactPage() {
                         Professional remote bass tracks for your songs. High-quality audio files delivered with quick turnaround times.
                     </p>
                     <Button asChild variant="outline" className="mt-auto">
-                        <a href="mailto:jim@advancebass.com?subject=Recording Session Inquiry">
+                        <ObfuscatedMailto user="jim" domain="advancebass.com" subject="Recording Session Inquiry">
                             Book a Session
-                        </a>
+                        </ObfuscatedMailto>
                     </Button>
                 </div>
 
@@ -56,9 +57,9 @@ export default function ContactPage() {
                         Experienced live bassist available for gigs, tours, and showcases. Versatile across genres including Rock, Funk, Soul, and Jazz.
                     </p>
                     <Button asChild variant="outline" className="mt-auto">
-                        <a href="mailto:jim@advancebass.com?subject=Live Performance Booking">
+                        <ObfuscatedMailto user="jim" domain="advancebass.com" subject="Live Performance Booking">
                             Check Availability
-                        </a>
+                        </ObfuscatedMailto>
                     </Button>
                 </div>
             </div>
@@ -72,9 +73,9 @@ export default function ContactPage() {
                     Have a general question or want to discuss a custom project? Drop me an email and I'll get back to you as soon as possible.
                 </p>
                 <Button size="lg" asChild className="text-base px-8">
-                    <a href="mailto:jim@advancebass.com">
+                    <ObfuscatedMailto user="jim" domain="advancebass.com">
                         Contact Me
-                    </a>
+                    </ObfuscatedMailto>
                 </Button>
             </div>
         </div>
