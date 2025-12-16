@@ -8,7 +8,7 @@ export function Footer() {
                     </p>
                 </div>
                 <div className="flex items-center gap-4">
-                    <p className="text-sm text-muted-foreground">© 2025 Advance Bass</p>
+                    <p className="text-sm text-muted-foreground">&copy; {new Date().getFullYear()} Advance Bass</p>
                 </div>
             </div>
         </footer>
