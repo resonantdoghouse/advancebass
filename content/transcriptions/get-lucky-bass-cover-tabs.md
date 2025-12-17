@@ -1,0 +1,11 @@
+---
+title: "Get Lucky Bass Cover Tabs"
+date: "2014-10-06"
+author: "Jim Bennett"
+tags: ["Transcription"]
+category: "Transcription"
+image: "/images/transcriptions/get-lucky-bass-cover-tabs/Get-Lucky-v1.png"
+excerpt: "..."
+---
+
+<img src="/images/transcriptions/get-lucky-bass-cover-tabs/Get-Lucky-v1.png" alt="Get Lucky Bass Cover Tabs">
