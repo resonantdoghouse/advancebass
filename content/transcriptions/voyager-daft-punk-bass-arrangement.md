@@ -1,6 +1,6 @@
 ---
 title: "Voyager: Daft Punk – Bass Arrangement"
-date: "2025-12-15"
+date: "2015-10-04"
 author: "Jim Bennett"
 tags: ["Daft Punk"]
 category: "Transcription"

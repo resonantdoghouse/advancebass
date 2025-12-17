@@ -1,6 +1,6 @@
 ---
 title: "The Walking Dead – Main Theme – Tabs"
-date: "2025-12-15"
+date: "2015-10-10"
 author: "Jim Bennett"
 tags: ["The Walking Dead"]
 category: "Transcription"

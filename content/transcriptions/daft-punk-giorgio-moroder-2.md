@@ -1,6 +1,6 @@
 ---
 title: "Giorgio By Moroder – Daft Punk – Two-Hand Tapping"
-date: "2025-12-15"
+date: "2015-10-11"
 author: "Jim Bennett"
 tags: ["Daft Punk"]
 category: "Transcription"

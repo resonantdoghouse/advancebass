@@ -1,6 +1,6 @@
 ---
 title: "The X-Files Theme – 5 String Bass"
-date: "2025-12-15"
+date: "2015-10-10"
 author: "Jim Bennett"
 tags: ["The X-Files"]
 category: "Transcription"

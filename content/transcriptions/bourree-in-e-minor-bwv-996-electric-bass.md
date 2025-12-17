@@ -1,6 +1,6 @@
 ---
 title: "Bourrée in E minor, BWV 996, Electric Bass"
-date: "2025-12-15"
+date: "2015-10-04"
 author: "Jim Bennett"
 tags: ["Bach", "Classical"]
 category: "Transcription"
