@@ -2,13 +2,13 @@
 title: "Aerodynamic: Daft Punk – Bass Arrangement"
 date: "2025-12-15"
 author: "Jim Bennett"
-tags: ["Transcription"]
+tags: ["Daft Punk"]
 category: "Transcription"
 image: "/images/transcriptions/aerodynamic-daft-punk-bass-arrangement/Aerodynamic_1.png"
 excerpt: "..."
 ---
 
-<img decoding="async" class="aligncenter size-full wp-image-66" src="/images/transcriptions/aerodynamic-daft-punk-bass-arrangement/Aerodynamic_1.png" alt="Aerodynamic_1" width="793" height="8210" sizes="(max-width: 793px) 100vw, 793px">
+<img src="/images/transcriptions/aerodynamic-daft-punk-bass-arrangement/Aerodynamic_1.png" alt="Aerodynamic_1">
 
 <hr>
 <p>Arrangement transcribed from Daft Punk: Aerodymnic, arranged for 4-part Bass.</p>
