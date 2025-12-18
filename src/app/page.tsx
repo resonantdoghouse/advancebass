@@ -2,6 +2,13 @@ import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { ArrowRight } from "lucide-react";
 
+import { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Advance Bass | Professional Bass Transcriptions & Resources",
+  description: "Free high-quality bass transcriptions, technique articles, and gear reviews. Learn bass lines from Daft Punk, Bach, and more.",
+};
+
 export default function Home() {
   return (
     <div className="flex flex-col min-h-screen">

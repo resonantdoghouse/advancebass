@@ -2,6 +2,13 @@ import { Mail, Music2, Mic2, GraduationCap } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { ObfuscatedMailto } from "@/components/ui/obfuscated-mailto";
 
+import { Metadata } from "next";
+
+export const metadata: Metadata = {
+    title: "Contact | Advance Bass",
+    description: "Get in touch for bass lessons, recording sessions, or live performances.",
+};
+
 export default function ContactPage() {
     return (
         <div className="container max-w-screen-xl mx-auto px-4 py-12 md:py-20">
