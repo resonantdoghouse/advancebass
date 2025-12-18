@@ -1,11 +1,10 @@
 "use client";
 
-import { useState } from "react";
 import { useMetronome } from "@/hooks/useMetronome";
 import { Button } from "@/components/ui/button";
 import { Slider } from "@/components/ui/slider";
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
-import { Play, Square, Settings, Volume2, GripHorizontal } from "lucide-react";
+import { Card, CardContent } from "@/components/ui/card";
+import { Play, Square, GripHorizontal, Music, Zap, VolumeX, FastForward, Rewind } from "lucide-react";
 
 interface MetronomeProps {
   compact?: boolean;
@@ -21,58 +20,78 @@ export function Metronome({ compact = false }: MetronomeProps) {
     beatsPerMeasure,
     setBeatsPerMeasure,
     currentBeat,
+    subdivision,
+    setSubdivision,
+    tone,
+    setTone,
+    accentPattern,
+    toggleAccent
   } = useMetronome();
 
   const handleBpmChange = (value: number[]) => {
     setBpm(value[0]);
   };
 
-  const handleIncrement = () => setBpm((prev) => Math.min(prev + 1, 300));
-  const handleDecrement = () => setBpm((prev) => Math.max(prev - 1, 30));
-
   const BeatsDisplay = () => (
-    <div className="flex justify-center gap-1.5 mb-2 h-4 items-center">
-      {Array.from({ length: beatsPerMeasure }).map((_, i) => (
-        <div
+    <div className="flex justify-center gap-1.5 mb-2 h-6 items-center">
+      {accentPattern.map((level, i) => (
+        <button
           key={i}
-          className={`rounded-full transition-all duration-75 ${
-            currentBeat === i && isPlaying
-              ? i === 0
-                ? "bg-primary h-3 w-3 shadow-[0_0_8px_theme(colors.primary.DEFAULT)]" // Accent beat
-                : "bg-primary/80 h-2.5 w-2.5" // Weak beat
-              : "bg-muted h-2 w-2"
-          }`}
+          onClick={() => toggleAccent(i)}
+          className={`rounded-full transition-all duration-100 flex items-center justify-center outline-none focus-visible:ring-2 focus-visible:ring-ring
+            ${level === 2 ? 'h-4 w-4 shadow-[0_0_8px_theme(colors.primary.DEFAULT)]' : level === 1 ? 'h-3 w-3' : 'h-2 w-2 opacity-30'} // Size based on accent
+            ${currentBeat === i && isPlaying && level !== 0 
+                ? "bg-primary scale-125" 
+                : level === 0 ? "bg-muted-foreground" : level === 2 ? "bg-primary" : "bg-primary/60"
+            }
+          `}
+          title={level === 2 ? "Accent" : level === 1 ? "Normal" : "Mute"}
         />
       ))}
     </div>
   );
 
-  if (compact) {
-    return (
-      <Card className="w-56 shadow-lg border-2 bg-card/95 backdrop-blur supports-[backdrop-filter]:bg-card/75">
+  return (
+    <Card className={`shadow-lg border-2 bg-card/95 backdrop-blur supports-[backdrop-filter]:bg-card/75 ${compact ? "w-64" : "w-full max-w-md mx-auto"}`}>
+      {compact && (
         <div className="flex justify-center h-5 items-center cursor-move text-muted-foreground/50 hover:text-foreground/80 transition-colors" title="Drag to move">
             <GripHorizontal className="h-4 w-4" />
         </div>
-        <CardContent className="p-3 pt-0 space-y-3">
-          <div className="flex justify-between items-center">
-             <div className="flex flex-col">
-                 <div className="text-2xl font-bold tabular-nums leading-none">{bpm}</div>
-                 <span className="text-[10px] text-muted-foreground uppercase tracking-wider font-semibold">BPM</span>
-             </div>
-             <Button
-                size="sm"
-                variant={isPlaying ? "destructive" : "default"}
-                onClick={isPlaying ? stop : start}
-                aria-label={isPlaying ? "Stop Metronome" : "Start Metronome"}
-                className="h-8 w-8 rounded-full"
-              >
-                {isPlaying ? <Square className="h-3.5 w-3.5 fill-current" /> : <Play className="h-3.5 w-3.5 fill-current ml-0.5" />}
-              </Button>
-          </div>
-          
-          <BeatsDisplay />
+      )}
+      
+      <CardContent className={`p-4 ${compact ? "pt-0 space-y-3" : "space-y-6 pt-6"}`}>
+        
+        {/* Top Controls: BPM & Play */}
+        <div className="flex justify-between items-center">
+           <div className="flex flex-col">
+               <div className="text-3xl font-bold tabular-nums leading-none tracking-tight">{bpm}</div>
+               <span className="text-[10px] text-muted-foreground uppercase tracking-wider font-semibold">BPM</span>
+           </div>
+           
+           <div className="flex items-center gap-2">
+                {!compact && (
+                    <div className="flex gap-1 mr-2">
+                         <Button variant="outline" size="icon" className="h-8 w-8" onClick={() => setBpm(Math.floor(bpm / 2))} title="Half Time"><Rewind className="h-3 w-3" /></Button>
+                         <Button variant="outline" size="icon" className="h-8 w-8" onClick={() => setBpm(Math.min(300, bpm * 2))} title="Double Time"><FastForward className="h-3 w-3" /></Button>
+                    </div>
+                )}
+                <Button
+                    size={compact ? "sm" : "lg"}
+                    variant={isPlaying ? "destructive" : "default"}
+                    onClick={isPlaying ? stop : start}
+                    aria-label={isPlaying ? "Stop Metronome" : "Start Metronome"}
+                    className={`${compact ? "h-10 w-10 text-lg" : "h-14 w-14 text-2xl"} rounded-full shadow-md`}
+                >
+                    {isPlaying ? <Square className="fill-current" /> : <Play className="fill-current ml-1" />}
+                </Button>
+           </div>
+        </div>
 
-          <Slider
+        {/* Beats Visualizer */}
+        <BeatsDisplay />
+
+        {/* BPM Slider */}
+        <Slider
             value={[bpm]}
             onValueChange={handleBpmChange}
             min={30}
@@ -80,75 +99,54 @@ export function Metronome({ compact = false }: MetronomeProps) {
             step={1}
             className="w-full"
             aria-label="Tempo Slider"
-          />
-          
-          <div className="flex justify-between items-center text-xs text-muted-foreground pt-1">
-             <div className="flex items-center gap-1 bg-muted/40 rounded px-1.5 py-0.5">
-               <button onClick={() => setBeatsPerMeasure(Math.max(1, beatsPerMeasure - 1))} className="hover:text-foreground px-1 font-bold disabled:opacity-50" aria-label="Decrease Time Signature">-</button>
-               <span className="tabular-nums w-3 text-center font-medium text-foreground">{beatsPerMeasure}</span>
-               <button onClick={() => setBeatsPerMeasure(Math.min(16, beatsPerMeasure + 1))} className="hover:text-foreground px-1 font-bold" aria-label="Increase Time Signature">+</button>
-               <span className="text-[10px] pl-0.5">/ 4</span>
+        />
+
+        {/* Bottom Controls: Time Sig, Subdivision, Tone */}
+        <div className="space-y-3 pt-1">
+             {/* Time Sig & Subdivision Row */}
+             <div className="flex justify-between items-center">
+                 <div className="flex items-center gap-1 bg-muted/40 rounded-lg p-1">
+                   <Button variant="ghost" size="sm" className="h-6 w-6 p-0 hover:bg-background" onClick={() => setBeatsPerMeasure(Math.max(1, beatsPerMeasure - 1))}>-</Button>
+                   <span className="tabular-nums w-4 text-center font-bold text-sm">{beatsPerMeasure}</span>
+                   <Button variant="ghost" size="sm" className="h-6 w-6 p-0 hover:bg-background" onClick={() => setBeatsPerMeasure(Math.min(16, beatsPerMeasure + 1))}>+</Button>
+                   <span className="text-xs text-muted-foreground pr-1">/ 4</span>
+                 </div>
+
+                 <Button 
+                    variant={subdivision === 3 ? "secondary" : "ghost"} 
+                    size="sm" 
+                    className={`h-7 px-2 text-xs gap-1 ${subdivision === 3 ? "bg-primary/20 text-primary hover:bg-primary/30" : ""}`}
+                    onClick={() => setSubdivision(subdivision === 3 ? 1 : 3)}
+                 >
+                    <Music className="h-3 w-3" />
+                    <span>Triplet</span>
+                 </Button>
              </div>
-          </div>
-        </CardContent>
-      </Card>
-    );
-  }
 
-  return (
-    <Card className="w-full max-w-md mx-auto">
-      <CardHeader>
-        <CardTitle className="flex items-center gap-2">
-            <Volume2 className="h-6 w-6" />
-            Metronome
-        </CardTitle>
-        <CardDescription>Precision timing for your practice sessions.</CardDescription>
-      </CardHeader>
-      <CardContent className="space-y-8">
-        <BeatsDisplay />
-
-        <div className="text-center space-y-2">
-          <div className="text-7xl font-bold tabular-nums tracking-tighter">
-            {bpm}
-          </div>
-          <p className="text-muted-foreground uppercase tracking-widest font-medium">BPM</p>
-        </div>
-
-        <div className="space-y-4">
-          <Slider
-            value={[bpm]}
-            onValueChange={handleBpmChange}
-            min={30}
-            max={300}
-            step={1}
-            className="w-full"
-          />
-          <div className="flex justify-between">
-            <Button variant="outline" onClick={handleDecrement} disabled={bpm <= 30}>-1</Button>
-            <Button variant="outline" onClick={handleIncrement} disabled={bpm >= 300}>+1</Button>
-          </div>
-        </div>
-
-        <div className="flex items-center justify-between border-t pt-4">
-            <div className="space-y-1">
-                <label className="text-sm font-medium">Time Signature</label>
-                <div className="flex items-center gap-2">
-                    <Button variant="outline" size="icon" onClick={() => setBeatsPerMeasure(Math.max(1, beatsPerMeasure - 1))} className="h-8 w-8">-</Button>
-                     <span className="text-xl font-bold w-8 text-center">{beatsPerMeasure}</span>
-                    <Button variant="outline" size="icon" onClick={() => setBeatsPerMeasure(Math.min(16, beatsPerMeasure + 1))} className="h-8 w-8">+</Button>
-                    <span className="text-muted-foreground ml-1 text-lg">/ 4</span>
+             {/* Tone Selection (Only visible if space permits or expanded) */}
+             <div className="flex justify-between items-center pt-2 border-t text-xs">
+                 <span className="text-muted-foreground font-medium">Sound</span>
+                 <div className="flex gap-1">
+                    {(['digital', 'woodblock', 'drum'] as const).map((t) => (
+                        <button
+                            key={t}
+                            onClick={() => setTone(t)}
+                            className={`px-2 py-1 rounded-md transition-colors ${tone === t ? 'bg-primary text-primary-foreground font-medium' : 'hover:bg-muted text-muted-foreground'}`}
+                        >
+                            {t.charAt(0).toUpperCase() + t.slice(1)}
+                        </button>
+                    ))}
+                 </div>
+             </div>
+             
+             {compact && (
+                <div className="flex justify-between pt-1">
+                   <Button variant="ghost" size="sm" className="h-6 text-[10px]" onClick={() => setBpm(Math.floor(bpm / 2))}>1/2x</Button>
+                   <Button variant="ghost" size="sm" className="h-6 text-[10px]" onClick={() => setBpm(Math.min(300, bpm * 2))}>2x</Button>
                 </div>
-            </div>
-
-            <Button
-              size="lg"
-              className="h-16 w-16 rounded-full"
-              variant={isPlaying ? "destructive" : "default"}
-              onClick={isPlaying ? stop : start}
-            >
-              {isPlaying ? <Square className="h-8 w-8 fill-current" /> : <Play className="h-8 w-8 fill-current" />}
-            </Button>
+             )}
         </div>
+
       </CardContent>
     </Card>
   );

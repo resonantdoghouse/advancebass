@@ -7,71 +7,137 @@ interface MetronomeState {
   currentBeat: number;
 }
 
+type ToneType = 'digital' | 'woodblock' | 'drum';
+
 export const useMetronome = () => {
   const [isPlaying, setIsPlaying] = useState(false);
   const [bpm, setBpm] = useState(120);
   const [beatsPerMeasure, setBeatsPerMeasure] = useState(4);
   const [currentBeat, setCurrentBeat] = useState(0);
+  const [subdivision, setSubdivision] = useState(1);
+  const [tone, setTone] = useState<ToneType>('digital');
+  const [accentPattern, setAccentPattern] = useState<number[]>([2, 1, 1, 1]); // 0: mute, 1: normal, 2: accent
 
   const audioContext = useRef<AudioContext | null>(null);
   const nextNoteTime = useRef(0);
   const timerID = useRef<number | null>(null);
-  const lookahead = 25.0; // How frequently to call scheduling function (in milliseconds)
-  const scheduleAheadTime = 0.1; // How far ahead to schedule audio (sec)
-  const beatRef = useRef(0); // Mutable ref to track beats without re-renders affecting scheduling
+  const lookahead = 25.0; 
+  const scheduleAheadTime = 0.1;
+  
+  // Track ticks instead of beats for subdivision support
+  const tickRef = useRef(0);
+
+  // Sync accent pattern length with beatsPerMeasure
+  useEffect(() => {
+    setAccentPattern(prev => {
+        if (prev.length === beatsPerMeasure) return prev;
+        
+        const newPattern = [...prev];
+        if (newPattern.length < beatsPerMeasure) {
+            // Fill new beats with normal (1)
+            while (newPattern.length < beatsPerMeasure) {
+                newPattern.push(1);
+            }
+        } else {
+            // Truncate
+            newPattern.length = beatsPerMeasure;
+        }
+        return newPattern;
+    });
+  }, [beatsPerMeasure]);
 
   const nextNote = useCallback(() => {
     const secondsPerBeat = 60.0 / bpm;
-    nextNoteTime.current += secondsPerBeat;
-    beatRef.current = (beatRef.current + 1) % beatsPerMeasure;
-    // We update state for UI visualization, but scheduling relies on refs
-  }, [bpm, beatsPerMeasure]);
+    const secondsPerTick = secondsPerBeat / subdivision;
+    
+    nextNoteTime.current += secondsPerTick;
+    tickRef.current = tickRef.current + 1;
+  }, [bpm, subdivision]);
 
   const scheduleNote = useCallback(
-    (beatNumber: number, time: number) => {
+    (tickIndex: number, time: number) => {
       if (!audioContext.current) return;
+
+      const beatIndex = Math.floor(tickIndex / subdivision) % beatsPerMeasure;
+      const subIndex = tickIndex % subdivision;
+
+      // Determine accent level:
+      // If subIndex === 0, utilize accentPattern[beatIndex]
+      // Else (subdivision note), assume normal (1) or softer?
+      // Let's say subdivisions are level 1 (or 0.5?), Main beats follow pattern.
+      
+      let level = 1;
+      let frequency = 800;
+      let duration = 0.03;
+
+      if (subIndex === 0) {
+          level = accentPattern[beatIndex] || 1;
+      } else {
+          // Subdivision (weaker)
+          level = 0.5;
+          frequency = 600;
+      }
+
+      if (level === 0) return; // Mute
 
       const osc = audioContext.current.createOscillator();
       const envelope = audioContext.current.createGain();
 
-      osc.frequency.value = beatNumber % beatsPerMeasure === 0 ? 1000 : 800;
+      // Tone Synthesis Logic
+      if (tone === 'digital') {
+          if (subIndex === 0) {
+              frequency = (level === 2) ? 1000 : 800;
+          }
+          osc.frequency.value = frequency;
+          osc.type = 'sine';
+      } else if (tone === 'woodblock') {
+           osc.frequency.value = (level === 2) ? 1200 : 800;
+           osc.type = 'square';
+           // Filter for 'wood' sound? - minimal implementation for now
+           duration = 0.01; // shorter click
+      } else if (tone === 'drum') {
+           osc.frequency.value = (level === 2) ? 150 : 100;
+           osc.type = 'triangle';
+      }
 
-      envelope.gain.value = 1;
-      envelope.gain.exponentialRampToValueAtTime(1, time + 0.001);
-      envelope.gain.exponentialRampToValueAtTime(0.001, time + 0.02);
+      const volume = (level === 2) ? 1.0 : 0.6;
+      if (subIndex !== 0) {
+          // Even softer for off-beats
+           // using level 0.5 from above logic
+           envelope.gain.value = 0.3; 
+      } else {
+           envelope.gain.value = volume;
+      }
+
+      envelope.gain.exponentialRampToValueAtTime(volume, time + 0.001);
+      envelope.gain.exponentialRampToValueAtTime(0.001, time + duration);
 
       osc.connect(envelope);
       envelope.connect(audioContext.current.destination);
 
       osc.start(time);
-      osc.stop(time + 0.03);
+      osc.stop(time + duration);
 
       // Sync visual state
-      // We use a draw callback or requestAnimationFrame for smoother Visuals if needed,
-      // but for simple beat counting, setting state here (delayed to match audio) is okay-ish
-      // However, strictly setting state in the future is hard.
-      // For this simple implementation, we'll set the current beat 'now'.
-      // To match the audio perfectly, we would use a separate visual loop.
-      // Given React 18, we can try to trust the timing or use a timeout.
-
-      const timeUntilNote = (time - audioContext.current.currentTime) * 1000;
-      setTimeout(() => {
-        setCurrentBeat(beatNumber);
-      }, Math.max(0, timeUntilNote));
+      // Only update main beat UI on main beats
+      if (subIndex === 0) {
+          const timeUntilNote = (time - audioContext.current.currentTime) * 1000;
+          setTimeout(() => {
+            setCurrentBeat(beatIndex);
+          }, Math.max(0, timeUntilNote));
+      }
     },
-    [beatsPerMeasure]
+    [beatsPerMeasure, subdivision, accentPattern, tone]
   );
 
   const scheduler = useCallback(() => {
     if (!audioContext.current) return;
 
-    // while there are notes that will need to play before the next interval,
-    // schedule them and advance the pointer.
     while (
       nextNoteTime.current <
       audioContext.current.currentTime + scheduleAheadTime
     ) {
-      scheduleNote(beatRef.current, nextNoteTime.current);
+      scheduleNote(tickRef.current, nextNoteTime.current);
       nextNote();
     }
     timerID.current = window.setTimeout(scheduler, lookahead);
@@ -84,13 +150,12 @@ export const useMetronome = () => {
       audioContext.current = new (window.AudioContext ||
         (window as any).webkitAudioContext)();
     }
-    // Resume context if suspended (browser policy)
     if (audioContext.current.state === "suspended") {
       audioContext.current.resume();
     }
 
     setIsPlaying(true);
-    beatRef.current = 0;
+    tickRef.current = 0;
     setCurrentBeat(0);
     nextNoteTime.current = audioContext.current.currentTime + 0.05;
     scheduler();
@@ -105,7 +170,6 @@ export const useMetronome = () => {
     setCurrentBeat(0);
   }, []);
 
-  // Cleanup
   useEffect(() => {
     return () => {
       if (timerID.current !== null) {
@@ -117,17 +181,22 @@ export const useMetronome = () => {
     };
   }, []);
 
-  // Restart scheduler if BPM changes while playing
-  // Actually, the scheduler recursively calls itself, using the LATEST refs/state if we are careful.
-  // But our 'nextNote' depends on 'bpm'. Since 'nextNote' is in the dependency array of 'scheduler',
-  // and 'scheduler' is re-created, the OLD timeout might call the OLD scheduler.
-  // We need to ensure the loop continues with fresh values.
-
-  // A ref for "isPlaying" helps the scheduler decide whether to continue
   const isPlayingRef = useRef(isPlaying);
   useEffect(() => {
     isPlayingRef.current = isPlaying;
   }, [isPlaying]);
+
+  const toggleAccent = (index: number) => {
+      setAccentPattern(prev => {
+          const next = [...prev];
+          // Cycle: 1 (Normal) -> 2 (Accent) -> 0 (Mute) -> 1
+          const val = next[index];
+          if (val === 1) next[index] = 2;
+          else if (val === 2) next[index] = 0;
+          else next[index] = 1;
+          return next;
+      });
+  };
 
   return {
     isPlaying,
@@ -138,5 +207,11 @@ export const useMetronome = () => {
     beatsPerMeasure,
     setBeatsPerMeasure,
     currentBeat,
+    subdivision,
+    setSubdivision,
+    tone,
+    setTone,
+    accentPattern,
+    toggleAccent
   };
 };
