@@ -2,10 +2,11 @@
 
 import { useState, useRef, useEffect } from "react";
 import { Button } from "@/components/ui/button";
-import { ZoomIn, ZoomOut, RotateCcw, Moon, Sun, Crop, Download, X, Wand2, Maximize2, Minimize2, ChevronLeft, ChevronRight, Move } from "lucide-react";
+import { ZoomIn, ZoomOut, RotateCcw, Moon, Sun, Crop, Download, X, Wand2, Maximize2, Minimize2, ChevronLeft, ChevronRight, Move, Timer } from "lucide-react";
 import ReactCrop, { Crop as CropType, PixelCrop } from "react-image-crop";
 import "react-image-crop/dist/ReactCrop.css";
 import { useTheme } from "next-themes";
+import { Metronome } from "@/components/tools/Metronome";
 
 interface TranscriptionImageViewerProps {
   images: { src: string; alt: string }[];
@@ -22,6 +23,11 @@ export function TranscriptionImageViewer({ images }: TranscriptionImageViewerPro
   const [isSharpened, setIsSharpened] = useState(false);
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [isCropMode, setIsCropMode] = useState(false);
+  const [isMetronomeVisible, setIsMetronomeVisible] = useState(false);
+  const [metronomePosition, setMetronomePosition] = useState({ x: 0, y: 0 });
+  const [isDraggingMetronome, setIsDraggingMetronome] = useState(false);
+  const [metronomeDragStart, setMetronomeDragStart] = useState({ x: 0, y: 0 });
+
   const [crop, setCrop] = useState<CropType>();
   const [completedCrop, setCompletedCrop] = useState<PixelCrop>();
 
@@ -30,6 +36,18 @@ export function TranscriptionImageViewer({ images }: TranscriptionImageViewerPro
   const { resolvedTheme } = useTheme();
 
   const currentImage = images[currentIndex] || { src: '', alt: '' };
+
+  // Load metronome position from local storage
+  useEffect(() => {
+    const savedPos = localStorage.getItem('metronome-position');
+    if (savedPos) {
+      try {
+        setMetronomePosition(JSON.parse(savedPos));
+      } catch (e) {
+        console.error("Failed to parse metronome position", e);
+      }
+    }
+  }, []);
 
   // Initialize dark mode based on global theme
   useEffect(() => {
@@ -130,6 +148,44 @@ export function TranscriptionImageViewer({ images }: TranscriptionImageViewerPro
       setPan({ x: 0, y: 0 });
     }
   };
+
+  // Metronome Drag Handlers
+  const handleMetronomePointerDown = (e: React.PointerEvent) => {
+    e.stopPropagation(); // Prevent image dragging
+    
+    // Check if target is interactive or inside an interactive element
+    const target = e.target as HTMLElement;
+    if (target.closest('button') || target.closest('[role="slider"]') || target.closest('.no-drag')) {
+        return;
+    }
+
+    setIsDraggingMetronome(true);
+    // Calculate offset from current position
+    // We want to track the delta, so we record where the click happened relative to the *current* x/y
+    setMetronomeDragStart({
+        x: e.clientX - metronomePosition.x,
+        y: e.clientY - metronomePosition.y
+    });
+    (e.target as Element).setPointerCapture(e.pointerId);
+  };
+
+  const handleMetronomePointerMove = (e: React.PointerEvent) => {
+    if (!isDraggingMetronome) return;
+    e.stopPropagation();
+    setMetronomePosition({
+        x: e.clientX - metronomeDragStart.x,
+        y: e.clientY - metronomeDragStart.y
+    });
+  };
+
+  const handleMetronomePointerUp = (e: React.PointerEvent) => {
+    if (isDraggingMetronome) { // Only save if we were dragging metronome
+         setIsDraggingMetronome(false);
+         (e.target as Element).releasePointerCapture(e.pointerId);
+         localStorage.setItem('metronome-position', JSON.stringify(metronomePosition));
+    }
+  };
+
 
   // Panning Event Handlers
   const handlePointerDown = (e: React.PointerEvent) => {
@@ -284,6 +340,15 @@ export function TranscriptionImageViewer({ images }: TranscriptionImageViewerPro
             {isFullscreen ? <Minimize2 className="h-4 w-4" /> : <Maximize2 className="h-4 w-4" />}
           </Button>
 
+          <Button
+            variant={isMetronomeVisible ? "default" : "outline"}
+            size="icon"
+            onClick={() => setIsMetronomeVisible(!isMetronomeVisible)}
+            title="Toggle Metronome"
+          >
+            <Timer className="h-4 w-4" />
+          </Button>
+
           <div className="h-6 w-px bg-border mx-2" />
 
           {!isCropMode ? (
@@ -302,6 +367,25 @@ export function TranscriptionImageViewer({ images }: TranscriptionImageViewerPro
           )}
         </div>
       </div>
+
+      {isMetronomeVisible && (
+        <div className="sticky top-4 z-40 flex justify-end px-4 h-0 pointer-events-none">
+            <div
+                className="pointer-events-auto w-64 animate-in fade-in slide-in-from-top-4 duration-200 cursor-move touch-none"
+                style={{
+                     transform: `translate(${metronomePosition.x}px, ${metronomePosition.y}px)`
+                }}
+                onPointerDown={handleMetronomePointerDown}
+                onPointerMove={handleMetronomePointerMove}
+                onPointerUp={handleMetronomePointerUp}
+                onPointerLeave={handleMetronomePointerUp}
+            >
+                <div className="shadow-2xl">
+                     <Metronome compact />
+                </div>
+            </div>
+        </div>
+      )}
 
       <div
         className={`relative overflow-hidden flex justify-center bg-muted/20 rounded p-4 touch-none ${isFullscreen ? 'flex-1 items-center bg-black/90' : 'min-h-[200px]'}`}
@@ -353,6 +437,8 @@ export function TranscriptionImageViewer({ images }: TranscriptionImageViewerPro
           Drag to select an area to export.
         </p>
       )}
+
+
     </div>
   );
 }

@@ -21,6 +21,12 @@ export function Header() {
                             Transcriptions
                         </Link>
                         <Link
+                            href="/tools/metronome"
+                            className="transition-colors hover:text-foreground/80 text-foreground/60"
+                        >
+                            Metronome
+                        </Link>
+                        <Link
                             href="/contact"
                             className="transition-colors hover:text-foreground/80 text-foreground/60"
                         >
