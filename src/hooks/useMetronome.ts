@@ -7,7 +7,7 @@ interface MetronomeState {
   currentBeat: number;
 }
 
-type ToneType = 'digital' | 'woodblock' | 'drum';
+type ToneType = "digital" | "woodblock" | "drum";
 
 export const useMetronome = () => {
   const [isPlaying, setIsPlaying] = useState(false);
@@ -15,120 +15,134 @@ export const useMetronome = () => {
   const [beatsPerMeasure, setBeatsPerMeasure] = useState(4);
   const [currentBeat, setCurrentBeat] = useState(0);
   const [subdivision, setSubdivision] = useState(1);
-  const [tone, setTone] = useState<ToneType>('digital');
+  const [tone, setTone] = useState<ToneType>("digital");
   const [accentPattern, setAccentPattern] = useState<number[]>([2, 1, 1, 1]); // 0: mute, 1: normal, 2: accent
 
   const audioContext = useRef<AudioContext | null>(null);
   const nextNoteTime = useRef(0);
   const timerID = useRef<number | null>(null);
-  const lookahead = 25.0; 
+  const lookahead = 25.0;
   const scheduleAheadTime = 0.1;
-  
-  // Track ticks instead of beats for subdivision support
   const tickRef = useRef(0);
+
+  // Refs for current state values to be accessed inside the scheduler closure
+  const bpmRef = useRef(bpm);
+  const beatsPerMeasureRef = useRef(beatsPerMeasure);
+  const subdivisionRef = useRef(subdivision);
+  const toneRef = useRef(tone);
+  const accentPatternRef = useRef(accentPattern);
+
+  // Sync refs with state
+  useEffect(() => {
+    bpmRef.current = bpm;
+  }, [bpm]);
+  useEffect(() => {
+    beatsPerMeasureRef.current = beatsPerMeasure;
+  }, [beatsPerMeasure]);
+  useEffect(() => {
+    subdivisionRef.current = subdivision;
+  }, [subdivision]);
+  useEffect(() => {
+    toneRef.current = tone;
+  }, [tone]);
+  useEffect(() => {
+    accentPatternRef.current = accentPattern;
+  }, [accentPattern]);
 
   // Sync accent pattern length with beatsPerMeasure
   useEffect(() => {
-    setAccentPattern(prev => {
-        if (prev.length === beatsPerMeasure) return prev;
-        
-        const newPattern = [...prev];
-        if (newPattern.length < beatsPerMeasure) {
-            // Fill new beats with normal (1)
-            while (newPattern.length < beatsPerMeasure) {
-                newPattern.push(1);
-            }
-        } else {
-            // Truncate
-            newPattern.length = beatsPerMeasure;
+    setAccentPattern((prev) => {
+      if (prev.length === beatsPerMeasure) return prev;
+
+      const newPattern = [...prev];
+      if (newPattern.length < beatsPerMeasure) {
+        while (newPattern.length < beatsPerMeasure) {
+          newPattern.push(1);
         }
-        return newPattern;
+      } else {
+        newPattern.length = beatsPerMeasure;
+      }
+      return newPattern;
     });
   }, [beatsPerMeasure]);
 
   const nextNote = useCallback(() => {
-    const secondsPerBeat = 60.0 / bpm;
-    const secondsPerTick = secondsPerBeat / subdivision;
-    
+    const secondsPerBeat = 60.0 / bpmRef.current;
+    const secondsPerTick = secondsPerBeat / subdivisionRef.current;
+
     nextNoteTime.current += secondsPerTick;
     tickRef.current = tickRef.current + 1;
-  }, [bpm, subdivision]);
+  }, []);
 
-  const scheduleNote = useCallback(
-    (tickIndex: number, time: number) => {
-      if (!audioContext.current) return;
+  const scheduleNote = useCallback((tickIndex: number, time: number) => {
+    if (!audioContext.current) return;
 
-      const beatIndex = Math.floor(tickIndex / subdivision) % beatsPerMeasure;
-      const subIndex = tickIndex % subdivision;
+    const currentSubdivision = subdivisionRef.current;
+    const currentBeatsPerMeasure = beatsPerMeasureRef.current;
+    const currentAccentPattern = accentPatternRef.current;
+    const currentTone = toneRef.current;
 
-      // Determine accent level:
-      // If subIndex === 0, utilize accentPattern[beatIndex]
-      // Else (subdivision note), assume normal (1) or softer?
-      // Let's say subdivisions are level 1 (or 0.5?), Main beats follow pattern.
-      
-      let level = 1;
-      let frequency = 800;
-      let duration = 0.03;
+    const beatIndex =
+      Math.floor(tickIndex / currentSubdivision) % currentBeatsPerMeasure;
+    const subIndex = tickIndex % currentSubdivision;
 
+    let level = 1;
+    let frequency = 800;
+    let duration = 0.03;
+
+    if (subIndex === 0) {
+      level =
+        currentAccentPattern[beatIndex] !== undefined
+          ? currentAccentPattern[beatIndex]
+          : 1;
+    } else {
+      level = 0.5;
+      frequency = 600;
+    }
+
+    if (level === 0) return; // Mute
+
+    const osc = audioContext.current.createOscillator();
+    const envelope = audioContext.current.createGain();
+
+    if (currentTone === "digital") {
       if (subIndex === 0) {
-          level = accentPattern[beatIndex] || 1;
-      } else {
-          // Subdivision (weaker)
-          level = 0.5;
-          frequency = 600;
+        frequency = level === 2 ? 1000 : 800;
       }
+      osc.frequency.value = frequency;
+      osc.type = "sine";
+    } else if (currentTone === "woodblock") {
+      osc.frequency.value = level === 2 ? 1200 : 800;
+      osc.type = "square";
+      duration = 0.01;
+    } else if (currentTone === "drum") {
+      osc.frequency.value = level === 2 ? 150 : 100;
+      osc.type = "triangle";
+    }
 
-      if (level === 0) return; // Mute
+    const volume = level === 2 ? 1.0 : 0.6;
+    if (subIndex !== 0) {
+      envelope.gain.value = 0.3;
+    } else {
+      envelope.gain.value = volume;
+    }
 
-      const osc = audioContext.current.createOscillator();
-      const envelope = audioContext.current.createGain();
+    envelope.gain.exponentialRampToValueAtTime(volume, time + 0.001);
+    envelope.gain.exponentialRampToValueAtTime(0.001, time + duration);
 
-      // Tone Synthesis Logic
-      if (tone === 'digital') {
-          if (subIndex === 0) {
-              frequency = (level === 2) ? 1000 : 800;
-          }
-          osc.frequency.value = frequency;
-          osc.type = 'sine';
-      } else if (tone === 'woodblock') {
-           osc.frequency.value = (level === 2) ? 1200 : 800;
-           osc.type = 'square';
-           // Filter for 'wood' sound? - minimal implementation for now
-           duration = 0.01; // shorter click
-      } else if (tone === 'drum') {
-           osc.frequency.value = (level === 2) ? 150 : 100;
-           osc.type = 'triangle';
-      }
+    osc.connect(envelope);
+    envelope.connect(audioContext.current.destination);
 
-      const volume = (level === 2) ? 1.0 : 0.6;
-      if (subIndex !== 0) {
-          // Even softer for off-beats
-           // using level 0.5 from above logic
-           envelope.gain.value = 0.3; 
-      } else {
-           envelope.gain.value = volume;
-      }
+    osc.start(time);
+    osc.stop(time + duration);
 
-      envelope.gain.exponentialRampToValueAtTime(volume, time + 0.001);
-      envelope.gain.exponentialRampToValueAtTime(0.001, time + duration);
-
-      osc.connect(envelope);
-      envelope.connect(audioContext.current.destination);
-
-      osc.start(time);
-      osc.stop(time + duration);
-
-      // Sync visual state
-      // Only update main beat UI on main beats
-      if (subIndex === 0) {
-          const timeUntilNote = (time - audioContext.current.currentTime) * 1000;
-          setTimeout(() => {
-            setCurrentBeat(beatIndex);
-          }, Math.max(0, timeUntilNote));
-      }
-    },
-    [beatsPerMeasure, subdivision, accentPattern, tone]
-  );
+    if (subIndex === 0) {
+      const timeUntilNote = (time - audioContext.current.currentTime) * 1000;
+      setTimeout(() => {
+        setCurrentBeat(beatIndex);
+      }, Math.max(0, timeUntilNote));
+    }
+  }, []);
 
   const scheduler = useCallback(() => {
     if (!audioContext.current) return;
@@ -187,15 +201,14 @@ export const useMetronome = () => {
   }, [isPlaying]);
 
   const toggleAccent = (index: number) => {
-      setAccentPattern(prev => {
-          const next = [...prev];
-          // Cycle: 1 (Normal) -> 2 (Accent) -> 0 (Mute) -> 1
-          const val = next[index];
-          if (val === 1) next[index] = 2;
-          else if (val === 2) next[index] = 0;
-          else next[index] = 1;
-          return next;
-      });
+    setAccentPattern((prev) => {
+      const next = [...prev];
+      const val = next[index];
+      if (val === 1) next[index] = 2;
+      else if (val === 2) next[index] = 0;
+      else next[index] = 1;
+      return next;
+    });
   };
 
   return {
@@ -212,6 +225,6 @@ export const useMetronome = () => {
     tone,
     setTone,
     accentPattern,
-    toggleAccent
+    toggleAccent,
   };
 };
