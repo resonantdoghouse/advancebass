@@ -1,6 +1,9 @@
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { ArrowRight } from "lucide-react";
+import { getAllArticles } from "@/lib/data";
+import { FEATURED_TRANSCRIPTION_SLUGS } from "@/lib/featured";
+import { TranscriptionCard } from "@/components/content/TranscriptionCard";
 
 import { Metadata } from "next";
 
@@ -9,7 +12,12 @@ export const metadata: Metadata = {
   description: "Free high-quality bass transcriptions, technique articles, and gear reviews. Learn bass lines from Daft Punk, Bach, and more.",
 };
 
-export default function Home() {
+export default async function Home() {
+  const allArticles = await getAllArticles();
+  const featuredArticles = FEATURED_TRANSCRIPTION_SLUGS.map(slug => 
+    allArticles.find(article => article.slug === slug)
+  ).filter(article => article !== undefined); // Simple way to filter out not founds securely
+
   return (
     <div className="flex flex-col min-h-screen">
       {/* Hero Section */}
@@ -31,12 +39,27 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Featured Transcriptions Preview or simple statement */}
-      <section className="container py-12 space-y-12 mx-auto px-4 md:px-8">
+      {/* Featured Transcriptions */}
+      <section className="container py-20 space-y-12 mx-auto px-4 md:px-8">
         <div className="text-center space-y-4">
-          <p className="text-muted-foreground">
-            Featuring transcriptions from Daft Punk, Bach, TV Themes, and more.
+          <h2 className="text-3xl font-bold tracking-tight sm:text-4xl">Featured Transcriptions</h2>
+          <p className="text-muted-foreground text-lg max-w-2xl mx-auto">
+            Check out some of our most popular and interesting bass transcriptions.
           </p>
+        </div>
+        
+        <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
+          {featuredArticles.map((article) => (
+             <TranscriptionCard key={article.id} article={article as any} />
+          ))}
+        </div>
+        
+        <div className="flex justify-center pt-8">
+             <Button asChild variant="outline" size="lg" className="rounded-full">
+                <Link href="/transcriptions">
+                  View All Transcriptions
+                </Link>
+             </Button>
         </div>
       </section>
     </div>

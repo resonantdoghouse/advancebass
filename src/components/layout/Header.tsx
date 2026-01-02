@@ -13,7 +13,15 @@ export function Header() {
                             Advance Bass
                         </span>
                     </Link>
+                </div>
+                <div className="flex flex-1 items-center justify-end space-x-4">
                     <nav className="flex items-center gap-6 text-sm">
+                        <Link
+                            href="/"
+                            className="transition-colors hover:text-foreground/80 text-foreground/60"
+                        >
+                            Home
+                        </Link>
                         <Link
                             href="/transcriptions"
                             className="transition-colors hover:text-foreground/80 text-foreground/60"
@@ -33,11 +41,6 @@ export function Header() {
                             Contact
                         </Link>
                     </nav>
-                </div>
-                <div className="flex flex-1 items-center justify-between space-x-2 md:justify-end">
-                    <div className="w-full flex-1 md:w-auto md:flex-none">
-                        {/* Search placeholder */}
-                    </div>
                     <nav className="flex items-center">
                         <ThemeToggle />
                     </nav>
