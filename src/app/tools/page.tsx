@@ -1,7 +1,7 @@
 
 import Link from "next/link";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Timer } from "lucide-react";
+import { Timer, Music } from "lucide-react";
 
 export const metadata = {
   title: "Practice Tools | Advance Bass",
@@ -26,6 +26,21 @@ export default function ToolsPage() {
               <CardTitle>Metronome</CardTitle>
               <CardDescription>
                 Accurate, adjustable metronome with visual beats and odd time signatures.
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <span className="text-sm font-medium text-primary">Open Tool &rarr;</span>
+            </CardContent>
+          </Card>
+        </Link>
+
+        <Link href="/tools/tuner" className="block transition-transform hover:scale-105">
+          <Card className="h-full hover:border-primary/50 transition-colors">
+            <CardHeader>
+              <Music className="h-8 w-8 text-primary mb-2" />
+              <CardTitle>Bass Tuner</CardTitle>
+              <CardDescription>
+                Chromatic tuner with microphone input and reference tones for 4, 5, and 6 string basses.
               </CardDescription>
             </CardHeader>
             <CardContent>
