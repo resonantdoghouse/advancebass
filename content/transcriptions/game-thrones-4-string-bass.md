@@ -5,6 +5,7 @@ author: "Jim Bennett"
 tags: ["Game Of Thrones"]
 category: "Transcription"
 image: "/images/transcriptions/game-thrones-4-string-bass/Game-of-Thrones-4-String-Bass-updated000.jpg"
+pages: 6
 excerpt: "..."
 ---
 

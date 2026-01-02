@@ -5,6 +5,7 @@ author: "Jim Bennett"
 tags: ["Daft Punk"]
 category: "Transcription"
 image: "/images/transcriptions/voyager-daft-punk-bass-arrangement/Voyager-Basic-Parts.png"
+pages: 1
 excerpt: "..."
 ---
 

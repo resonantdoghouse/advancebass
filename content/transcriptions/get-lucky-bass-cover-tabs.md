@@ -5,6 +5,7 @@ author: "Jim Bennett"
 tags: ["Daft Punk"]
 category: "Transcription"
 image: "/images/transcriptions/get-lucky-bass-cover-tabs/Get-Lucky-v1.png"
+pages: 1
 excerpt: "..."
 ---
 

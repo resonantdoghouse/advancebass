@@ -5,6 +5,7 @@ author: "Jim Bennett"
 tags: ["Daft Punk"]
 category: "Transcription"
 image: "/images/transcriptions/daft-punk-giorgio-moroder/Giorgio-by-Moroder1-724x1024.png"
+pages: 2
 excerpt: "..."
 ---
 

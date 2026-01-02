@@ -15,6 +15,7 @@ export type Article = {
     tags: string[];
     content?: string;
     image?: string;
+    pages?: number;
     category: "Transcription" | "Technique" | "Gear" | "Theory";
 };
 
@@ -82,6 +83,7 @@ export async function getAllArticles(): Promise<Article[]> {
                 tags: matterResult.data.tags || [],
                 category: matterResult.data.category as Article['category'],
                 image: matterResult.data.image,
+                pages: matterResult.data.pages,
                 content: matterResult.content, // Raw markdown
             });
         }

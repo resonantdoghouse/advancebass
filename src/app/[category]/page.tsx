@@ -3,7 +3,7 @@ import Image from "next/image";
 import { getAllArticles, getCategoryFromSlug, getArticleUrl } from "@/lib/data";
 import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Calendar } from "lucide-react";
+import { Calendar, FileText } from "lucide-react";
 import { notFound } from "next/navigation";
 import { Metadata } from "next";
 
@@ -83,6 +83,13 @@ export default async function CategoryPage({ params }: Props) {
                                 <CardDescription className="flex items-center gap-2 mt-2">
                                     <Calendar className="h-3 w-3" />
                                     {article.date}
+                                    {article.pages && (
+                                        <>
+                                            <span>•</span>
+                                            <FileText className="h-3 w-3" />
+                                            {article.pages} {article.pages === 1 ? 'Page' : 'Pages'}
+                                        </>
+                                    )}
                                 </CardDescription>
                             </CardHeader>
                             <CardContent className="flex-1">
