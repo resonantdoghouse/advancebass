@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Image from "next/image";
 import { getAllArticles, getCategoryFromSlug, getArticleUrl } from "@/lib/data";
 import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -61,11 +62,12 @@ export default async function CategoryPage({ params }: Props) {
                                     {/* Using standard img tag for simplicity with local files without needing extensive next.config setup for generic paths if strict, but next/image is better. 
                                         Since these are local public files, simpe <img /> works fine/fast. 
                                     */}
-                                    <img
+                                    <Image
                                         src={article.image}
                                         alt={article.title}
+                                        fill
+                                        sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                                         className="object-cover w-full h-full transition-transform duration-500 group-hover:scale-110 opacity-90 group-hover:opacity-100"
-                                        loading="lazy"
                                     />
                                     <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
                                     <Badge variant="secondary" className="absolute bottom-2 left-2 bg-background/80 backdrop-blur text-xs">{article.category}</Badge>

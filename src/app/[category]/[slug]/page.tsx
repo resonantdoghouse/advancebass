@@ -28,8 +28,18 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     return {
         title: `${article.title} | Advance Bass`,
         description: article.excerpt,
+        openGraph: {
+            title: article.title,
+            description: article.excerpt,
+            type: "article",
+            publishedTime: article.date,
+            authors: [article.author],
+            images: article.image ? [article.image] : [],
+        },
     };
 }
+
+import { JsonLd } from "@/components/seo/JsonLd";
 
 export default async function ArticlePage({ params }: Props) {
     const { category: categorySlug, slug } = await params;
@@ -50,8 +60,22 @@ export default async function ArticlePage({ params }: Props) {
         redirect(`/${expectedCategorySlug}/${slug}`);
     }
 
+    const jsonLd = {
+        "@context": "https://schema.org",
+        "@type": "Article",
+        headline: article.title,
+        description: article.excerpt,
+        image: article.image ? `https://advancebass.com${article.image}` : undefined,
+        datePublished: article.date,
+        author: {
+            "@type": "Person",
+            name: article.author,
+        },
+    };
+
     return (
         <div className="container py-12 max-w-4xl mx-auto px-4 md:px-8">
+            <JsonLd data={jsonLd} />
             <Button variant="ghost" className="mb-8 pl-0 hover:pl-2 transition-all" asChild>
                 <Link href={`/${categorySlug}`}>
                     <ArrowLeft className="mr-2 h-4 w-4" /> Back to {article.category}

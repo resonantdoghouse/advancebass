@@ -63,6 +63,20 @@ export const metadata: Metadata = {
   },
 };
 
+const jsonLd = {
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  name: "Advance Bass",
+  url: "https://advancebass.com",
+  potentialAction: {
+    "@type": "SearchAction",
+    target: "https://advancebass.com/search?q={search_term_string}",
+    "query-input": "required name=search_term_string",
+  },
+};
+
+import { JsonLd } from "@/components/seo/JsonLd";
+
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -73,6 +87,7 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased min-h-screen flex flex-col`}
       >
+        <JsonLd data={jsonLd} />
         <ThemeProvider
           attribute="class"
           defaultTheme="system"
