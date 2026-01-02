@@ -6,7 +6,7 @@ tags: ["Daft Punk"]
 category: "Transcription"
 image: "/images/transcriptions/voyager-daft-punk-bass-arrangement/Voyager-Basic-Parts.png"
 pages: 1
-excerpt: "..."
+excerpt: ""
 ---
 
 <img src="/images/transcriptions/voyager-daft-punk-bass-arrangement/Voyager-Basic-Parts.png" alt="Voyager Basic Parts" >

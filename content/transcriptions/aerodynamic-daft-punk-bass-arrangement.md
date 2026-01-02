@@ -6,7 +6,7 @@ tags: ["Daft Punk"]
 category: "Transcription"
 image: "/images/transcriptions/aerodynamic-daft-punk-bass-arrangement/Aerodynamic_1.png"
 pages: 1
-excerpt: "..."
+excerpt: ""
 ---
 
 <img src="/images/transcriptions/aerodynamic-daft-punk-bass-arrangement/Aerodynamic_1.png" alt="Aerodynamic_1">

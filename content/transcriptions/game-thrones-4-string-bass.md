@@ -6,7 +6,7 @@ tags: ["Game Of Thrones"]
 category: "Transcription"
 image: "/images/transcriptions/game-thrones-4-string-bass/Game-of-Thrones-4-String-Bass-updated000.jpg"
 pages: 6
-excerpt: "..."
+excerpt: ""
 ---
 
 <img src="/images/transcriptions/game-thrones-4-string-bass/Game-of-Thrones-4-String-Bass-updated000.jpg" alt="Game Of Thrones 4 String Bass - Page 1" >

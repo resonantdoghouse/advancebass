@@ -6,7 +6,7 @@ tags: ["Bach", "Classical"]
 category: "Transcription"
 image: "/images/transcriptions/bourree-in-e-minor-bwv-996-electric-bass/Bouree-in-e-minor000-791x1024.jpg"
 pages: 3
-excerpt: "..."
+excerpt: ""
 ---
 
 <img src="/images/transcriptions/bourree-in-e-minor-bwv-996-electric-bass/Bouree-in-e-minor000-791x1024.jpg" alt="Bouree in e minor000" >

@@ -6,7 +6,7 @@ tags: ["Daft Punk"]
 category: "Transcription"
 image: "/images/transcriptions/get-lucky-bass-cover-tabs/Get-Lucky-v1.png"
 pages: 1
-excerpt: "..."
+excerpt: ""
 ---
 
 <img src="/images/transcriptions/get-lucky-bass-cover-tabs/Get-Lucky-v1.png" alt="Get Lucky Bass Cover Tabs">

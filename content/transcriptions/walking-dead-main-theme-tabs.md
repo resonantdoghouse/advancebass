@@ -6,7 +6,7 @@ tags: ["The Walking Dead"]
 category: "Transcription"
 image: "/images/transcriptions/walking-dead-main-theme-tabs/The-Walking-Dead-page-1-724x1024.png"
 pages: 3
-excerpt: "..."
+excerpt: ""
 ---
 
 <img src="/images/transcriptions/walking-dead-main-theme-tabs/The-Walking-Dead-page-1-724x1024.png" alt="The Walking Dead page 1">
