@@ -1,7 +1,7 @@
-export const NOTES = ["C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B"];
+export const NOTES = ["C", "C#/Db", "D", "D#/Eb", "E", "F", "F#/Gb", "G", "G#/Ab", "A", "A#/Bb", "B"];
 
 export const SCALES = {
-  chromatic: { name: "Chromatic", pattern: [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1] },
+  chromatic: { name: "Chromatic", pattern: [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1] },
   major: { name: "Major", pattern: [2, 2, 1, 2, 2, 2, 1] },
   natural_minor: { name: "Natural Minor", pattern: [2, 1, 2, 2, 1, 2, 2] },
   harmonic_minor: { name: "Harmonic Minor", pattern: [2, 1, 2, 2, 1, 3, 1] },
@@ -47,7 +47,12 @@ export function getAllFretboardNotes(
   const fretboard: { stringIndex: number; fret: number; note: string; octave: number; frequency: number }[] = [];
 
   tuning.forEach((stringInfo, stringIndex) => {
-    let currentNoteIndex = NOTES.indexOf(stringInfo.note);
+    // Find index of the open string note, handling enharmonics (e.g. "C#" matching "C#/Db")
+    let currentNoteIndex = NOTES.findIndex(n => n === stringInfo.note || n.split('/').includes(stringInfo.note));
+    
+    // Fallback if not found (shouldn't happen with standard tunings but for safety)
+    if (currentNoteIndex === -1) currentNoteIndex = 0;
+
     let currentOctave = stringInfo.octave;
 
     for (let fret = 0; fret <= frets; fret++) {
