@@ -70,16 +70,16 @@ export default function CircleOfFifths() {
     const endRad = (endAngle * Math.PI) / 180;
 
     // Outer points
-    const x1 = 200 + outerRadius * Math.cos(startRad);
-    const y1 = 200 + outerRadius * Math.sin(startRad);
-    const x2 = 200 + outerRadius * Math.cos(endRad);
-    const y2 = 200 + outerRadius * Math.sin(endRad);
+    const x1 = (200 + outerRadius * Math.cos(startRad)).toFixed(3);
+    const y1 = (200 + outerRadius * Math.sin(startRad)).toFixed(3);
+    const x2 = (200 + outerRadius * Math.cos(endRad)).toFixed(3);
+    const y2 = (200 + outerRadius * Math.sin(endRad)).toFixed(3);
 
     // Inner points
-    const x3 = 200 + innerRadius * Math.cos(endRad);
-    const y3 = 200 + innerRadius * Math.sin(endRad);
-    const x4 = 200 + innerRadius * Math.cos(startRad);
-    const y4 = 200 + innerRadius * Math.sin(startRad);
+    const x3 = (200 + innerRadius * Math.cos(endRad)).toFixed(3);
+    const y3 = (200 + innerRadius * Math.sin(endRad)).toFixed(3);
+    const x4 = (200 + innerRadius * Math.cos(startRad)).toFixed(3);
+    const y4 = (200 + innerRadius * Math.sin(startRad)).toFixed(3);
 
     return `M ${x1} ${y1} A ${outerRadius} ${outerRadius} 0 0 1 ${x2} ${y2} L ${x3} ${y3} A ${innerRadius} ${innerRadius} 0 0 0 ${x4} ${y4} Z`;
   };
@@ -87,8 +87,8 @@ export default function CircleOfFifths() {
   const getLabelPosition = (index: number, total: number, radius: number) => {
     const angle = (index * 360) / total - 90;
     const rad = (angle * Math.PI) / 180;
-    const x = 200 + radius * Math.cos(rad);
-    const y = 200 + radius * Math.sin(rad);
+    const x = (200 + radius * Math.cos(rad)).toFixed(3);
+    const y = (200 + radius * Math.sin(rad)).toFixed(3);
     return { x, y };
   };
 
