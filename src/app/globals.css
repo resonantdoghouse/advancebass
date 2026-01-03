@@ -47,7 +47,11 @@
   --border: 240 5.9% 90%;
   --input: 240 5.9% 90%;
   --ring: 47 95% 45%;
+  --input: 240 5.9% 90%;
+  --ring: 47 95% 45%;
   --radius: 0.5rem;
+  --fretboard: 35 30% 90%; /* Maple-ish #f2eee9 */
+  --fretboard-dot: 240 10% 3.9%; /* Dark dots */
 }
 
 .dark {
@@ -72,6 +76,8 @@
   --border: 240 4% 16%;
   --input: 240 4% 16%;
   --ring: 47 95% 57%;
+  --fretboard: 30 10% 20%; /* Rosewood-ish #332e2e */
+  --fretboard-dot: 0 0% 90%; /* Light dots */
 }
 
 body {

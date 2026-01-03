@@ -48,6 +48,22 @@ export default function ToolsPage() {
             </CardContent>
           </Card>
         </Link>
+        <Link href="/tools/scale-visualizer" className="block transition-transform hover:scale-105">
+          <Card className="h-full hover:border-primary/50 transition-colors">
+            <CardHeader>
+              <div className="h-8 w-8 text-primary mb-2 flex items-center justify-center border-2 border-primary rounded-md text-xs font-bold">
+                #:
+              </div>
+              <CardTitle>Scale Visualizer</CardTitle>
+              <CardDescription>
+                Interactive fretboard to learn scales and modes on 4, 5, or 6 string basses.
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <span className="text-sm font-medium text-primary">Open Tool &rarr;</span>
+            </CardContent>
+          </Card>
+        </Link>
       </div>
     </div>
   );
