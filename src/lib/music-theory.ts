@@ -1,3 +1,5 @@
+export const NOTES_SHARP = ["C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B"];
+export const NOTES_FLAT = ["C", "Db", "D", "Eb", "E", "F", "Gb", "G", "Ab", "A", "Bb", "B"];
 export const NOTES = ["C", "C#/Db", "D", "D#/Eb", "E", "F", "F#/Gb", "G", "G#/Ab", "A", "A#/Bb", "B"];
 
 export const SCALES = {
@@ -16,8 +18,68 @@ export const SCALES = {
   locrian: { name: "Locrian", pattern: [1, 2, 2, 1, 2, 2, 2] },
 };
 
+// Map specific key names to our canonical 12-tone array names
+const NOTE_ALIASES: Record<string, string> = {
+  "Cb": "B",
+  "Db": "C#/Db",
+  "Eb": "D#/Eb",
+  "Gb": "F#/Gb",
+  "Ab": "G#/Ab",
+  "Bb": "A#/Bb",
+  "C#": "C#/Db",
+  "D#": "D#/Eb",
+  "F#": "F#/Gb",
+  "G#": "G#/Ab",
+  "A#": "A#/Bb",
+  "E#": "F", // Theoretical but possible in C# Major
+  "B#": "C"  // Theoretical
+};
+
+// Derived from Western Harmony (15 Major + 15 Minor keys)
+// Derived from Western Harmony (Standard Keys)
+// Removed Cb (7 flats) in favor of B (5 sharps)
+// Removed C# (7 sharps) in favor of Db (5 flats) where appropriate, but kept C# options if desired for minor.
+// Actually, let's Stick to the Circle of Fifths commonly used.
+export const WESTERN_ROOTS = [
+  "C",   "G",  "D",  "A",  "E",  "B",  "F#", 
+  "Gb", "Db", "Ab", "Eb", "Bb", "F",
+  // Minor roots often used
+  "C#", "G#", "D#", "A#"
+];
+
+// Determine if a key uses sharps or flats
+export function getKeyAccidental(root: string): 'sharp' | 'flat' {
+  const flatKeys = ["F", "Bb", "Eb", "Ab", "Db", "Gb", "Cb"]; // Keys with flats
+  return flatKeys.includes(root) ? 'flat' : 'sharp'; // Default to sharp for C and sharp keys
+}
+
+// Get the display name for a note index based on key context
+export function getNoteName(noteIndex: number, keyRoot: string): string {
+  const accidental = getKeyAccidental(keyRoot);
+  return accidental === 'flat' ? NOTES_FLAT[noteIndex] : NOTES_SHARP[noteIndex];
+}
+
+// Helper to resolve any note name to canonical form
+export function normalizeRoot(root: string): string {
+    if (NOTES.includes(root)) return root;
+    return NOTE_ALIASES[root] || root;
+}
+
+// Calculate the interval in semitones between a root and a target note
+export function getInterval(root: string, note: string): number {
+    const rootIndex = NOTES.indexOf(normalizeRoot(root));
+    const noteIndex = NOTES.indexOf(normalizeRoot(note));
+    if (rootIndex === -1 || noteIndex === -1) return -1;
+    
+    let interval = noteIndex - rootIndex;
+    if (interval < 0) interval += 12;
+    return interval;
+}
+
+
 export function getScaleNotes(rootNote: string, scaleKey: keyof typeof SCALES): string[] {
-  const rootIndex = NOTES.indexOf(rootNote);
+  const normalizedRoot = normalizeRoot(rootNote);
+  const rootIndex = NOTES.indexOf(normalizedRoot);
   if (rootIndex === -1) return [];
 
   const pattern = SCALES[scaleKey].pattern;
@@ -44,7 +106,7 @@ export function getAllFretboardNotes(
   frets = 24
 ) {
   // Generate a map of all notes on the fretboard
-  const fretboard: { stringIndex: number; fret: number; note: string; octave: number; frequency: number }[] = [];
+  const fretboard: { stringIndex: number; fret: number; note: string; noteIndex: number; octave: number; frequency: number }[] = [];
 
   tuning.forEach((stringInfo, stringIndex) => {
     // Find index of the open string note, handling enharmonics (e.g. "C#" matching "C#/Db")
@@ -74,6 +136,7 @@ export function getAllFretboardNotes(
         stringIndex,
         fret,
         note: noteName,
+        noteIndex: currentNoteIndex, // 0-11
         octave: currentOctave,
         frequency
       });

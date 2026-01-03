@@ -5,14 +5,16 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
-import { NOTES, SCALES, getScaleNotes, getAllFretboardNotes } from "@/lib/music-theory";
+import { NOTES, SCALES, WESTERN_ROOTS, getScaleNotes, getAllFretboardNotes, getNoteName, normalizeRoot, getInterval } from "@/lib/music-theory";
 import { useBassSynth } from "@/hooks/useBassSynth";
 import { TUNING_PRESETS } from "@/lib/tuner-utils";
 
 type FretboardNote = {
   stringIndex: number;
   fret: number;
+
   note: string;
+  noteIndex: number; 
   octave: number;
   frequency: number;
 };
@@ -53,7 +55,28 @@ export function ScaleVisualizer() {
   });
 
   const isNoteInScale = (note: string) => scaleNotesSet.has(note);
-  const isRoot = (note: string) => note === rootNote;
+  const isRoot = (note: string) => normalizeRoot(note) === normalizeRoot(rootNote);
+
+  // Helper to determine note color class based on interval
+  const getNoteColorClass = (note: string, isRootNote: boolean): string => {
+      if (isRootNote) return "bg-indigo-500 text-white border-indigo-500 ring-2 ring-indigo-500/30 dark:ring-indigo-400/30"; // Root: Indigo (Softer border/ring)
+
+      const interval = getInterval(rootNote, note);
+      
+      // Major/Minor 3rd (3 or 4 semitones)
+      if (interval === 3 || interval === 4) {
+          return "bg-sky-600 text-white border-sky-700"; // 3rd: Sky (Darker for A11Y)
+      }
+      
+      // Perfect 5th (7 semitones)
+      if (interval === 7) {
+          return "bg-emerald-600 text-white border-emerald-700"; // 5th: Emerald (Darker for A11Y)
+      }
+
+      // Default Scale Note
+      return "bg-background text-foreground border-foreground/20"; 
+  };
+
 
   const handleNoteClick = (noteData: FretboardNote) => {
       playTone(noteData.frequency);
@@ -63,6 +86,27 @@ export function ScaleVisualizer() {
     <Card className="w-full shadow-xl border-2 bg-card/95 backdrop-blur">
       <CardContent className="p-6 space-y-8">
         
+        {/* Legend */}
+        <div className="flex flex-wrap gap-4 items-center justify-center md:justify-start text-xs text-muted-foreground bg-muted/20 p-2 rounded-lg">
+            <span className="font-semibold mr-2">Intervals:</span>
+            <div className="flex items-center gap-2">
+                <span className="w-3 h-3 rounded-full bg-indigo-500 border border-indigo-500 ring-1 ring-indigo-500/30 block"></span>
+                <span>Root</span>
+            </div>
+            <div className="flex items-center gap-2">
+                <span className="w-3 h-3 rounded-full bg-sky-600 border border-sky-700 block"></span>
+                <span>3rd</span>
+            </div>
+            <div className="flex items-center gap-2">
+                <span className="w-3 h-3 rounded-full bg-emerald-600 border border-emerald-700 block"></span>
+                <span>5th</span>
+            </div>
+             <div className="flex items-center gap-2">
+                <span className="w-3 h-3 rounded-full bg-background border border-foreground/20 block"></span>
+                <span>Other</span>
+            </div>
+        </div>
+
         {/* Controls */}
         <div className="flex flex-col md:flex-row gap-4 items-center justify-between bg-muted/30 p-4 rounded-lg">
             <div className="flex flex-col gap-2 w-full md:w-auto">
@@ -86,7 +130,7 @@ export function ScaleVisualizer() {
                         <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
-                        {NOTES.map(note => (
+                        {WESTERN_ROOTS.map(note => (
                             <SelectItem key={note} value={note}>{note}</SelectItem>
                         ))}
                     </SelectContent>
@@ -143,26 +187,17 @@ export function ScaleVisualizer() {
                                  }}
                              >
                                 {/* Fret Numbers */}
-                                <span className={cn(
-                                    "absolute -bottom-8 left-1/2 -translate-x-1/2 text-xs font-mono font-bold",
-                                    "text-neutral-500 dark:text-neutral-400"
-                                )}>
-                                    {i + 1}
-                                </span>
-                                {/* Dot Inlays */}
-                                {[3, 5, 7, 9, 12, 15].includes(i + 1) && (
-                                    <div className={cn(
-                                        "absolute top-1/2 -translate-y-1/2 left-1/2 -translate-x-1/2 w-4 h-4 rounded-full flex flex-col items-center justify-center gap-1 opacity-70",
-                                        "absolute top-1/2 -translate-y-1/2 left-1/2 -translate-x-1/2 w-4 h-4 rounded-full flex flex-col items-center justify-center gap-1 opacity-70",
-                                        "bg-[hsl(var(--fretboard-dot))]"
+                                <div className="absolute -bottom-8 left-1/2 -translate-x-1/2 flex items-center justify-center">
+                                    <span className={cn(
+                                        "w-6 h-6 flex items-center justify-center text-xs font-mono font-bold rounded-full",
+                                        [3, 5, 7, 9, 12, 15].includes(i + 1) 
+                                            ? "text-primary font-extrabold scale-125" // Subtle highlight: Primary color + Larger
+                                            : "text-neutral-500 dark:text-neutral-400"
                                     )}>
-                                        {(i + 1) === 12 && <div className={cn(
-                                            "w-4 h-4 rounded-full absolute top-[-20px]",
-                                            "w-4 h-4 rounded-full absolute top-[-20px]",
-                                            "bg-[hsl(var(--fretboard-dot))]"
-                                        )}></div> }
-                                    </div>
-                                )}
+                                        {i + 1}
+                                    </span>
+                                </div>
+
                              </div>
                          ))}
                     </div>
@@ -197,15 +232,14 @@ export function ScaleVisualizer() {
                                                 onClick={() => handleNoteClick(noteData)}
                                                 className={cn(
                                                     "w-7 h-7 rounded-full flex items-center justify-center text-[10px] font-bold transition-all border shadow-sm",
-                                                    inScale ? (
-                                                        isRootNote 
-                                                            ? "bg-primary text-primary-foreground border-primary scale-110 shadow-md ring-2 ring-primary/30" 
-                                                            : "bg-background text-foreground border-foreground/20 hover:scale-110 hover:border-primary/50" // High contrast notes
+                                                    inScale ? cn(
+                                                        getNoteColorClass(noteData.note, isRootNote),
+                                                        isRootNote ? "scale-110 shadow-md" : "hover:scale-110"
                                                     ) : "bg-transparent text-transparent border-transparent w-4 h-4 hover:w-7 hover:h-7 hover:bg-black/50 hover:text-white dark:hover:bg-white/20 dark:hover:text-white opacity-0 hover:opacity-100" // Ghost notes
                                                 )}
-                                                title={`${noteData.note}${noteData.octave}`}
+                                                title={`${getNoteName(noteData.noteIndex, rootNote)}${noteData.octave}`}
                                             >
-                                                {noteData.note}
+                                                {getNoteName(noteData.noteIndex, rootNote)}
                                             </button>
                                         </div>
                                     );
