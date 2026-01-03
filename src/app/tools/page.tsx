@@ -64,6 +64,22 @@ export default function ToolsPage() {
             </CardContent>
           </Card>
         </Link>
+        <Link href="/tools/circle-of-fifths" className="block transition-transform hover:scale-105">
+          <Card className="h-full hover:border-primary/50 transition-colors">
+            <CardHeader>
+              <div className="h-8 w-8 text-primary mb-2 flex items-center justify-center border-2 border-primary rounded-full text-xs font-bold">
+                5th
+              </div>
+              <CardTitle>Circle of Fifths</CardTitle>
+              <CardDescription>
+                Visual guide to key signatures, relative minors, and scale relationships.
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <span className="text-sm font-medium text-primary">Open Tool &rarr;</span>
+            </CardContent>
+          </Card>
+        </Link>
       </div>
     </div>
   );
