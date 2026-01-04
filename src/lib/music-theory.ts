@@ -167,3 +167,29 @@ export function getAllFretboardNotes(
 
   return fretboard;
 }
+
+/**
+ * Convert a frequency (Hz) to the nearest musical note and octave.
+ */
+export function getNoteFromFrequency(frequency: number): { note: string; octave: number; cents: number } {
+  const A4 = 440;
+  const C0 = A4 * Math.pow(2, -4.75); // ~16.35 Hz
+  const name = ["C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B"];
+  
+  if (frequency <= 0) return { note: "", octave: 0, cents: 0 };
+
+  const h = Math.round(12 * Math.log2(frequency / C0));
+  const octave = Math.floor(h / 12);
+  const n = h % 12;
+  
+  // Calculate cents off
+  // exact frequency of the note found:
+  const noteFreq = C0 * Math.pow(2, h / 12);
+  const cents = 1200 * Math.log2(frequency / noteFreq);
+
+  return {
+    note: name[n],
+    octave: octave,
+    cents: Math.round(cents)
+  };
+}

@@ -2,7 +2,16 @@
 
 import React, { useState, useRef, useEffect } from "react";
 import dynamic from "next/dynamic";
-import { Play, Pause, RotateCcw, Volume2, VolumeX } from "lucide-react";
+import {
+  Play,
+  Pause,
+  RotateCcw,
+  Volume2,
+  VolumeX,
+  Mic,
+  Activity,
+} from "lucide-react";
+import { getNoteFromFrequency } from "@/lib/music-theory";
 import { Button } from "@/components/ui/button";
 import { Slider } from "@/components/ui/slider";
 import { Input } from "@/components/ui/input";
@@ -60,6 +69,16 @@ export default function VideoLooper() {
   const [startTime, setStartTime] = useState(0);
   const [endTime, setEndTime] = useState(0);
   const [isMounted, setIsMounted] = useState(false);
+
+  // Audio Analysis State
+  const [isAnalyzing, setIsAnalyzing] = useState(false);
+  const [detectedNote, setDetectedNote] = useState("-");
+  const [detectedFreq, setDetectedFreq] = useState(0);
+  const [noteHistory, setNoteHistory] = useState<string[]>([]);
+  const audioContextRef = useRef<AudioContext | null>(null);
+  const analyserRef = useRef<AnalyserNode | null>(null);
+  const sourceRef = useRef<MediaStreamAudioSourceNode | null>(null);
+  const requestRef = useRef<number>(0);
 
   useEffect(() => {
     setIsMounted(true);
@@ -183,6 +202,89 @@ export default function VideoLooper() {
       return `${hh}:${mm.toString().padStart(2, "0")}:${ss}`;
     }
     return `${mm}:${ss}`;
+  };
+
+  const toggleAudioAnalysis = async () => {
+    if (isAnalyzing) {
+      // Stop Analysis
+      if (audioContextRef.current) {
+        audioContextRef.current.close();
+        audioContextRef.current = null;
+      }
+      if (requestRef.current) {
+        cancelAnimationFrame(requestRef.current);
+      }
+      setIsAnalyzing(false);
+      setDetectedNote("-");
+      setDetectedFreq(0);
+      return;
+    }
+
+    try {
+      // Start Analysis
+      const stream = await navigator.mediaDevices.getDisplayMedia({
+        video: true,
+        audio: true,
+      });
+
+      // We only need audio
+      const audioTracks = stream.getAudioTracks();
+      if (audioTracks.length === 0) {
+        alert("No audio track found. Please make sure to share audio.");
+        return;
+      }
+
+      const audioContext = new (window.AudioContext ||
+        (window as any).webkitAudioContext)();
+      audioContextRef.current = audioContext;
+
+      const analyser = audioContext.createAnalyser();
+      analyser.fftSize = 2048;
+      analyserRef.current = analyser;
+
+      const source = audioContext.createMediaStreamSource(stream);
+      source.connect(analyser);
+      sourceRef.current = source;
+
+      setIsAnalyzing(true);
+      updatePitch();
+
+      // Handle stream end (user stops sharing)
+      stream.getVideoTracks()[0].onended = () => {
+        toggleAudioAnalysis();
+      };
+    } catch (err) {
+      console.error("Error starting audio analysis:", err);
+      setIsAnalyzing(false);
+    }
+  };
+
+  const updatePitch = () => {
+    if (!audioContextRef.current || !analyserRef.current) return;
+
+    const analyser = analyserRef.current;
+    const buf = new Float32Array(analyser.fftSize);
+    analyser.getFloatTimeDomainData(buf);
+
+    const ac = autoCorrelate(buf, audioContextRef.current.sampleRate);
+
+    if (ac !== -1) {
+      const { note, octave, cents } = getNoteFromFrequency(ac);
+      const noteName = `${note}${octave}`;
+      setDetectedFreq(Math.round(ac));
+      setDetectedNote(noteName);
+
+      setNoteHistory((prev) => {
+        const last = prev[prev.length - 1];
+        if (last !== noteName) {
+          // Keep last 10 notes
+          return [...prev, noteName].slice(-10);
+        }
+        return prev;
+      });
+    }
+
+    requestRef.current = requestAnimationFrame(updatePitch);
   };
 
   if (!isMounted) {
@@ -428,6 +530,83 @@ export default function VideoLooper() {
 
         {/* Right Column: Settings & Info */}
         <div className="w-full md:w-80 space-y-6">
+          {/* Audio Analysis Card */}
+          <Card className="border-primary/20 bg-primary/5">
+            <CardHeader className="pb-3">
+              <CardTitle className="text-lg flex items-center gap-2">
+                <Activity className="h-5 w-5 text-primary" />
+                Bass AI
+              </CardTitle>
+              <CardDescription>
+                Detect bass notes from the video audio.
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              {isAnalyzing ? (
+                <div className="space-y-4">
+                  <div className="flex flex-col items-center justify-center p-6 bg-background rounded-lg border shadow-inner">
+                    <span className="text-xs text-muted-foreground uppercase tracking-widest">
+                      Detected Note
+                    </span>
+                    <div className="text-6xl font-black text-primary my-2 tabular-nums">
+                      {detectedNote}
+                    </div>
+                    <div className="text-sm font-mono text-muted-foreground block">
+                      {detectedFreq > 0 ? `${detectedFreq} Hz` : "--"}
+                    </div>
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label className="text-xs text-muted-foreground">
+                      History
+                    </Label>
+                    <div className="flex gap-2 flex-wrap p-2 bg-background/50 rounded border min-h-[40px] items-center">
+                      {noteHistory.map((n, i) => (
+                        <span
+                          key={i}
+                          className="text-xs font-mono font-bold bg-primary/10 text-primary px-1.5 py-0.5 rounded"
+                        >
+                          {n}
+                        </span>
+                      ))}
+                      {noteHistory.length === 0 && (
+                        <span className="text-xs text-muted-foreground italic">
+                          No notes detected...
+                        </span>
+                      )}
+                    </div>
+                  </div>
+
+                  <Button
+                    variant="destructive"
+                    className="w-full"
+                    onClick={toggleAudioAnalysis}
+                  >
+                    Stop Analysis
+                  </Button>
+                </div>
+              ) : (
+                <div className="space-y-3">
+                  <div className="text-sm text-muted-foreground bg-background/50 p-3 rounded border">
+                    <p className="mb-2">To analyze audio:</p>
+                    <ol className="list-decimal list-inside space-y-1 text-xs">
+                      <li>Click "Start Analysis"</li>
+                      <li>
+                        Select <strong>Current Tab</strong>
+                      </li>
+                      <li>
+                        Check <strong>Share Audio</strong>
+                      </li>
+                    </ol>
+                  </div>
+                  <Button className="w-full" onClick={toggleAudioAnalysis}>
+                    <Mic className="mr-2 h-4 w-4" /> Start Analysis
+                  </Button>
+                </div>
+              )}
+            </CardContent>
+          </Card>
+
           <Card>
             <CardHeader className="pb-3">
               <CardTitle className="text-lg">Track Selection</CardTitle>
@@ -493,4 +672,61 @@ export default function VideoLooper() {
       </div>
     </div>
   );
+}
+
+// Autocorrelation algorithm for pitch detection
+function autoCorrelate(buf: Float32Array, sampleRate: number) {
+  // Implements the ACF2+ algorithm
+  const SIZE = buf.length;
+  let rms = 0;
+
+  for (let i = 0; i < SIZE; i++) {
+    const val = buf[i];
+    rms += val * val;
+  }
+  rms = Math.sqrt(rms / SIZE);
+  if (rms < 0.01)
+    // not enough signal
+    return -1;
+
+  let r1 = 0,
+    r2 = SIZE - 1,
+    thres = 0.2;
+  for (let i = 0; i < SIZE / 2; i++)
+    if (Math.abs(buf[i]) < thres) {
+      r1 = i;
+      break;
+    }
+  for (let i = 1; i < SIZE / 2; i++)
+    if (Math.abs(buf[SIZE - i]) < thres) {
+      r2 = SIZE - i;
+      break;
+    }
+
+  buf = buf.slice(r1, r2);
+  const BUTTON_SIZE = buf.length;
+  const c = new Float32Array(BUTTON_SIZE);
+  for (let i = 0; i < BUTTON_SIZE; i++)
+    for (let j = 0; j < BUTTON_SIZE - i; j++) c[i] = c[i] + buf[j] * buf[j + i];
+
+  let d = 0;
+  while (c[d] > c[d + 1]) d++;
+  let maxval = -1,
+    maxpos = -1;
+  for (let i = d; i < BUTTON_SIZE; i++) {
+    if (c[i] > maxval) {
+      maxval = c[i];
+      maxpos = i;
+    }
+  }
+  let T0 = maxpos;
+
+  const x1 = c[T0 - 1],
+    x2 = c[T0],
+    x3 = c[T0 + 1];
+  const a = (x1 + x3 - 2 * x2) / 2;
+  const b = (x3 - x1) / 2;
+  if (a) T0 = T0 - b / (2 * a);
+
+  return sampleRate / T0;
 }
