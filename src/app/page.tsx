@@ -8,6 +8,7 @@ import {
   Disc,
   MoveRight,
   Music2,
+  Repeat,
 } from "lucide-react";
 import { getAllArticles } from "@/lib/data";
 import { FEATURED_TRANSCRIPTION_SLUGS } from "@/lib/featured";
@@ -64,8 +65,8 @@ export default async function Home() {
             Practice & Study Tools
           </h2>
           <p className="text-muted-foreground text-lg max-w-2xl mx-auto">
-            Tools designed specifically for bass players to improve
-            timing, tuning, and theory knowledge.
+            Tools designed specifically for bass players to improve timing,
+            tuning, and theory knowledge.
           </p>
         </div>
 
@@ -122,7 +123,7 @@ export default async function Home() {
                 <CardTitle>Circle of Fifths</CardTitle>
                 <CardDescription>Understand harmony</CardDescription>
               </CardHeader>
-            <CardContent>
+              <CardContent>
                 <p className="text-sm text-muted-foreground">
                   Interactive tool to learn key signatures and harmonic
                   relationships.
@@ -141,6 +142,22 @@ export default async function Home() {
               <CardContent>
                 <p className="text-sm text-muted-foreground">
                   Visualize chord tones and arpeggios across the fretboard.
+                </p>
+              </CardContent>
+            </Card>
+          </Link>
+
+          <Link href="/tools/video-looper">
+            <Card className="h-full hover:bg-muted/50 transition-colors cursor-pointer border-primary/20">
+              <CardHeader>
+                <Repeat className="w-10 h-10 mb-2 text-primary" />
+                <CardTitle>Video Looper</CardTitle>
+                <CardDescription>Practice with videos</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <p className="text-sm text-muted-foreground">
+                  Loop YouTube videos and control speed to master difficult
+                  sections.
                 </p>
               </CardContent>
             </Card>
