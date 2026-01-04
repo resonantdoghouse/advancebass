@@ -223,10 +223,13 @@ export default function VideoLooper() {
 
     try {
       // Start Analysis
+      // selfBrowserSurface: "include" and preferCurrentTab: true help Edge/Chrome show the current tab option
       const stream = await navigator.mediaDevices.getDisplayMedia({
         video: true,
         audio: true,
-      });
+        selfBrowserSurface: "include",
+        preferCurrentTab: true,
+      } as any);
 
       // We only need audio
       const audioTracks = stream.getAudioTracks();
