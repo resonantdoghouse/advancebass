@@ -538,7 +538,8 @@ export default function VideoLooper() {
                 Bass AI
               </CardTitle>
               <CardDescription>
-                Detect bass notes from the video audio.
+                Experimental feature to help analyze tricky or hard-to-hear bass
+                lines.
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
