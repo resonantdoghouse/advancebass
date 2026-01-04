@@ -122,10 +122,25 @@ export default async function Home() {
                 <CardTitle>Circle of Fifths</CardTitle>
                 <CardDescription>Understand harmony</CardDescription>
               </CardHeader>
-              <CardContent>
+            <CardContent>
                 <p className="text-sm text-muted-foreground">
                   Interactive tool to learn key signatures and harmonic
                   relationships.
+                </p>
+              </CardContent>
+            </Card>
+          </Link>
+
+          <Link href="/tools/arpeggio-visualizer">
+            <Card className="h-full hover:bg-muted/50 transition-colors cursor-pointer border-primary/20">
+              <CardHeader>
+                <Music2 className="w-10 h-10 mb-2 text-primary" />
+                <CardTitle>Arpeggio Visualizer</CardTitle>
+                <CardDescription>Chord tone mapping</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <p className="text-sm text-muted-foreground">
+                  Visualize chord tones and arpeggios across the fretboard.
                 </p>
               </CardContent>
             </Card>

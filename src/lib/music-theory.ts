@@ -18,6 +18,17 @@ export const SCALES = {
   locrian: { name: "Locrian", pattern: [1, 2, 2, 1, 2, 2, 2] },
 };
 
+export const CHORDS = {
+  major: { name: "Major", pattern: [4, 3, 5] },           // 1-3-5
+  minor: { name: "Minor", pattern: [3, 4, 5] },           // 1-b3-5
+  major7: { name: "Major 7", pattern: [4, 3, 4, 1] },     // 1-3-5-7
+  minor7: { name: "Minor 7", pattern: [3, 4, 3, 2] },     // 1-b3-5-b7
+  dominant7: { name: "Dominant 7", pattern: [4, 3, 3, 2] }, // 1-3-5-b7
+  diminished: { name: "Diminished", pattern: [3, 3, 6] },   // 1-b3-b5 (dim triad) - technically 1-b3-b5. Full dim7 is 1-b3-b5-bb7
+  m7b5: { name: "Half-Diminished (m7b5)", pattern: [3, 3, 4, 2] }, // 1-b3-b5-b7
+  augmented: { name: "Augmented", pattern: [4, 4, 4] },    // 1-3-#5
+};
+
 // Map specific key names to our canonical 12-tone array names
 const NOTE_ALIASES: Record<string, string> = {
   "Cb": "B",
@@ -35,11 +46,7 @@ const NOTE_ALIASES: Record<string, string> = {
   "B#": "C"  // Theoretical
 };
 
-// Derived from Western Harmony (15 Major + 15 Minor keys)
 // Derived from Western Harmony (Standard Keys)
-// Removed Cb (7 flats) in favor of B (5 sharps)
-// Removed C# (7 sharps) in favor of Db (5 flats) where appropriate, but kept C# options if desired for minor.
-// Actually, let's Stick to the Circle of Fifths commonly used.
 export const WESTERN_ROOTS = [
   "C",   "G",  "D",  "A",  "E",  "B",  "F#", 
   "Gb", "Db", "Ab", "Eb", "Bb", "F",
@@ -91,14 +98,28 @@ export function getScaleNotes(rootNote: string, scaleKey: keyof typeof SCALES): 
     scaleNotes.push(NOTES[currentIndex]);
   }
   
-  // Remove the last note if it repeats the root (for 7 note scales patterns sometimes imply octave, but standard is to define intervals that sum to 12)
-  // My patterns sum to 12 (e.g. major: 2+2+1+2+2+2+1 = 12).
-  // The loop above adds the octave at the end. Let's keep it or remove it depending on UI preference. 
-  // Usually for visualization we just want the unique notes in the scale.
-  // Actually, let's keep unique notes.
   scaleNotes.pop(); 
 
   return scaleNotes;
+}
+
+export function getChordNotes(rootNote: string, chordKey: keyof typeof CHORDS): string[] {
+    const normalizedRoot = normalizeRoot(rootNote);
+    const rootIndex = NOTES.indexOf(normalizedRoot);
+    if (rootIndex === -1) return [];
+
+    const pattern = CHORDS[chordKey].pattern;
+    const chordNotes = [NOTES[rootIndex]]; 
+
+    let currentIndex = rootIndex;
+    for (const interval of pattern) {
+        currentIndex = (currentIndex + interval) % 12;
+        chordNotes.push(NOTES[currentIndex]);
+    }
+    
+    chordNotes.pop();
+
+    return chordNotes;
 }
 
 export function getAllFretboardNotes(
@@ -122,12 +143,6 @@ export function getAllFretboardNotes(
       
       // Calculate frequency
       // Standard A4 = 440Hz. Formula: f = 440 * 2^((n - 69)/12)
-      // We need absolute semitone index. MID note number.
-      // C1 is midi 24. A1 is 33. E1 (bass low E) is 28.
-      // noteIndex is 0-11 (C to B). 
-      // Midi number = (octave + 1) * 12 + noteIndex
-      // Wait, octave 0 is standard C0. 
-      // Let's rely on relative calculation or just simple formula.
       
       const midiNumber = (currentOctave + 1) * 12 + currentNoteIndex;
       const frequency = 440 * Math.pow(2, (midiNumber - 69) / 12);
