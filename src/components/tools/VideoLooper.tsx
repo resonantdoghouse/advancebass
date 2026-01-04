@@ -11,7 +11,7 @@ import {
   Mic,
   Activity,
 } from "lucide-react";
-import { getNoteFromFrequency } from "@/lib/music-theory";
+import { getNoteFromFrequency, detectChord } from "@/lib/music-theory";
 import { Button } from "@/components/ui/button";
 import { Slider } from "@/components/ui/slider";
 import { Input } from "@/components/ui/input";
@@ -73,6 +73,7 @@ export default function VideoLooper() {
   // Audio Analysis State
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [detectedNote, setDetectedNote] = useState("-");
+  const [detectedChord, setDetectedChord] = useState("-");
   const [detectedFreq, setDetectedFreq] = useState(0);
   const [noteHistory, setNoteHistory] = useState<string[]>([]);
   const audioContextRef = useRef<AudioContext | null>(null);
@@ -284,6 +285,14 @@ export default function VideoLooper() {
       });
     }
 
+    // Chord Detection
+    const byteBuf = new Uint8Array(analyser.frequencyBinCount);
+    analyser.getByteFrequencyData(byteBuf);
+    const chord = detectChord(byteBuf, audioContextRef.current.sampleRate);
+    if (chord !== "-") {
+      setDetectedChord(chord);
+    }
+
     requestRef.current = requestAnimationFrame(updatePitch);
   };
 
@@ -311,6 +320,9 @@ export default function VideoLooper() {
                   playbackRate={playbackRate}
                   onProgress={handleProgress}
                   onDuration={handleDuration}
+                  onPlay={() => setPlaying(true)}
+                  onPause={() => setPlaying(false)}
+                  onEnded={() => setPlaying(false)}
                   controls={false}
                 />
               </div>
@@ -583,15 +595,29 @@ export default function VideoLooper() {
             <CardContent className="space-y-4">
               {isAnalyzing ? (
                 <div className="space-y-4">
-                  <div className="flex flex-col items-center justify-center p-6 bg-background rounded-lg border shadow-inner">
-                    <span className="text-xs text-muted-foreground uppercase tracking-widest">
-                      Detected Note
-                    </span>
-                    <div className="text-6xl font-black text-primary my-2 tabular-nums">
-                      {detectedNote}
+                  <div className="grid grid-cols-2 gap-4">
+                    <div className="flex flex-col items-center justify-center p-6 bg-background rounded-lg border shadow-inner">
+                      <span className="text-xs text-muted-foreground uppercase tracking-widest">
+                        Detected Note
+                      </span>
+                      <div className="text-4xl font-black text-primary my-2 tabular-nums">
+                        {detectedNote}
+                      </div>
+                      <div className="text-xs font-mono text-muted-foreground block">
+                        {detectedFreq > 0 ? `${detectedFreq} Hz` : "--"}
+                      </div>
                     </div>
-                    <div className="text-sm font-mono text-muted-foreground block">
-                      {detectedFreq > 0 ? `${detectedFreq} Hz` : "--"}
+
+                    <div className="flex flex-col items-center justify-center p-6 bg-background rounded-lg border shadow-inner">
+                      <span className="text-xs text-muted-foreground uppercase tracking-widest">
+                        Detected Chord
+                      </span>
+                      <div className="text-4xl font-black text-secondary-foreground my-2 tabular-nums">
+                        {detectedChord}
+                      </div>
+                      <div className="text-xs font-mono text-muted-foreground block">
+                        &nbsp;
+                      </div>
                     </div>
                   </div>
 

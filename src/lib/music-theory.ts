@@ -193,3 +193,108 @@ export function getNoteFromFrequency(frequency: number): { note: string; octave:
     cents: Math.round(cents)
   };
 }
+
+/**
+ * Analyze frequency data to detect a chord.
+ * Uses a simplified Chroma feature extraction.
+ */
+export function detectChord(frequencies: Uint8Array, sampleRate: number): string {
+  if (!frequencies || frequencies.length === 0) return "-";
+
+  const binCount = frequencies.length;
+  // Frequency step per bin: sampleRate / (2 * binCount) if binCount = fftSize/2
+  const binWidth = (sampleRate / 2) / binCount;
+
+  // Chroma vector (12 pitch classes: C, C#, ..., B)
+  const chroma = new Float32Array(12).fill(0);
+  
+  // Only check a relevant frequency range (e.g., 60Hz to 2000Hz)
+  const minFreq = 60;
+  const maxFreq = 2000;
+  
+  let maxEnergy = 0;
+
+  for (let i = 0; i < binCount; i++) {
+    const amplitude = frequencies[i];
+    if (amplitude < 50) continue; // Noise gate
+
+    const freq = i * binWidth;
+    if (freq < minFreq || freq > maxFreq) continue;
+
+    const midi = 69 + 12 * Math.log2(freq / 440);
+    const roundedMidi = Math.round(midi);
+    const diff = Math.abs(midi - roundedMidi);
+    const weight = Math.exp(-diff * diff) * amplitude;
+    const pitchClass = roundedMidi % 12; 
+    
+    if (pitchClass >= 0 && pitchClass < 12) {
+       chroma[pitchClass] += weight;
+    }
+  }
+
+  // Normalize chroma
+  for(let i=0; i<12; i++) {
+      if (chroma[i] > maxEnergy) maxEnergy = chroma[i];
+  }
+  
+  if (maxEnergy < 10) return "-"; 
+
+  const activeNotes: number[] = [];
+  const threshold = maxEnergy * 0.4;
+  for(let i=0; i<12; i++) {
+      if (chroma[i] >= threshold) {
+          activeNotes.push(i);
+      }
+  }
+  
+  if (activeNotes.length < 2) return "-"; 
+
+  const TRIAD_MAJ = [0, 4, 7];
+  const TRIAD_MIN = [0, 3, 7];
+  const SEVEN_DOM = [0, 4, 7, 10];
+  const SEVEN_MAJ = [0, 4, 7, 11];
+  const SEVEN_MIN = [0, 3, 7, 10];
+  
+  let bestMatch = "";
+  let bestMatchScore = 0;
+
+  function matchChord(activeNotes: number[], root: number, pattern: number[]): number {
+      let matches = 0;
+      for (const semitone of pattern) {
+          const targetNote = (root + semitone) % 12;
+          if (activeNotes.includes(targetNote)) {
+              matches++;
+          }
+      }
+      return matches;
+  }
+
+  function getNoteName(index: number): string {
+      const names = ["C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B"];
+      return names[index];
+  }
+
+  for (const root of activeNotes) {
+      const patterns = [
+        { pat: TRIAD_MAJ, suffix: "" },
+        { pat: TRIAD_MIN, suffix: "m" },
+        { pat: SEVEN_DOM, suffix: "7" },
+        { pat: SEVEN_MAJ, suffix: "maj7" },
+        { pat: SEVEN_MIN, suffix: "m7" }
+      ];
+      
+      for(const p of patterns) {
+         const score = matchChord(activeNotes, root, p.pat);
+         if (score > bestMatchScore) { 
+             bestMatchScore = score; 
+             bestMatch = getNoteName(root) + p.suffix; 
+         }
+      }
+  }
+  
+  if (bestMatchScore >= 2.5) { 
+      return bestMatch;
+  }
+
+  return "-";
+}
