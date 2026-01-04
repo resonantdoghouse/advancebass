@@ -15,6 +15,13 @@ import {
   CardDescription,
 } from "@/components/ui/card";
 import { Switch } from "@/components/ui/switch";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 interface OnProgressProps {
   played: number;
@@ -28,8 +35,14 @@ const ReactPlayer = dynamic(() => import("react-player"), {
   ssr: false,
 }) as unknown as React.ComponentType<any>;
 
+const PRESETS = [
+  { label: "Jaco Pastorius - Teen Town", id: "a3113eNj4IA" },
+  { label: "Jaco Pastorius - Havona", id: "sMQUFvv0WRY" },
+  { label: "James Jamerson - Bernadette", id: "QLDqlgRK100" },
+];
+
 export default function VideoLooper() {
-  const [url, setUrl] = useState("https://www.youtube.com/watch?v=a3113eNj4IA");
+  const [videoId, setVideoId] = useState("a3113eNj4IA");
   const [playing, setPlaying] = useState(false);
   const [volume, setVolume] = useState(0.8);
   const [muted, setMuted] = useState(false);
@@ -140,23 +153,44 @@ export default function VideoLooper() {
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-6">
-          <div className="flex gap-2">
-            <Input
-              type="text"
-              placeholder="Enter YouTube URL"
-              value={url}
-              onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                setUrl(e.target.value)
-              }
-              className="flex-1"
-            />
+          <div className="flex flex-col md:flex-row gap-4 items-end">
+            <div className="md:w-1/3 w-full space-y-2">
+              <Label>Suggestions</Label>
+              <Select onValueChange={(value) => setVideoId(value)}>
+                <SelectTrigger>
+                  <SelectValue placeholder="Select a song..." />
+                </SelectTrigger>
+                <SelectContent>
+                  {PRESETS.map((preset) => (
+                    <SelectItem key={preset.id} value={preset.id}>
+                      {preset.label}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+            <div className="flex-1 space-y-2 w-full">
+              <Label>YouTube Video ID</Label>
+              <Input
+                type="text"
+                placeholder="e.g. a3113eNj4IA"
+                value={videoId}
+                onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                  setVideoId(e.target.value)
+                }
+              />
+            </div>
           </div>
+          <p className="text-xs text-muted-foreground">
+            Get the ID from the URL: youtube.com/watch?v=
+            <strong>ID_HERE</strong>
+          </p>
 
           <div className="relative pt-[56.25%] bg-black rounded-lg overflow-hidden border border-border">
             <div className="absolute top-0 left-0 w-full h-full">
               <ReactPlayer
                 ref={playerRef}
-                url={url}
+                url={`https://www.youtube.com/watch?v=${videoId}`}
                 width="100%"
                 height="100%"
                 playing={playing}
