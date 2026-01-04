@@ -15,14 +15,6 @@ import {
   CardDescription,
 } from "@/components/ui/card";
 import { Switch } from "@/components/ui/switch";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-// import { OnProgressProps } from "react-player/base";
 
 interface OnProgressProps {
   played: number;
@@ -36,39 +28,8 @@ const ReactPlayer = dynamic(() => import("react-player"), {
   ssr: false,
 }) as unknown as React.ComponentType<any>;
 
-const PRESETS = [
-  {
-    label: "Jaco Pastorius - Portrait of Tracy (Live)",
-    url: "https://www.youtube.com/watch?v=Getj2Q4C-8I",
-  },
-  {
-    label: "Marcus Miller - Run for Cover (Live)",
-    url: "https://www.youtube.com/watch?v=7-4A1C8jM6M",
-  },
-  {
-    label: "Hadrien Feraud - Strasbourg St Denis (Solo)",
-    url: "https://www.youtube.com/watch?v=pG7_gceIFL4",
-  },
-  {
-    label: "James Jamerson - Ain't No Mountain High Enough (Isolated)",
-    url: "https://www.youtube.com/watch?v=Kq-r4ZUpels",
-  },
-  {
-    label: "John Patitucci - Electric Bass Solo (Minor Lament)",
-    url: "https://www.youtube.com/watch?v=DimqT08xQcE",
-  },
-  {
-    label: "Gary Willis - Tribal Tech 'Big Wave'",
-    url: "https://www.youtube.com/watch?v=HaFiP6uG8Xll",
-  },
-  {
-    label: "Christian McBride - Cherokee (Solo)",
-    url: "https://www.youtube.com/watch?v=Qc1XjK-8_kE",
-  },
-];
-
 export default function VideoLooper() {
-  const [url, setUrl] = useState("https://www.youtube.com/watch?v=Getj2Q4C-8I");
+  const [url, setUrl] = useState("https://www.youtube.com/watch?v=a3113eNj4IA");
   const [playing, setPlaying] = useState(false);
   const [volume, setVolume] = useState(0.8);
   const [muted, setMuted] = useState(false);
@@ -179,21 +140,7 @@ export default function VideoLooper() {
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-6">
-          <div className="flex flex-col md:flex-row gap-4">
-            <div className="md:w-1/3">
-              <Select onValueChange={(value) => setUrl(value)}>
-                <SelectTrigger>
-                  <SelectValue placeholder="Select a preset..." />
-                </SelectTrigger>
-                <SelectContent>
-                  {PRESETS.map((preset) => (
-                    <SelectItem key={preset.url} value={preset.url}>
-                      {preset.label}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
+          <div className="flex gap-2">
             <Input
               type="text"
               placeholder="Enter YouTube URL"
