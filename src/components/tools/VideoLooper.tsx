@@ -243,7 +243,7 @@ export default function VideoLooper() {
       audioContextRef.current = audioContext;
 
       const analyser = audioContext.createAnalyser();
-      analyser.fftSize = 2048;
+      analyser.fftSize = 4096;
       analyserRef.current = analyser;
 
       const source = audioContext.createMediaStreamSource(stream);

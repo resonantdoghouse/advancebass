@@ -196,13 +196,14 @@ export function getNoteFromFrequency(frequency: number): { note: string; octave:
 
 /**
  * Analyze frequency data to detect a chord.
- * Uses a simplified Chroma feature extraction.
+ * Uses Peak Picking + simplified Chroma feature extraction.
  */
 export function detectChord(frequencies: Uint8Array, sampleRate: number): string {
   if (!frequencies || frequencies.length === 0) return "-";
 
   const binCount = frequencies.length;
   // Frequency step per bin: sampleRate / (2 * binCount) if binCount = fftSize/2
+  // For fftSize = 4096, binCount = 2048. Max Freq = 24000. BinWidth ~ 11.7Hz
   const binWidth = (sampleRate / 2) / binCount;
 
   // Chroma vector (12 pitch classes: C, C#, ..., B)
@@ -210,21 +211,34 @@ export function detectChord(frequencies: Uint8Array, sampleRate: number): string
   
   // Only check a relevant frequency range (e.g., 60Hz to 2000Hz)
   const minFreq = 60;
-  const maxFreq = 2000;
+  const maxFreq = 2500;
   
-  let maxEnergy = 0;
+  // Peak Picking Threshold
+  const noiseThreshold = 100; // Increased threshold to ignore background
+  
+  let maxEnergies = 0;
 
-  for (let i = 0; i < binCount; i++) {
+  for (let i = 2; i < binCount - 2; i++) {
     const amplitude = frequencies[i];
-    if (amplitude < 50) continue; // Noise gate
+    
+    // 1. Threshold Gate
+    if (amplitude < noiseThreshold) continue;
+
+    // 2. Peak Picking: Must be a local maximum
+    // Simple check: > prev and > next
+    if (amplitude <= frequencies[i-1] || amplitude <= frequencies[i+1]) continue;
 
     const freq = i * binWidth;
     if (freq < minFreq || freq > maxFreq) continue;
 
+    // Map to MIDI Note
     const midi = 69 + 12 * Math.log2(freq / 440);
     const roundedMidi = Math.round(midi);
-    const diff = Math.abs(midi - roundedMidi);
-    const weight = Math.exp(-diff * diff) * amplitude;
+    
+    // Weight by amplitude and frequency relevance (lower frequencies often fundamental)
+    // We just use amplitude for now, maybe log amplitude?
+    const weight = amplitude; 
+    
     const pitchClass = roundedMidi % 12; 
     
     if (pitchClass >= 0 && pitchClass < 12) {
@@ -233,20 +247,24 @@ export function detectChord(frequencies: Uint8Array, sampleRate: number): string
   }
 
   // Normalize chroma
+  let maxChromaVal = 0;
   for(let i=0; i<12; i++) {
-      if (chroma[i] > maxEnergy) maxEnergy = chroma[i];
+      if (chroma[i] > maxChromaVal) maxChromaVal = chroma[i];
   }
   
-  if (maxEnergy < 10) return "-"; 
+  if (maxChromaVal < 10) return "-"; 
 
+  // Select active notes based on % of max energy
   const activeNotes: number[] = [];
-  const threshold = maxEnergy * 0.4;
+  const relativeThreshold = maxChromaVal * 0.6; // Stricter: must be 60% of strongest note
+  
   for(let i=0; i<12; i++) {
-      if (chroma[i] >= threshold) {
+      if (chroma[i] >= relativeThreshold) {
           activeNotes.push(i);
       }
   }
   
+  // Need at least 2 notes to imply a chord usually, but let's be lenient
   if (activeNotes.length < 2) return "-"; 
 
   const TRIAD_MAJ = [0, 4, 7];
@@ -260,13 +278,24 @@ export function detectChord(frequencies: Uint8Array, sampleRate: number): string
 
   function matchChord(activeNotes: number[], root: number, pattern: number[]): number {
       let matches = 0;
+      let penalties = 0;
+      
+      // Check for presence of pattern notes
       for (const semitone of pattern) {
           const targetNote = (root + semitone) % 12;
           if (activeNotes.includes(targetNote)) {
               matches++;
           }
       }
-      return matches;
+      
+      // Penalize active notes that are NOT in the pattern (optional tightness)
+      // activeNotes.forEach(n => {
+      //    // check if n fits in pattern relative to root
+      //    const interval = (n - root + 12) % 12;
+      //    if (!pattern.includes(interval)) penalties += 0.5;
+      // });
+      
+      return matches - penalties;
   }
 
   function getNoteName(index: number): string {
@@ -274,27 +303,36 @@ export function detectChord(frequencies: Uint8Array, sampleRate: number): string
       return names[index];
   }
 
+  // Try each active note as potential root
   for (const root of activeNotes) {
       const patterns = [
-        { pat: TRIAD_MAJ, suffix: "" },
-        { pat: TRIAD_MIN, suffix: "m" },
-        { pat: SEVEN_DOM, suffix: "7" },
-        { pat: SEVEN_MAJ, suffix: "maj7" },
-        { pat: SEVEN_MIN, suffix: "m7" }
+        { pat: TRIAD_MAJ, suffix: "", requiredMatches: 2.5 }, // 3 notes
+        { pat: TRIAD_MIN, suffix: "m", requiredMatches: 2.5 }, // 3 notes
+        { pat: SEVEN_DOM, suffix: "7", requiredMatches: 3 }, // 4 notes
+        { pat: SEVEN_MAJ, suffix: "maj7", requiredMatches: 3 }, // 4 notes
+        { pat: SEVEN_MIN, suffix: "m7", requiredMatches: 3 } // 4 notes
       ];
       
       for(const p of patterns) {
          const score = matchChord(activeNotes, root, p.pat);
-         if (score > bestMatchScore) { 
-             bestMatchScore = score; 
-             bestMatch = getNoteName(root) + p.suffix; 
+         // Prioritize more complex matches if score is high
+         // Normalize score? 
+         // For now just raw matches. 
+         
+         // Require specific minimum matches
+         if (score >= p.requiredMatches) {
+             if (score > bestMatchScore) { 
+                 bestMatchScore = score; 
+                 bestMatch = getNoteName(root) + p.suffix; 
+             }
          }
       }
   }
   
-  if (bestMatchScore >= 2.5) { 
+  if (bestMatch) { 
       return bestMatch;
   }
 
   return "-";
 }
+
