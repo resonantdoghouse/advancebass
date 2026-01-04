@@ -530,6 +530,44 @@ export default function VideoLooper() {
 
         {/* Right Column: Settings & Info */}
         <div className="w-full md:w-80 space-y-6">
+          <Card>
+            <CardHeader className="pb-3">
+              <CardTitle className="text-lg">Track Selection</CardTitle>
+              <CardDescription>Choose a preset or enter an ID</CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="space-y-2">
+                <Label>Suggestions</Label>
+                <Select onValueChange={(value) => setVideoId(value)}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select a song..." />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {PRESETS.map((preset) => (
+                      <SelectItem key={preset.id} value={preset.id}>
+                        {preset.label}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+
+              <div className="space-y-2">
+                <Label>YouTube Video ID</Label>
+                <Input
+                  type="text"
+                  placeholder="e.g. a3113eNj4IA"
+                  value={videoId}
+                  onChange={(e) => setVideoId(e.target.value)}
+                  className="font-mono text-sm"
+                />
+                <p className="text-[10px] text-muted-foreground">
+                  The ID is the part after <code>v=</code> in the URL.
+                </p>
+              </div>
+            </CardContent>
+          </Card>
+
           {/* Audio Analysis Card */}
           <Card className="border-primary/20 bg-primary/5">
             <CardHeader className="pb-3">
@@ -605,44 +643,6 @@ export default function VideoLooper() {
                   </Button>
                 </div>
               )}
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardHeader className="pb-3">
-              <CardTitle className="text-lg">Track Selection</CardTitle>
-              <CardDescription>Choose a preset or enter an ID</CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="space-y-2">
-                <Label>Suggestions</Label>
-                <Select onValueChange={(value) => setVideoId(value)}>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select a song..." />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {PRESETS.map((preset) => (
-                      <SelectItem key={preset.id} value={preset.id}>
-                        {preset.label}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
-
-              <div className="space-y-2">
-                <Label>YouTube Video ID</Label>
-                <Input
-                  type="text"
-                  placeholder="e.g. a3113eNj4IA"
-                  value={videoId}
-                  onChange={(e) => setVideoId(e.target.value)}
-                  className="font-mono text-sm"
-                />
-                <p className="text-[10px] text-muted-foreground">
-                  The ID is the part after <code>v=</code> in the URL.
-                </p>
-              </div>
             </CardContent>
           </Card>
 
