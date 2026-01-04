@@ -190,50 +190,13 @@ export default function VideoLooper() {
   }
 
   return (
-    <div className="container mx-auto p-4 max-w-4xl space-y-6">
-      <Card>
-        <CardHeader>
-          <CardTitle>Video Looper</CardTitle>
-          <CardDescription>
-            Loop and control speed of YouTube videos for practice.
-          </CardDescription>
-        </CardHeader>
-        <CardContent className="space-y-6">
-          <div className="flex flex-col md:flex-row gap-4 items-end">
-            <div className="md:w-1/3 w-full space-y-2">
-              <Label>Suggestions</Label>
-              <Select onValueChange={(value) => setVideoId(value)}>
-                <SelectTrigger>
-                  <SelectValue placeholder="Select a song..." />
-                </SelectTrigger>
-                <SelectContent>
-                  {PRESETS.map((preset) => (
-                    <SelectItem key={preset.id} value={preset.id}>
-                      {preset.label}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-            <div className="flex-1 space-y-2 w-full">
-              <Label>YouTube Video ID</Label>
-              <Input
-                type="text"
-                placeholder="e.g. a3113eNj4IA"
-                value={videoId}
-                onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                  setVideoId(e.target.value)
-                }
-              />
-            </div>
-          </div>
-          <p className="text-xs text-muted-foreground">
-            Get the ID from the URL: youtube.com/watch?v=
-            <strong>ID_HERE</strong>
-          </p>
-
-          <div className="flex flex-col gap-4 bg-background rounded-lg">
-            <div className="relative pt-[56.25%] bg-black rounded-lg overflow-hidden border border-border">
+    <div className="container mx-auto p-4 max-w-5xl space-y-6">
+      <div className="flex flex-col md:flex-row gap-6">
+        {/* Left Column: Video & Controls */}
+        <div className="flex-1 space-y-4">
+          <div className="flex flex-col gap-4 bg-background rounded-lg border p-4 shadow-sm">
+            {/* Video Player */}
+            <div className="relative pt-[56.25%] bg-black rounded-lg overflow-hidden border border-border shadow-md">
               <div className="absolute top-0 left-0 w-full h-full">
                 <ReactPlayer
                   ref={playerRef}
@@ -251,178 +214,283 @@ export default function VideoLooper() {
               </div>
             </div>
 
-            <div className="space-y-4">
-              {/* Progress Bar */}
-              {/* Progress Bar */}
-              <div className="space-y-2">
-                <div className="flex justify-between text-sm text-muted-foreground">
-                  <span>{formatTime(played * duration)}</span>
-                  <span>{formatTime(duration)}</span>
-                </div>
+            {/* Timeline Control */}
+            <div className="space-y-1 pt-2">
+              <div
+                className="relative h-8 flex items-center select-none group"
+                ref={progressBarRef}
+                onMouseMove={(e) => dragging && handleDrag(e)}
+                onTouchMove={(e) => dragging && handleDrag(e)}
+              >
+                <Slider
+                  value={[played]}
+                  max={1}
+                  step={0.001}
+                  onValueChange={handleSeekChange}
+                  onValueCommit={handleSeekMouseUp}
+                  className="z-10 cursor-pointer"
+                />
 
-                <div
-                  className="relative h-6 flex items-center select-none"
-                  ref={progressBarRef}
-                  onMouseMove={(e) => dragging && handleDrag(e)}
-                  onTouchMove={(e) => dragging && handleDrag(e)}
+                {/* Visual Loop Markers */}
+                {loop && duration > 0 && (
+                  <>
+                    {/* Start Marker */}
+                    <div
+                      className="absolute top-0 bottom-0 w-1 bg-yellow-500 cursor-ew-resize z-20 hover:scale-x-150 transition-transform"
+                      style={{ left: `${(startTime / duration) * 100}%` }}
+                      onMouseDown={() => handleDragStart("start")}
+                      onTouchStart={() => handleDragStart("start")}
+                    >
+                      <div className="absolute -top-7 left-1/2 -translate-x-1/2 bg-yellow-500 text-black text-[10px] font-bold px-1.5 py-0.5 rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap shadow-sm">
+                        {formatTime(startTime)}
+                      </div>
+                    </div>
+
+                    {/* Loop Range Highlight */}
+                    <div
+                      className="absolute top-1/2 -translate-y-1/2 h-2 bg-yellow-500/20 pointer-events-none z-0 rounded-sm"
+                      style={{
+                        left: `${(startTime / duration) * 100}%`,
+                        width: `${((endTime - startTime) / duration) * 100}%`,
+                      }}
+                    />
+
+                    {/* End Marker */}
+                    <div
+                      className="absolute top-0 bottom-0 w-1 bg-yellow-500 cursor-ew-resize z-20 hover:scale-x-150 transition-transform"
+                      style={{ left: `${(endTime / duration) * 100}%` }}
+                      onMouseDown={() => handleDragStart("end")}
+                      onTouchStart={() => handleDragStart("end")}
+                    >
+                      <div className="absolute -top-7 left-1/2 -translate-x-1/2 bg-yellow-500 text-black text-[10px] font-bold px-1.5 py-0.5 rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap shadow-sm">
+                        {formatTime(endTime)}
+                      </div>
+                    </div>
+                  </>
+                )}
+              </div>
+              <div className="flex justify-between text-xs text-muted-foreground font-mono">
+                <span>{formatTime(played * duration)}</span>
+                <span>{formatTime(duration)}</span>
+              </div>
+            </div>
+
+            {/* Main Controls Deck */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 items-center bg-muted/40 p-3 rounded-lg border border-border/50">
+              {/* Transport */}
+              <div className="flex items-center gap-2">
+                <Button
+                  variant="default"
+                  size="icon"
+                  className="h-10 w-10 shrink-0"
+                  onClick={handlePlayPause}
                 >
-                  <Slider
-                    value={[played]}
-                    max={1}
-                    step={0.001}
-                    onValueChange={handleSeekChange}
-                    onValueCommit={handleSeekMouseUp}
-                    className="z-10"
-                  />
-
-                  {/* Visual Loop Markers */}
-                  {loop && duration > 0 && (
-                    <>
-                      {/* Start Marker */}
-                      <div
-                        className="absolute top-0 bottom-0 w-1 bg-yellow-500 cursor-ew-resize z-20 group"
-                        style={{ left: `${(startTime / duration) * 100}%` }}
-                        onMouseDown={() => handleDragStart("start")}
-                        onTouchStart={() => handleDragStart("start")}
-                      >
-                        <div className="absolute -top-6 left-1/2 -translate-x-1/2 bg-yellow-500 text-black text-[10px] px-1 rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">
-                          Start: {formatTime(startTime)}
-                        </div>
-                      </div>
-
-                      {/* Loop Range Highlight */}
-                      <div
-                        className="absolute top-1/2 -translate-y-1/2 h-1 bg-yellow-500/30 pointer-events-none z-0"
-                        style={{
-                          left: `${(startTime / duration) * 100}%`,
-                          width: `${((endTime - startTime) / duration) * 100}%`,
-                        }}
-                      />
-
-                      {/* End Marker */}
-                      <div
-                        className="absolute top-0 bottom-0 w-1 bg-yellow-500 cursor-ew-resize z-20 group"
-                        style={{ left: `${(endTime / duration) * 100}%` }}
-                        onMouseDown={() => handleDragStart("end")}
-                        onTouchStart={() => handleDragStart("end")}
-                      >
-                        <div className="absolute -top-6 left-1/2 -translate-x-1/2 bg-yellow-500 text-black text-[10px] px-1 rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">
-                          End: {formatTime(endTime)}
-                        </div>
-                      </div>
-                    </>
+                  {playing ? (
+                    <Pause className="h-5 w-5 fill-current" />
+                  ) : (
+                    <Play className="h-5 w-5 fill-current ml-0.5" />
                   )}
+                </Button>
+                <Button
+                  variant="outline"
+                  size="icon"
+                  className="h-10 w-10 shrink-0"
+                  onClick={handleStop}
+                >
+                  <RotateCcw className="h-4 w-4" />
+                </Button>
+
+                <div className="flex items-center gap-2 ml-2 px-2 py-1 bg-background rounded-full border">
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    className="h-6 w-6 rounded-full hover:bg-muted"
+                    onClick={handleToggleMute}
+                  >
+                    {muted || volume === 0 ? (
+                      <VolumeX className="h-3 w-3" />
+                    ) : (
+                      <Volume2 className="h-3 w-3" />
+                    )}
+                  </Button>
+                  <div className="w-20">
+                    <Slider
+                      value={[muted ? 0 : volume]}
+                      max={1}
+                      step={0.01}
+                      onValueChange={handleVolumeChange}
+                    />
+                  </div>
                 </div>
               </div>
 
-              {/* Main Controls */}
-              <div className="flex flex-wrap items-center justify-between gap-4">
-                <div className="flex items-center gap-2">
+              {/* Speed Controls */}
+              <div className="flex flex-wrap justify-end gap-1">
+                {[0.5, 0.75, 1, 1.25, 1.5, 2].map((rate) => (
                   <Button
-                    variant="outline"
-                    size="icon"
-                    onClick={handlePlayPause}
+                    key={rate}
+                    variant={playbackRate === rate ? "default" : "secondary"}
+                    size="sm"
+                    className={`h-8 px-3 text-xs font-medium transition-all ${
+                      playbackRate === rate
+                        ? "shadow-md scale-105"
+                        : "text-muted-foreground hover:text-foreground"
+                    }`}
+                    onClick={() => handlePlaybackRateChange(rate)}
                   >
-                    {playing ? (
-                      <Pause className="h-4 w-4" />
-                    ) : (
-                      <Play className="h-4 w-4" />
-                    )}
+                    {rate}x
                   </Button>
-                  <Button variant="ghost" size="icon" onClick={handleStop}>
-                    <RotateCcw className="h-4 w-4" />
-                  </Button>
+                ))}
+              </div>
+            </div>
 
-                  <div className="flex items-center gap-2 ml-2">
-                    <Button
-                      variant="ghost"
-                      size="icon"
-                      onClick={handleToggleMute}
-                    >
-                      {muted || volume === 0 ? (
-                        <VolumeX className="h-4 w-4" />
-                      ) : (
-                        <Volume2 className="h-4 w-4" />
-                      )}
-                    </Button>
-                    <div className="w-24">
-                      <Slider
-                        value={[muted ? 0 : volume]}
-                        max={1}
-                        step={0.01}
-                        onValueChange={handleVolumeChange}
+            {/* Loop Controls */}
+            <div
+              className={`transition-all duration-300 rounded-lg border overflow-hidden ${
+                loop
+                  ? "bg-yellow-500/10 border-yellow-500/50"
+                  : "bg-muted/20 border-border/50"
+              }`}
+            >
+              <div className="p-3 flex items-center justify-between border-b border-border/10">
+                <div className="flex items-center gap-3">
+                  <Switch
+                    id="loop-mode"
+                    checked={loop}
+                    onCheckedChange={setLoop}
+                    className="data-[state=checked]:bg-yellow-500"
+                  />
+                  <Label
+                    htmlFor="loop-mode"
+                    className="font-semibold cursor-pointer"
+                  >
+                    Loop Section
+                  </Label>
+                </div>
+                {loop && (
+                  <span className="text-xs text-yellow-600 font-medium animate-pulse">
+                    Loop Active
+                  </span>
+                )}
+              </div>
+
+              {loop && (
+                <div className="grid grid-cols-2 gap-4 p-3 bg-background/50">
+                  <div className="space-y-1.5">
+                    <Label className="text-xs text-muted-foreground">
+                      Start Time
+                    </Label>
+                    <div className="flex gap-2">
+                      <Input
+                        type="number"
+                        className="h-8 font-mono text-sm"
+                        value={startTime}
+                        step="0.1"
+                        onChange={(e) => setStartTime(Number(e.target.value))}
                       />
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        className="h-8 text-xs"
+                        onClick={setStartTimeToCurrent}
+                      >
+                        Set
+                      </Button>
+                    </div>
+                  </div>
+                  <div className="space-y-1.5">
+                    <Label className="text-xs text-muted-foreground">
+                      End Time
+                    </Label>
+                    <div className="flex gap-2">
+                      <Input
+                        type="number"
+                        className="h-8 font-mono text-sm"
+                        value={endTime}
+                        step="0.1"
+                        onChange={(e) => setEndTime(Number(e.target.value))}
+                      />
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        className="h-8 text-xs"
+                        onClick={setEndTimeToCurrent}
+                      >
+                        Set
+                      </Button>
                     </div>
                   </div>
                 </div>
-
-                <div className="flex items-center gap-4">
-                  <div className="flex items-center gap-2">
-                    <Label htmlFor="loop-mode" className="cursor-pointer">
-                      Loop
-                    </Label>
-                    <Switch
-                      id="loop-mode"
-                      checked={loop}
-                      onCheckedChange={setLoop}
-                    />
-                  </div>
-
-                  <div className="flex bg-secondary rounded-md p-1 items-center">
-                    {[0.5, 0.75, 1, 1.25, 1.5, 2].map((rate) => (
-                      <Button
-                        key={rate}
-                        variant={playbackRate === rate ? "default" : "ghost"}
-                        size="sm"
-                        className="h-7 px-2 text-xs"
-                        onClick={() => handlePlaybackRateChange(rate)}
-                      >
-                        {rate}x
-                      </Button>
-                    ))}
-                  </div>
-                </div>
-              </div>
-
-              {/* Loop & Trim Controls */}
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 border rounded-lg p-4 bg-muted/30">
-                <div className="space-y-2">
-                  <Label>Loop Start</Label>
-                  <div className="flex gap-2">
-                    <Input
-                      type="number"
-                      step="0.1"
-                      value={startTime}
-                      onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                        setStartTime(Number(e.target.value))
-                      }
-                    />
-                    <Button variant="outline" onClick={setStartTimeToCurrent}>
-                      Current
-                    </Button>
-                  </div>
-                </div>
-                <div className="space-y-2">
-                  <Label>Loop End</Label>
-                  <div className="flex gap-2">
-                    <Input
-                      type="number"
-                      step="0.1"
-                      value={endTime}
-                      onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                        setEndTime(Number(e.target.value))
-                      }
-                    />
-                    <Button variant="outline" onClick={setEndTimeToCurrent}>
-                      Current
-                    </Button>
-                  </div>
-                </div>
-              </div>
+              )}
             </div>
           </div>
-        </CardContent>
-      </Card>
+        </div>
+
+        {/* Right Column: Settings & Info */}
+        <div className="w-full md:w-80 space-y-6">
+          <Card>
+            <CardHeader className="pb-3">
+              <CardTitle className="text-lg">Track Selection</CardTitle>
+              <CardDescription>Choose a preset or enter an ID</CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="space-y-2">
+                <Label>Suggestions</Label>
+                <Select onValueChange={(value) => setVideoId(value)}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select a song..." />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {PRESETS.map((preset) => (
+                      <SelectItem key={preset.id} value={preset.id}>
+                        {preset.label}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+
+              <div className="space-y-2">
+                <Label>YouTube Video ID</Label>
+                <Input
+                  type="text"
+                  placeholder="e.g. a3113eNj4IA"
+                  value={videoId}
+                  onChange={(e) => setVideoId(e.target.value)}
+                  className="font-mono text-sm"
+                />
+                <p className="text-[10px] text-muted-foreground">
+                  The ID is the part after <code>v=</code> in the URL.
+                </p>
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card className="bg-muted/10 border-none shadow-none">
+            <CardHeader className="pb-2">
+              <CardTitle className="text-sm font-medium uppercase tracking-wider text-muted-foreground">
+                Instructions
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="text-sm space-y-2 text-muted-foreground">
+              <p>
+                1. <strong>Select a track</strong> or enter a YouTube ID.
+              </p>
+              <p>
+                2. Use <strong>Spacebar</strong> to Play/Pause (if focused).
+              </p>
+              <p>
+                3. <strong>Enable Loop</strong> and drag the yellow markers to
+                repeat a section.
+              </p>
+              <p>
+                4. Slow down difficult parts using the <strong>Speed</strong>{" "}
+                controls.
+              </p>
+            </CardContent>
+          </Card>
+        </div>
+      </div>
     </div>
   );
 }
