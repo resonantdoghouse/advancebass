@@ -260,37 +260,50 @@ export default function VideoLooper() {
     }
   };
 
+  // Throttling refs
+  const lastNoteUpdateRef = useRef<number>(0);
+  const lastChordUpdateRef = useRef<number>(0);
+
   const updatePitch = () => {
     if (!audioContextRef.current || !analyserRef.current) return;
 
+    const now = Date.now();
     const analyser = analyserRef.current;
-    const buf = new Float32Array(analyser.fftSize);
-    analyser.getFloatTimeDomainData(buf);
 
-    const ac = autoCorrelate(buf, audioContextRef.current.sampleRate);
+    // Note Detection (Throttled to ~125ms / 16th notes @ 120bpm)
+    if (now - lastNoteUpdateRef.current > 125) {
+      const buf = new Float32Array(analyser.fftSize);
+      analyser.getFloatTimeDomainData(buf);
 
-    if (ac !== -1) {
-      const { note, octave, cents } = getNoteFromFrequency(ac);
-      const noteName = `${note}${octave}`;
-      setDetectedFreq(Math.round(ac));
-      setDetectedNote(noteName);
+      const ac = autoCorrelate(buf, audioContextRef.current.sampleRate);
 
-      setNoteHistory((prev) => {
-        const last = prev[prev.length - 1];
-        if (last !== noteName) {
-          // Keep last 10 notes
-          return [...prev, noteName].slice(-10);
-        }
-        return prev;
-      });
+      if (ac !== -1) {
+        const { note, octave, cents } = getNoteFromFrequency(ac);
+        const noteName = `${note}${octave}`;
+        setDetectedFreq(Math.round(ac));
+        setDetectedNote(noteName);
+
+        setNoteHistory((prev) => {
+          const last = prev[prev.length - 1];
+          if (last !== noteName) {
+            // Keep last 10 notes
+            return [...prev, noteName].slice(-10);
+          }
+          return prev;
+        });
+      }
+      lastNoteUpdateRef.current = now;
     }
 
-    // Chord Detection
-    const byteBuf = new Uint8Array(analyser.frequencyBinCount);
-    analyser.getByteFrequencyData(byteBuf);
-    const chord = detectChord(byteBuf, audioContextRef.current.sampleRate);
-    if (chord !== "-") {
-      setDetectedChord(chord);
+    // Chord Detection (Throttled to ~250ms / 8th notes @ 120bpm)
+    if (now - lastChordUpdateRef.current > 250) {
+      const byteBuf = new Uint8Array(analyser.frequencyBinCount);
+      analyser.getByteFrequencyData(byteBuf);
+      const chord = detectChord(byteBuf, audioContextRef.current.sampleRate);
+      if (chord !== "-") {
+        setDetectedChord(chord);
+      }
+      lastChordUpdateRef.current = now;
     }
 
     requestRef.current = requestAnimationFrame(updatePitch);
