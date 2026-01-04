@@ -45,7 +45,7 @@ export default async function Home() {
           </h1>
           <p className="mx-auto max-w-[700px] text-muted-foreground md:text-xl">
             Professional transcriptions and interactive study tools to master
-            the low end. Completely free.
+            the low end.
           </p>
         </div>
         <div className="space-x-4">
@@ -64,7 +64,7 @@ export default async function Home() {
             Practice & Study Tools
           </h2>
           <p className="text-muted-foreground text-lg max-w-2xl mx-auto">
-            Essential tools designed specifically for bass players to improve
+            Tools designed specifically for bass players to improve
             timing, tuning, and theory knowledge.
           </p>
         </div>
