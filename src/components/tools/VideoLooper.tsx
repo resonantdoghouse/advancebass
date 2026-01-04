@@ -38,7 +38,14 @@ const ReactPlayer = dynamic(() => import("react-player"), {
 const PRESETS = [
   { label: "Jaco Pastorius - Teen Town", id: "a3113eNj4IA" },
   { label: "Jaco Pastorius - Havona", id: "sMQUFvv0WRY" },
+  { label: "Jaco Pastorius - Donna Lee", id: "-0NNA6w8Zk4" },
   { label: "James Jamerson - Bernadette", id: "QLDqlgRK100" },
+  { label: "James Jamerson - What's Going On", id: "jEpiyY1RpRI" },
+  {
+    label: "James Jamerson - Ain't No Mountain High Enough",
+    id: "kAT3aVj-A_E",
+  },
+  { label: "Hadrien Feraud - Bubbatron (Live)", id: "7fX92BSNiYw" },
 ];
 
 export default function VideoLooper() {
@@ -60,7 +67,9 @@ export default function VideoLooper() {
 
   // Use a ref to access the player instance
   const playerRef = useRef<any>(null);
+  const progressBarRef = useRef<HTMLDivElement>(null);
   const [isSeeking, setIsSeeking] = useState(false);
+  const [dragging, setDragging] = useState<"start" | "end" | null>(null);
 
   const handlePlayPause = () => {
     setPlaying(!playing);
@@ -108,6 +117,42 @@ export default function VideoLooper() {
     setIsSeeking(false);
     playerRef.current?.seekTo(value[0]);
   };
+
+  const handleDragStart = (type: "start" | "end") => {
+    setDragging(type);
+  };
+
+  const handleDrag = (e: React.MouseEvent | React.TouchEvent) => {
+    if (!dragging || !progressBarRef.current) return;
+
+    const rect = progressBarRef.current.getBoundingClientRect();
+    const clientX = "touches" in e ? e.touches[0].clientX : e.clientX;
+    const Percentage =
+      Math.min(Math.max(0, clientX - rect.left), rect.width) / rect.width;
+
+    const time = Percentage * duration;
+
+    if (dragging === "start") {
+      setStartTime(Math.min(time, endTime));
+    } else {
+      setEndTime(Math.max(time, startTime));
+    }
+  };
+
+  const handleDragEnd = () => {
+    setDragging(null);
+  };
+
+  useEffect(() => {
+    if (dragging) {
+      window.addEventListener("mouseup", handleDragEnd);
+      window.addEventListener("touchend", handleDragEnd);
+      return () => {
+        window.removeEventListener("mouseup", handleDragEnd);
+        window.removeEventListener("touchend", handleDragEnd);
+      };
+    }
+  }, [dragging]);
 
   const handlePlaybackRateChange = (rate: number) => {
     setPlaybackRate(rate);
@@ -199,25 +244,73 @@ export default function VideoLooper() {
                 playbackRate={playbackRate}
                 onProgress={handleProgress}
                 onDuration={handleDuration}
-                controls={true}
+                controls={false}
               />
             </div>
           </div>
 
           <div className="space-y-4">
             {/* Progress Bar */}
+            {/* Progress Bar */}
             <div className="space-y-2">
               <div className="flex justify-between text-sm text-muted-foreground">
                 <span>{formatTime(played * duration)}</span>
                 <span>{formatTime(duration)}</span>
               </div>
-              <Slider
-                value={[played]}
-                max={1}
-                step={0.001}
-                onValueChange={handleSeekChange}
-                onValueCommit={handleSeekMouseUp}
-              />
+
+              <div
+                className="relative h-6 flex items-center select-none"
+                ref={progressBarRef}
+                onMouseMove={(e) => dragging && handleDrag(e)}
+                onTouchMove={(e) => dragging && handleDrag(e)}
+              >
+                <Slider
+                  value={[played]}
+                  max={1}
+                  step={0.001}
+                  onValueChange={handleSeekChange}
+                  onValueCommit={handleSeekMouseUp}
+                  className="z-10"
+                />
+
+                {/* Visual Loop Markers */}
+                {loop && duration > 0 && (
+                  <>
+                    {/* Start Marker */}
+                    <div
+                      className="absolute top-0 bottom-0 w-1 bg-yellow-500 cursor-ew-resize z-20 group"
+                      style={{ left: `${(startTime / duration) * 100}%` }}
+                      onMouseDown={() => handleDragStart("start")}
+                      onTouchStart={() => handleDragStart("start")}
+                    >
+                      <div className="absolute -top-6 left-1/2 -translate-x-1/2 bg-yellow-500 text-black text-[10px] px-1 rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">
+                        Start: {formatTime(startTime)}
+                      </div>
+                    </div>
+
+                    {/* Loop Range Highlight */}
+                    <div
+                      className="absolute top-1/2 -translate-y-1/2 h-1 bg-yellow-500/30 pointer-events-none z-0"
+                      style={{
+                        left: `${(startTime / duration) * 100}%`,
+                        width: `${((endTime - startTime) / duration) * 100}%`,
+                      }}
+                    />
+
+                    {/* End Marker */}
+                    <div
+                      className="absolute top-0 bottom-0 w-1 bg-yellow-500 cursor-ew-resize z-20 group"
+                      style={{ left: `${(endTime / duration) * 100}%` }}
+                      onMouseDown={() => handleDragStart("end")}
+                      onTouchStart={() => handleDragStart("end")}
+                    >
+                      <div className="absolute -top-6 left-1/2 -translate-x-1/2 bg-yellow-500 text-black text-[10px] px-1 rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">
+                        End: {formatTime(endTime)}
+                      </div>
+                    </div>
+                  </>
+                )}
+              </div>
             </div>
 
             {/* Main Controls */}
