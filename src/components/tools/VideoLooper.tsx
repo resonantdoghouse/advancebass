@@ -63,7 +63,7 @@ export default function VideoLooper() {
   const [volume, setVolume] = useState(0.8);
   const [muted, setMuted] = useState(false);
   const [playbackRate, setPlaybackRate] = useState(1.0);
-  const [loop, setLoop] = useState(false);
+  const [loop, setLoop] = useState(true);
   const [played, setPlayed] = useState(0);
   const [duration, setDuration] = useState(0);
   const [startTime, setStartTime] = useState(0);
