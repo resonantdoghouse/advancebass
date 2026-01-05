@@ -12,6 +12,7 @@ import {
   Activity,
 } from "lucide-react";
 import { getNoteFromFrequency, detectChord } from "@/lib/music-theory";
+import { autoCorrelate } from "@/lib/tuner-utils";
 import { BPMDetector } from "@/lib/bpm-detector";
 import { Button } from "@/components/ui/button";
 import { Slider } from "@/components/ui/slider";
@@ -65,6 +66,9 @@ const PRESETS = [
     id: "kAT3aVj-A_E",
   },
   { label: "Hadrien Feraud - Bubbatron (Live)", id: "7fX92BSNiYw" },
+  { label: "Marvin Gaye - Inner City Blues (Bob Babbitt)", id: "57Ykv1D0qEE" },
+  { label: "Muse - Hysteria (Chris Wolstenholme)", id: "3dm_5qWWDV8" },
+  { label: "Michael Jackson - Billie Jean (Louis Johnson)", id: "Zi_XLOBDo_Y" },
 ];
 
 export default function VideoLooper() {
@@ -328,14 +332,8 @@ export default function VideoLooper() {
       lastChordUpdateRef.current = now;
     }
 
-    // BPM Detection (Every frame, but process() internally throttles updates)
+    // BPM Detection
     if (bpmDetectorRef.current) {
-      // We need Time Domain data for energy calculation clearly
-      // We already got it in 'buf' above, but that was inside the 'if' block for notes.
-      // Let's get it freshly if we didn't just get it, or reuse if we did?
-      // Simpler to just re-fetch or hoist the buffer fetch.
-      // Note: getFloatTimeDomainData is cheap.
-
       const buf = new Float32Array(analyser.fftSize);
       analyser.getFloatTimeDomainData(buf);
       const bpm = bpmDetectorRef.current.process(buf);
@@ -344,7 +342,96 @@ export default function VideoLooper() {
       }
     }
 
+    // Visualizer Drawing
+    drawVisualizer();
+
     requestRef.current = requestAnimationFrame(updatePitch);
+  };
+
+  // Visualizer State & Logic
+  const canvasRef = useRef<HTMLCanvasElement>(null);
+  const frequencyBufferRef = useRef<Uint8Array | null>(null);
+  const timeBufferRef = useRef<Uint8Array | null>(null);
+  const [visualizerMode, setVisualizerMode] = useState<
+    "waveform" | "frequency"
+  >("frequency");
+
+  const drawVisualizer = () => {
+    if (!canvasRef.current || !analyserRef.current) return;
+
+    const canvas = canvasRef.current;
+    const ctx = canvas.getContext("2d");
+    if (!ctx) return;
+
+    const width = canvas.width;
+    const height = canvas.height;
+    const analyser = analyserRef.current;
+
+    // Clear canvas
+    ctx.clearRect(0, 0, width, height);
+
+    if (visualizerMode === "frequency") {
+      const bufferLength = analyser.frequencyBinCount;
+      if (
+        !frequencyBufferRef.current ||
+        frequencyBufferRef.current.length !== bufferLength
+      ) {
+        frequencyBufferRef.current = new Uint8Array(bufferLength);
+      }
+      const dataArray = frequencyBufferRef.current;
+      analyser.getByteFrequencyData(dataArray as any);
+
+      const barWidth = (width / bufferLength) * 2.5;
+      let barHeight;
+      let x = 0;
+
+      for (let i = 0; i < bufferLength; i++) {
+        barHeight = (dataArray[i] / 255) * height;
+
+        // Use a gradient or theme color
+        ctx.fillStyle = `hsl(${(i / bufferLength) * 360}, 70%, 50%)`;
+        // Or simpler theme match:
+        // ctx.fillStyle = "rgb(250, 204, 21)"; // Yellowish
+
+        ctx.fillRect(x, height - barHeight, barWidth, barHeight);
+
+        x += barWidth + 1;
+      }
+    } else {
+      // Waveform
+      const bufferLength = analyser.fftSize;
+      if (
+        !timeBufferRef.current ||
+        timeBufferRef.current.length !== bufferLength
+      ) {
+        timeBufferRef.current = new Uint8Array(bufferLength);
+      }
+      const dataArray = timeBufferRef.current;
+      analyser.getByteTimeDomainData(dataArray as any);
+
+      ctx.lineWidth = 2;
+      ctx.strokeStyle = "rgb(250, 204, 21)"; // Yellow
+      ctx.beginPath();
+
+      const sliceWidth = width / bufferLength;
+      let x = 0;
+
+      for (let i = 0; i < bufferLength; i++) {
+        const v = dataArray[i] / 128.0;
+        const y = (v * height) / 2;
+
+        if (i === 0) {
+          ctx.moveTo(x, y);
+        } else {
+          ctx.lineTo(x, y);
+        }
+
+        x += sliceWidth;
+      }
+
+      ctx.lineTo(canvas.width, canvas.height / 2);
+      ctx.stroke();
+    }
   };
 
   if (!isMounted) {
@@ -451,9 +538,15 @@ export default function VideoLooper() {
                   onClick={handlePlayPause}
                 >
                   {playing ? (
-                    <Pause className="h-5 w-5 fill-current" />
+                    <Pause
+                      className="h-5 w-5 fill-current"
+                      aria-label="Pause"
+                    />
                   ) : (
-                    <Play className="h-5 w-5 fill-current ml-0.5" />
+                    <Play
+                      className="h-5 w-5 fill-current ml-0.5"
+                      aria-label="Play"
+                    />
                   )}
                 </Button>
                 <Button
@@ -462,7 +555,7 @@ export default function VideoLooper() {
                   className="h-10 w-10 shrink-0"
                   onClick={handleStop}
                 >
-                  <RotateCcw className="h-4 w-4" />
+                  <RotateCcw className="h-4 w-4" aria-label="Reset" />
                 </Button>
 
                 <div className="flex items-center gap-2 ml-2 px-2 py-1 bg-background rounded-full border">
@@ -473,9 +566,9 @@ export default function VideoLooper() {
                     onClick={handleToggleMute}
                   >
                     {muted || volume === 0 ? (
-                      <VolumeX className="h-3 w-3" />
+                      <VolumeX className="h-3 w-3" aria-label="Unmute" />
                     ) : (
-                      <Volume2 className="h-3 w-3" />
+                      <Volume2 className="h-3 w-3" aria-label="Mute" />
                     )}
                   </Button>
                   <div className="w-20">
@@ -644,68 +737,102 @@ export default function VideoLooper() {
                   audio.
                 </CardDescription>
               </div>
-              <Dialog>
-                <DialogTrigger asChild>
+              <div className="flex items-center gap-2">
+                <div className="flex bg-muted/50 rounded-lg p-0.5 max-[400px]:hidden">
                   <Button
-                    variant="ghost"
-                    size="icon"
-                    className="h-8 w-8 text-muted-foreground hover:text-foreground"
+                    variant={
+                      visualizerMode === "frequency" ? "secondary" : "ghost"
+                    }
+                    size="sm"
+                    className="h-7 text-[10px] px-2"
+                    onClick={() => setVisualizerMode("frequency")}
                   >
-                    <Info className="h-4 w-4" />
-                    <span className="sr-only">Instructions</span>
+                    Spectrum
                   </Button>
-                </DialogTrigger>
-                <DialogContent>
-                  <DialogHeader>
-                    <DialogTitle>How to use</DialogTitle>
-                    <DialogDescription>
-                      Follow these steps to get the most out of the Looper and
-                      AI Tools.
-                    </DialogDescription>
-                  </DialogHeader>
-                  <div className="space-y-4 py-4">
-                    <div className="space-y-2">
-                      <h4 className="font-medium leading-none">
-                        Playback & Looping
-                      </h4>
-                      <ul className="text-sm text-muted-foreground list-disc list-inside space-y-1">
-                        <li>Select a track or enter a YouTube ID.</li>
-                        <li>Use Spacebar to Play/Pause.</li>
-                        <li>
-                          Enable <strong>Loop Section</strong> to repeat a
-                          specific part.
-                        </li>
-                        <li>
-                          Drag the yellow markers on the timeline to set loop
-                          points.
-                        </li>
-                      </ul>
+                  <Button
+                    variant={
+                      visualizerMode === "waveform" ? "secondary" : "ghost"
+                    }
+                    size="sm"
+                    className="h-7 text-[10px] px-2"
+                    onClick={() => setVisualizerMode("waveform")}
+                  >
+                    Wave
+                  </Button>
+                </div>
+                <Dialog>
+                  <DialogTrigger asChild>
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      className="h-8 w-8 text-muted-foreground hover:text-foreground"
+                    >
+                      <Info className="h-4 w-4" />
+                      <span className="sr-only">Instructions</span>
+                    </Button>
+                  </DialogTrigger>
+                  <DialogContent>
+                    <DialogHeader>
+                      <DialogTitle>How to use</DialogTitle>
+                      <DialogDescription>
+                        Follow these steps to get the most out of the Looper and
+                        AI Tools.
+                      </DialogDescription>
+                    </DialogHeader>
+                    <div className="space-y-4 py-4">
+                      <div className="space-y-2">
+                        <h4 className="font-medium leading-none">
+                          Playback & Looping
+                        </h4>
+                        <ul className="text-sm text-muted-foreground list-disc list-inside space-y-1">
+                          <li>Select a track or enter a YouTube ID.</li>
+                          <li>Use Spacebar to Play/Pause.</li>
+                          <li>
+                            Enable <strong>Loop Section</strong> to repeat a
+                            specific part.
+                          </li>
+                          <li>
+                            Drag the yellow markers on the timeline to set loop
+                            points.
+                          </li>
+                        </ul>
+                      </div>
+                      <div className="space-y-2">
+                        <h4 className="font-medium leading-none">
+                          AI Audio Analysis
+                        </h4>
+                        <ul className="text-sm text-muted-foreground list-disc list-inside space-y-1">
+                          <li>
+                            Click <strong>Start Analysis</strong> to enable
+                            detection.
+                          </li>
+                          <li>
+                            Select the <strong>Current Tab</strong> and check{" "}
+                            <strong>Share Audio</strong> in the browser prompt.
+                          </li>
+                          <li>
+                            The AI will detect the fundamental{" "}
+                            <strong>Note</strong>, <strong>Chord</strong>{" "}
+                            function, and <strong>BPM</strong>.
+                          </li>
+                        </ul>
+                      </div>
                     </div>
-                    <div className="space-y-2">
-                      <h4 className="font-medium leading-none">
-                        AI Audio Analysis
-                      </h4>
-                      <ul className="text-sm text-muted-foreground list-disc list-inside space-y-1">
-                        <li>
-                          Click <strong>Start Analysis</strong> to enable
-                          detection.
-                        </li>
-                        <li>
-                          Select the <strong>Current Tab</strong> and check{" "}
-                          <strong>Share Audio</strong> in the browser prompt.
-                        </li>
-                        <li>
-                          The AI will detect the fundamental{" "}
-                          <strong>Note</strong>, <strong>Chord</strong>{" "}
-                          function, and <strong>BPM</strong>.
-                        </li>
-                      </ul>
-                    </div>
-                  </div>
-                </DialogContent>
-              </Dialog>
+                  </DialogContent>
+                </Dialog>
+              </div>
             </CardHeader>
             <CardContent className="space-y-4">
+              {isAnalyzing && (
+                <div className="w-full h-20 bg-black/90 rounded-md overflow-hidden border border-white/10 relative">
+                  <canvas
+                    ref={canvasRef}
+                    width={600}
+                    height={160}
+                    className="w-full h-full block"
+                  />
+                </div>
+              )}
               {isAnalyzing ? (
                 <div className="space-y-4">
                   <div className="grid grid-cols-3 gap-2">
@@ -806,61 +933,4 @@ export default function VideoLooper() {
       </div>
     </div>
   );
-}
-
-// Autocorrelation algorithm for pitch detection
-function autoCorrelate(buf: Float32Array, sampleRate: number) {
-  // Implements the ACF2+ algorithm
-  const SIZE = buf.length;
-  let rms = 0;
-
-  for (let i = 0; i < SIZE; i++) {
-    const val = buf[i];
-    rms += val * val;
-  }
-  rms = Math.sqrt(rms / SIZE);
-  if (rms < 0.01)
-    // not enough signal
-    return -1;
-
-  let r1 = 0,
-    r2 = SIZE - 1,
-    thres = 0.2;
-  for (let i = 0; i < SIZE / 2; i++)
-    if (Math.abs(buf[i]) < thres) {
-      r1 = i;
-      break;
-    }
-  for (let i = 1; i < SIZE / 2; i++)
-    if (Math.abs(buf[SIZE - i]) < thres) {
-      r2 = SIZE - i;
-      break;
-    }
-
-  buf = buf.slice(r1, r2);
-  const BUTTON_SIZE = buf.length;
-  const c = new Float32Array(BUTTON_SIZE);
-  for (let i = 0; i < BUTTON_SIZE; i++)
-    for (let j = 0; j < BUTTON_SIZE - i; j++) c[i] = c[i] + buf[j] * buf[j + i];
-
-  let d = 0;
-  while (c[d] > c[d + 1]) d++;
-  let maxval = -1,
-    maxpos = -1;
-  for (let i = d; i < BUTTON_SIZE; i++) {
-    if (c[i] > maxval) {
-      maxval = c[i];
-      maxpos = i;
-    }
-  }
-  let T0 = maxpos;
-
-  const x1 = c[T0 - 1],
-    x2 = c[T0],
-    x3 = c[T0 + 1];
-  const a = (x1 + x3 - 2 * x2) / 2;
-  const b = (x3 - x1) / 2;
-  if (a) T0 = T0 - b / (2 * a);
-
-  return sampleRate / T0;
 }

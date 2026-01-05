@@ -62,7 +62,7 @@ export function autoCorrelate(buf: Float32Array, sampleRate: number): number {
   buf = buf.slice(r1, r2);
   size = buf.length;
 
-  const c = new Array(size).fill(0);
+  const c = new Float32Array(size);
   for (let i = 0; i < size; i++) {
     for (let j = 0; j < size - i; j++) {
       c[i] = c[i] + buf[j] * buf[j + i];
