@@ -69,6 +69,11 @@ const PRESETS = [
   { label: "Marvin Gaye - Inner City Blues (Bob Babbitt)", id: "57Ykv1D0qEE" },
   { label: "Muse - Hysteria (Chris Wolstenholme)", id: "3dm_5qWWDV8" },
   { label: "Michael Jackson - Billie Jean (Louis Johnson)", id: "Zi_XLOBDo_Y" },
+  { label: "Richard Bona - Amazing Bass Solo", id: "6PnYOZyRL74" },
+  {
+    label: "Oteil Burbridge - Aquarium Rescue Unit (Live 1996)",
+    id: "cKPXX08Q-HI",
+  },
 ];
 
 export default function VideoLooper() {
@@ -708,6 +713,14 @@ export default function VideoLooper() {
                     ))}
                   </SelectContent>
                 </Select>
+                <div className="pt-1 text-center">
+                  <a
+                    href="mailto:contact@advancebass.com?subject=Video%20Loop%20Request&body=Hi%2C%20I%27d%20like%20to%20request%20the%20following%20video%20to%20be%20added%20to%20the%20looper%20presets%3A%0A%0AArtist%3A%20%0ASong%3A%20%0AYoutube%20URL%3A%20"
+                    className="text-xs text-muted-foreground hover:text-primary underline underline-offset-4 transition-colors"
+                  >
+                    Request a song to be added
+                  </a>
+                </div>
               </div>
 
               <div className="space-y-2">
