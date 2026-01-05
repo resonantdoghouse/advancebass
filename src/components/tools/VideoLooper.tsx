@@ -9,7 +9,13 @@ import {
   Volume2,
   VolumeX,
   Mic,
-  Activity,
+  Search,
+  User,
+  Music,
+  Filter,
+  ChevronRight,
+  Info,
+  Activity, // Added back
 } from "lucide-react";
 import { getNoteFromFrequency, detectChord } from "@/lib/music-theory";
 import { autoCorrelate } from "@/lib/tuner-utils";
@@ -24,6 +30,7 @@ import {
   CardHeader,
   CardTitle,
   CardDescription,
+  CardFooter,
 } from "@/components/ui/card";
 import { Switch } from "@/components/ui/switch";
 import {
@@ -41,7 +48,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { Info } from "lucide-react";
+import { VIDEO_PRESETS, BASSISTS, VideoPreset } from "@/lib/video-presets";
 
 interface OnProgressProps {
   played: number;
@@ -55,30 +62,11 @@ const ReactPlayer = dynamic(() => import("react-player"), {
   ssr: false,
 }) as unknown as React.ComponentType<any>;
 
-const PRESETS = [
-  { label: "Jaco Pastorius - Teen Town", id: "a3113eNj4IA" },
-  { label: "Jaco Pastorius - Havona", id: "sMQUFvv0WRY" },
-  { label: "Jaco Pastorius - Donna Lee", id: "-0NNA6w8Zk4" },
-  { label: "James Jamerson - Bernadette", id: "QLDqlgRK100" },
-  { label: "James Jamerson - What's Going On", id: "jEpiyY1RpRI" },
-  {
-    label: "James Jamerson - Ain't No Mountain High Enough",
-    id: "kAT3aVj-A_E",
-  },
-  { label: "Hadrien Feraud - Bubbatron (Live)", id: "7fX92BSNiYw" },
-  { label: "Marvin Gaye - Inner City Blues (Bob Babbitt)", id: "57Ykv1D0qEE" },
-  { label: "Muse - Hysteria (Chris Wolstenholme)", id: "3dm_5qWWDV8" },
-  { label: "Michael Jackson - Billie Jean (Louis Johnson)", id: "Zi_XLOBDo_Y" },
-  { label: "Richard Bona - Amazing Bass Solo", id: "6PnYOZyRL74" },
-  {
-    id: "cKPXX08Q-HI",
-  },
-  { label: "Rush - YYZ", id: "ftVTWDrtrlc" },
-  { label: "Primus - My Name Is Mud", id: "953PkxFNiko" },
-];
-
 export default function VideoLooper() {
   const [videoId, setVideoId] = useState("a3113eNj4IA");
+  const [currentPreset, setCurrentPreset] = useState<VideoPreset | null>(null);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [isLibraryOpen, setIsLibraryOpen] = useState(false);
   const [playing, setPlaying] = useState(false);
   const [volume, setVolume] = useState(0.8);
   const [muted, setMuted] = useState(false);
@@ -106,8 +94,10 @@ export default function VideoLooper() {
   useEffect(() => {
     setIsMounted(true);
     // Randomize initial video
-    const randomPreset = PRESETS[Math.floor(Math.random() * PRESETS.length)];
+    const randomPreset =
+      VIDEO_PRESETS[Math.floor(Math.random() * VIDEO_PRESETS.length)];
     setVideoId(randomPreset.id);
+    setCurrentPreset(randomPreset);
   }, []);
 
   // Use a ref to access the player instance
@@ -579,7 +569,7 @@ export default function VideoLooper() {
                       <Volume2 className="h-3 w-3" aria-label="Mute" />
                     )}
                   </Button>
-                  <div className="w-20">
+                  <div className="w-20 shrink-0">
                     <Slider
                       value={[muted ? 0 : volume]}
                       max={1}
@@ -694,51 +684,160 @@ export default function VideoLooper() {
 
         {/* Right Column: Settings & Info */}
         <div className="w-full md:w-80 space-y-6">
+          {/* Library & Info Column */}
           <Card>
             <CardHeader className="pb-3">
-              <CardTitle className="text-lg">Track Selection</CardTitle>
-              <CardDescription>Choose a preset or enter an ID</CardDescription>
+              <CardTitle className="text-lg flex justify-between items-center">
+                <span>Current Track</span>
+                <Dialog open={isLibraryOpen} onOpenChange={setIsLibraryOpen}>
+                  <DialogTrigger asChild>
+                    <Button size="sm" variant="outline" className="h-8 gap-2">
+                      <Search className="h-4 w-4" />
+                      Browse Library
+                    </Button>
+                  </DialogTrigger>
+                  <DialogContent className="max-w-2xl max-h-[80vh] flex flex-col">
+                    <DialogHeader>
+                      <DialogTitle>Video Library</DialogTitle>
+                      <DialogDescription>
+                        Browse our collection of bass lines and solos.
+                      </DialogDescription>
+                    </DialogHeader>
+
+                    <div className="flex items-center gap-2 py-4">
+                      <div className="relative flex-1">
+                        <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
+                        <Input
+                          placeholder="Search by song, artist, or bassist..."
+                          className="pl-9"
+                          value={searchQuery}
+                          onChange={(e) => setSearchQuery(e.target.value)}
+                        />
+                      </div>
+                    </div>
+
+                    <div className="flex-1 overflow-y-auto border rounded-md">
+                      <div className="divide-y">
+                        {VIDEO_PRESETS.filter((preset) => {
+                          const q = searchQuery.toLowerCase();
+                          return (
+                            preset.title.toLowerCase().includes(q) ||
+                            preset.artist.toLowerCase().includes(q) ||
+                            preset.bassist.toLowerCase().includes(q) ||
+                            preset.genre.some((g) =>
+                              g.toLowerCase().includes(q)
+                            )
+                          );
+                        }).map((preset) => (
+                          <div
+                            key={preset.id}
+                            className="flex items-center justify-between p-3 hover:bg-muted/50 cursor-pointer transition-colors"
+                            onClick={() => {
+                              setVideoId(preset.id);
+                              setCurrentPreset(preset);
+                              setIsLibraryOpen(false);
+                            }}
+                          >
+                            <div className="space-y-1">
+                              <div className="font-medium flex items-center gap-2">
+                                {preset.title}
+                                {preset.difficulty === "Expert" && (
+                                  <span className="text-[10px] px-1.5 py-0.5 rounded-full bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400 font-bold">
+                                    Expert
+                                  </span>
+                                )}
+                              </div>
+                              <div className="text-sm text-muted-foreground">
+                                {preset.artist} •{" "}
+                                <span className="text-primary">
+                                  {preset.bassist}
+                                </span>
+                              </div>
+                            </div>
+                            <ChevronRight className="h-4 w-4 text-muted-foreground" />
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  </DialogContent>
+                </Dialog>
+              </CardTitle>
+              <CardDescription>
+                {currentPreset ? (
+                  <span>
+                    Playing{" "}
+                    <span className="font-medium text-foreground">
+                      {currentPreset.title}
+                    </span>{" "}
+                    by {currentPreset.artist}
+                  </span>
+                ) : (
+                  "Load a preset or enter a custom ID"
+                )}
+              </CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
-              <div className="space-y-2">
-                <Label>Suggestions</Label>
-                <Select onValueChange={(value) => setVideoId(value)}>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select a song..." />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {PRESETS.map((preset) => (
-                      <SelectItem key={preset.id} value={preset.id}>
-                        {preset.label}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-                <div className="pt-1 text-center">
-                  <a
-                    href="mailto:contact@advancebass.com?subject=Video%20Loop%20Request&body=Hi%2C%20I%27d%20like%20to%20request%20the%20following%20video%20to%20be%20added%20to%20the%20looper%20presets%3A%0A%0AArtist%3A%20%0ASong%3A%20%0AYoutube%20URL%3A%20"
-                    className="text-xs text-muted-foreground hover:text-primary underline underline-offset-4 transition-colors"
-                  >
-                    Request a song to be added
-                  </a>
+              {/* Custom ID Input */}
+              <div className="space-y-2 pt-2 border-t">
+                <Label className="text-xs text-muted-foreground">
+                  Or load by YouTube ID
+                </Label>
+                <div className="flex gap-2">
+                  <Input
+                    type="text"
+                    placeholder="e.g. a3113eNj4IA"
+                    value={videoId}
+                    onChange={(e) => {
+                      setVideoId(e.target.value);
+                      setCurrentPreset(null); // Clear preset if manual ID
+                    }}
+                    className="font-mono text-sm h-9"
+                  />
                 </div>
               </div>
 
-              <div className="space-y-2">
-                <Label>YouTube Video ID</Label>
-                <Input
-                  type="text"
-                  placeholder="e.g. a3113eNj4IA"
-                  value={videoId}
-                  onChange={(e) => setVideoId(e.target.value)}
-                  className="font-mono text-sm"
-                />
-                <p className="text-[10px] text-muted-foreground">
-                  The ID is the part after <code>v=</code> in the URL.
-                </p>
+              <div className="pt-2 text-center">
+                <a
+                  href="mailto:contact@advancebass.com?subject=Video%20Loop%20Request&body=Hi%2C%20I%27d%20like%20to%20request%20the%20following%20video%20to%20be%20added%20to%20the%20looper%20presets%3A%0A%0AArtist%3A%20%0ASong%3A%20%0AYoutube%20URL%3A%20"
+                  className="text-xs text-muted-foreground hover:text-primary underline underline-offset-4 transition-colors"
+                >
+                  Request a song to be added
+                </a>
               </div>
             </CardContent>
           </Card>
+
+          {/* Bassist Info Card */}
+          {currentPreset && BASSISTS[currentPreset.bassist] && (
+            <Card className="bg-muted/30 border-primary/20">
+              <CardHeader className="pb-2">
+                <div className="flex items-center gap-2 mb-1">
+                  <User className="h-4 w-4 text-primary" />
+                  <span className="text-xs font-medium text-primary uppercase tracking-wider">
+                    Bass Player Spotlight
+                  </span>
+                </div>
+                <CardTitle className="text-lg">
+                  {BASSISTS[currentPreset.bassist].name}
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-3 text-sm">
+                <p className="text-muted-foreground leading-relaxed">
+                  {BASSISTS[currentPreset.bassist].bio}
+                </p>
+                <div className="flex flex-wrap gap-2 pt-1">
+                  {BASSISTS[currentPreset.bassist].style.map((s) => (
+                    <span
+                      key={s}
+                      className="px-2 py-0.5 rounded-full bg-background border text-[10px] font-medium text-muted-foreground"
+                    >
+                      {s}
+                    </span>
+                  ))}
+                </div>
+              </CardContent>
+            </Card>
+          )}
 
           {/* Audio Analysis Card */}
           <Card className="border-primary/20 bg-primary/5">
@@ -844,111 +943,66 @@ export default function VideoLooper() {
                 </Dialog>
               </div>
             </CardHeader>
-            <CardContent className="space-y-4">
-              {isAnalyzing && (
-                <div className="w-full h-20 bg-black/90 rounded-md overflow-hidden border border-white/10 relative">
+            <CardContent>
+              <div className="space-y-4">
+                <Button
+                  className={`w-full ${
+                    isAnalyzing
+                      ? "bg-destructive hover:bg-destructive/90"
+                      : "bg-primary hover:bg-primary/90"
+                  }`}
+                  onClick={toggleAudioAnalysis}
+                >
+                  <Mic className="mr-2 h-4 w-4" />
+                  {isAnalyzing ? "Stop Analysis" : "Start Audio Analysis"}
+                </Button>
+
+                {/* Analysis Display */}
+                <div className="grid grid-cols-3 gap-2 text-center">
+                  <div className="bg-background rounded-md p-2 border shadow-sm">
+                    <span className="text-[10px] uppercase text-muted-foreground font-bold tracking-wider">
+                      Note
+                    </span>
+                    <div className="text-2xl font-bold text-primary">
+                      {detectedNote}
+                    </div>
+                    <div className="text-[10px] text-muted-foreground">
+                      {detectedFreq > 0 ? `${detectedFreq} Hz` : "--"}
+                    </div>
+                  </div>
+                  <div className="bg-background rounded-md p-2 border shadow-sm">
+                    <span className="text-[10px] uppercase text-muted-foreground font-bold tracking-wider">
+                      Chord
+                    </span>
+                    <div className="text-2xl font-bold text-primary">
+                      {detectedChord}
+                    </div>
+                  </div>
+                  <div className="bg-background rounded-md p-2 border shadow-sm">
+                    <span className="text-[10px] uppercase text-muted-foreground font-bold tracking-wider">
+                      BPM
+                    </span>
+                    <div className="text-2xl font-bold text-primary">
+                      {detectedBpm > 0 ? Math.round(detectedBpm) : "--"}
+                    </div>
+                  </div>
+                </div>
+
+                {/* Visualizer Canvas */}
+                <div className="relative h-24 bg-black/90 rounded-md border border-primary/20 overflow-hidden shadow-inner">
                   <canvas
                     ref={canvasRef}
-                    width={600}
-                    height={160}
-                    className="w-full h-full block"
+                    width={300}
+                    height={100}
+                    className="w-full h-full"
                   />
+                  {!isAnalyzing && (
+                    <div className="absolute inset-0 flex items-center justify-center text-xs text-muted-foreground/50">
+                      Visualizer Off
+                    </div>
+                  )}
                 </div>
-              )}
-              {isAnalyzing ? (
-                <div className="space-y-4">
-                  <div className="grid grid-cols-3 gap-2">
-                    <div className="flex flex-col items-center justify-center p-4 bg-background rounded-lg border shadow-inner overflow-hidden">
-                      <span className="text-[10px] text-muted-foreground uppercase tracking-widest truncate w-full text-center">
-                        Note
-                      </span>
-                      <div
-                        className="text-2xl md:text-3xl font-black text-primary my-1 tabular-nums truncate w-full text-center"
-                        title={detectedNote}
-                      >
-                        {detectedNote}
-                      </div>
-                      <div className="text-[10px] font-mono text-muted-foreground block truncate w-full text-center">
-                        {detectedFreq > 0 ? `${detectedFreq} Hz` : "--"}
-                      </div>
-                    </div>
-
-                    <div className="flex flex-col items-center justify-center p-4 bg-background rounded-lg border shadow-inner overflow-hidden">
-                      <span className="text-[10px] text-muted-foreground uppercase tracking-widest truncate w-full text-center">
-                        Chord
-                      </span>
-                      <div
-                        className="text-xl md:text-3xl font-black text-secondary-foreground my-1 tabular-nums truncate w-full text-center"
-                        title={detectedChord}
-                      >
-                        {detectedChord}
-                      </div>
-                      <div className="text-[10px] font-mono text-muted-foreground block">
-                        &nbsp;
-                      </div>
-                    </div>
-
-                    <div className="flex flex-col items-center justify-center p-4 bg-background rounded-lg border shadow-inner overflow-hidden">
-                      <span className="text-[10px] text-muted-foreground uppercase tracking-widest truncate w-full text-center">
-                        BPM
-                      </span>
-                      <div className="text-2xl md:text-3xl font-black text-accent-foreground my-1 tabular-nums truncate w-full text-center">
-                        {detectedBpm > 0 ? detectedBpm : "--"}
-                      </div>
-                      <div className="text-[10px] font-mono text-muted-foreground block">
-                        Tempo
-                      </div>
-                    </div>
-                  </div>
-
-                  <div className="space-y-2">
-                    <Label className="text-xs text-muted-foreground">
-                      History
-                    </Label>
-                    <div className="flex gap-2 flex-wrap p-2 bg-background/50 rounded border min-h-[40px] items-center">
-                      {noteHistory.map((n, i) => (
-                        <span
-                          key={i}
-                          className="text-xs font-mono font-bold bg-primary/10 text-primary px-1.5 py-0.5 rounded"
-                        >
-                          {n}
-                        </span>
-                      ))}
-                      {noteHistory.length === 0 && (
-                        <span className="text-xs text-muted-foreground italic">
-                          No notes detected...
-                        </span>
-                      )}
-                    </div>
-                  </div>
-
-                  <Button
-                    variant="destructive"
-                    className="w-full"
-                    onClick={toggleAudioAnalysis}
-                  >
-                    Stop Analysis
-                  </Button>
-                </div>
-              ) : (
-                <div className="space-y-3">
-                  <div className="text-sm text-muted-foreground bg-background/50 p-3 rounded border">
-                    <p className="mb-2">To analyze audio:</p>
-                    <ol className="list-decimal list-inside space-y-1 text-xs">
-                      <li>Click "Start Analysis"</li>
-                      <li>
-                        Select <strong>Current Tab</strong>
-                      </li>
-                      <li>
-                        Check <strong>Share Audio</strong>
-                      </li>
-                    </ol>
-                  </div>
-                  <Button className="w-full" onClick={toggleAudioAnalysis}>
-                    <Mic className="mr-2 h-4 w-4" /> Start Analysis
-                  </Button>
-                </div>
-              )}
+              </div>
             </CardContent>
           </Card>
         </div>
