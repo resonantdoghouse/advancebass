@@ -32,6 +32,15 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import { Info } from "lucide-react";
 
 interface OnProgressProps {
   played: number;
@@ -621,15 +630,77 @@ export default function VideoLooper() {
 
           {/* Audio Analysis Card */}
           <Card className="border-primary/20 bg-primary/5">
-            <CardHeader className="pb-3">
-              <CardTitle className="text-lg flex items-center gap-2">
-                <Activity className="h-5 w-5 text-primary" />
-                Bass AI
-              </CardTitle>
-              <CardDescription>
-                Experimental feature to help analyze tricky or hard-to-hear bass
-                lines.
-              </CardDescription>
+            <CardHeader className="pb-3 flex flex-row items-center justify-between space-y-0">
+              <div className="space-y-1">
+                <CardTitle className="text-lg flex items-center gap-2">
+                  <Activity className="h-5 w-5 text-primary" />
+                  AI Audio Tools
+                </CardTitle>
+                <CardDescription>
+                  Real-time analysis to detect notes, chords, and tempo from
+                  audio.
+                </CardDescription>
+              </div>
+              <Dialog>
+                <DialogTrigger asChild>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    className="h-8 w-8 text-muted-foreground hover:text-foreground"
+                  >
+                    <Info className="h-4 w-4" />
+                    <span className="sr-only">Instructions</span>
+                  </Button>
+                </DialogTrigger>
+                <DialogContent>
+                  <DialogHeader>
+                    <DialogTitle>How to use</DialogTitle>
+                    <DialogDescription>
+                      Follow these steps to get the most out of the Looper and
+                      AI Tools.
+                    </DialogDescription>
+                  </DialogHeader>
+                  <div className="space-y-4 py-4">
+                    <div className="space-y-2">
+                      <h4 className="font-medium leading-none">
+                        Playback & Looping
+                      </h4>
+                      <ul className="text-sm text-muted-foreground list-disc list-inside space-y-1">
+                        <li>Select a track or enter a YouTube ID.</li>
+                        <li>Use Spacebar to Play/Pause.</li>
+                        <li>
+                          Enable <strong>Loop Section</strong> to repeat a
+                          specific part.
+                        </li>
+                        <li>
+                          Drag the yellow markers on the timeline to set loop
+                          points.
+                        </li>
+                      </ul>
+                    </div>
+                    <div className="space-y-2">
+                      <h4 className="font-medium leading-none">
+                        AI Audio Analysis
+                      </h4>
+                      <ul className="text-sm text-muted-foreground list-disc list-inside space-y-1">
+                        <li>
+                          Click <strong>Start Analysis</strong> to enable
+                          detection.
+                        </li>
+                        <li>
+                          Select the <strong>Current Tab</strong> and check{" "}
+                          <strong>Share Audio</strong> in the browser prompt.
+                        </li>
+                        <li>
+                          The AI will detect the fundamental{" "}
+                          <strong>Note</strong>, <strong>Chord</strong>{" "}
+                          function, and <strong>BPM</strong>.
+                        </li>
+                      </ul>
+                    </div>
+                  </div>
+                </DialogContent>
+              </Dialog>
             </CardHeader>
             <CardContent className="space-y-4">
               {isAnalyzing ? (
@@ -720,30 +791,6 @@ export default function VideoLooper() {
                   </Button>
                 </div>
               )}
-            </CardContent>
-          </Card>
-
-          <Card className="bg-muted/10 border-none shadow-none">
-            <CardHeader className="pb-2">
-              <CardTitle className="text-sm font-medium uppercase tracking-wider text-muted-foreground">
-                Instructions
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="text-sm space-y-2 text-muted-foreground">
-              <p>
-                1. <strong>Select a track</strong> or enter a YouTube ID.
-              </p>
-              <p>
-                2. Use <strong>Spacebar</strong> to Play/Pause (if focused).
-              </p>
-              <p>
-                3. <strong>Enable Loop</strong> and drag the yellow markers to
-                repeat a section.
-              </p>
-              <p>
-                4. Slow down difficult parts using the <strong>Speed</strong>{" "}
-                controls.
-              </p>
             </CardContent>
           </Card>
         </div>
