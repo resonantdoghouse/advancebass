@@ -355,6 +355,8 @@ export default function VideoLooper() {
   const [visualizerMode, setVisualizerMode] = useState<
     "waveform" | "frequency"
   >("frequency");
+  // Ref to track mode inside the animation loop
+  const visualizerModeRef = useRef<"waveform" | "frequency">("frequency");
 
   const drawVisualizer = () => {
     if (!canvasRef.current || !analyserRef.current) return;
@@ -370,7 +372,7 @@ export default function VideoLooper() {
     // Clear canvas
     ctx.clearRect(0, 0, width, height);
 
-    if (visualizerMode === "frequency") {
+    if (visualizerModeRef.current === "frequency") {
       const bufferLength = analyser.frequencyBinCount;
       if (
         !frequencyBufferRef.current ||
@@ -745,7 +747,10 @@ export default function VideoLooper() {
                     }
                     size="sm"
                     className="h-7 text-[10px] px-2"
-                    onClick={() => setVisualizerMode("frequency")}
+                    onClick={() => {
+                      setVisualizerMode("frequency");
+                      visualizerModeRef.current = "frequency";
+                    }}
                   >
                     Spectrum
                   </Button>
@@ -755,7 +760,10 @@ export default function VideoLooper() {
                     }
                     size="sm"
                     className="h-7 text-[10px] px-2"
-                    onClick={() => setVisualizerMode("waveform")}
+                    onClick={() => {
+                      setVisualizerMode("waveform");
+                      visualizerModeRef.current = "waveform";
+                    }}
                   >
                     Wave
                   </Button>
