@@ -556,7 +556,7 @@ export default function VideoLooper() {
                   <RotateCcw className="h-4 w-4" aria-label="Reset" />
                 </Button>
 
-                <div className="flex items-center gap-2 ml-2 px-2 py-1 bg-background rounded-full border">
+                <div className="flex items-center gap-2 ml-2 px-2 py-1 bg-background rounded-full border shrink-0">
                   <Button
                     variant="ghost"
                     size="icon"
