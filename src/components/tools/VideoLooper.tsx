@@ -100,6 +100,13 @@ export default function VideoLooper() {
     setCurrentPreset(randomPreset);
   }, []);
 
+  useEffect(() => {
+    setStartTime(0);
+    setEndTime(0);
+    setPlayed(0);
+    setPlaying(false);
+  }, [videoId]);
+
   // Use a ref to access the player instance
   const playerRef = useRef<any>(null);
   const progressBarRef = useRef<HTMLDivElement>(null);
