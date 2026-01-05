@@ -12,6 +12,7 @@ import {
   Activity,
 } from "lucide-react";
 import { getNoteFromFrequency, detectChord } from "@/lib/music-theory";
+import { BPMDetector } from "@/lib/bpm-detector";
 import { Button } from "@/components/ui/button";
 import { Slider } from "@/components/ui/slider";
 import { Input } from "@/components/ui/input";
@@ -76,6 +77,8 @@ export default function VideoLooper() {
   const [detectedChord, setDetectedChord] = useState("-");
   const [detectedFreq, setDetectedFreq] = useState(0);
   const [noteHistory, setNoteHistory] = useState<string[]>([]);
+  const [detectedBpm, setDetectedBpm] = useState(0);
+  const bpmDetectorRef = useRef<any>(null); // Type 'any' to avoid strict BPMDetector type dependency here for now, or import it.
   const audioContextRef = useRef<AudioContext | null>(null);
   const analyserRef = useRef<AnalyserNode | null>(null);
   const sourceRef = useRef<MediaStreamAudioSourceNode | null>(null);
@@ -218,6 +221,7 @@ export default function VideoLooper() {
       setIsAnalyzing(false);
       setDetectedNote("-");
       setDetectedFreq(0);
+      setDetectedBpm(0);
       return;
     }
 
@@ -249,6 +253,9 @@ export default function VideoLooper() {
       const source = audioContext.createMediaStreamSource(stream);
       source.connect(analyser);
       sourceRef.current = source;
+
+      // Initialize BPM Detector
+      bpmDetectorRef.current = new BPMDetector(audioContext.sampleRate);
 
       setIsAnalyzing(true);
       updatePitch();
@@ -307,6 +314,22 @@ export default function VideoLooper() {
         setDetectedChord(chord);
       }
       lastChordUpdateRef.current = now;
+    }
+
+    // BPM Detection (Every frame, but process() internally throttles updates)
+    if (bpmDetectorRef.current) {
+      // We need Time Domain data for energy calculation clearly
+      // We already got it in 'buf' above, but that was inside the 'if' block for notes.
+      // Let's get it freshly if we didn't just get it, or reuse if we did?
+      // Simpler to just re-fetch or hoist the buffer fetch.
+      // Note: getFloatTimeDomainData is cheap.
+
+      const buf = new Float32Array(analyser.fftSize);
+      analyser.getFloatTimeDomainData(buf);
+      const bpm = bpmDetectorRef.current.process(buf);
+      if (bpm > 0) {
+        setDetectedBpm(bpm);
+      }
     }
 
     requestRef.current = requestAnimationFrame(updatePitch);
@@ -611,7 +634,7 @@ export default function VideoLooper() {
             <CardContent className="space-y-4">
               {isAnalyzing ? (
                 <div className="space-y-4">
-                  <div className="grid grid-cols-2 gap-4">
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                     <div className="flex flex-col items-center justify-center p-6 bg-background rounded-lg border shadow-inner">
                       <span className="text-xs text-muted-foreground uppercase tracking-widest">
                         Detected Note
@@ -633,6 +656,18 @@ export default function VideoLooper() {
                       </div>
                       <div className="text-xs font-mono text-muted-foreground block">
                         &nbsp;
+                      </div>
+                    </div>
+
+                    <div className="flex flex-col items-center justify-center p-6 bg-background rounded-lg border shadow-inner">
+                      <span className="text-xs text-muted-foreground uppercase tracking-widest">
+                        Detected BPM
+                      </span>
+                      <div className="text-4xl font-black text-accent-foreground my-2 tabular-nums">
+                        {detectedBpm > 0 ? detectedBpm : "--"}
+                      </div>
+                      <div className="text-xs font-mono text-muted-foreground block">
+                        Est. Tempo
                       </div>
                     </div>
                   </div>
