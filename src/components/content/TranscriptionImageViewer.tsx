@@ -1,8 +1,24 @@
 "use client";
 
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect, SyntheticEvent } from "react";
 import { Button } from "@/components/ui/button";
-import { ZoomIn, ZoomOut, RotateCcw, Moon, Sun, Crop, Download, X, Wand2, Maximize2, Minimize2, ChevronLeft, ChevronRight, Move, Timer } from "lucide-react";
+import {
+  ZoomIn,
+  ZoomOut,
+  RotateCcw,
+  Moon,
+  Sun,
+  Crop,
+  Download,
+  X,
+  Wand2,
+  Maximize2,
+  Minimize2,
+  ChevronLeft,
+  ChevronRight,
+  Move,
+  Timer,
+} from "lucide-react";
 import ReactCrop, { Crop as CropType, PixelCrop } from "react-image-crop";
 import "react-image-crop/dist/ReactCrop.css";
 import { useTheme } from "next-themes";
@@ -12,7 +28,9 @@ interface TranscriptionImageViewerProps {
   images: { src: string; alt: string }[];
 }
 
-export function TranscriptionImageViewer({ images }: TranscriptionImageViewerProps) {
+export function TranscriptionImageViewer({
+  images,
+}: TranscriptionImageViewerProps) {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [zoom, setZoom] = useState(1);
   const [pan, setPan] = useState({ x: 0, y: 0 });
@@ -35,11 +53,11 @@ export function TranscriptionImageViewer({ images }: TranscriptionImageViewerPro
   const imgRef = useRef<HTMLImageElement>(null);
   const { resolvedTheme } = useTheme();
 
-  const currentImage = images[currentIndex] || { src: '', alt: '' };
+  const currentImage = images[currentIndex] || { src: "", alt: "" };
 
   // Load metronome position from local storage
   useEffect(() => {
-    const savedPos = localStorage.getItem('metronome-position');
+    const savedPos = localStorage.getItem("metronome-position");
     if (savedPos) {
       try {
         setMetronomePosition(JSON.parse(savedPos));
@@ -51,7 +69,7 @@ export function TranscriptionImageViewer({ images }: TranscriptionImageViewerPro
 
   // Initialize dark mode based on global theme
   useEffect(() => {
-    if (resolvedTheme === 'dark') {
+    if (resolvedTheme === "dark") {
       setIsDarkMode(true);
     } else {
       setIsDarkMode(false);
@@ -63,20 +81,21 @@ export function TranscriptionImageViewer({ images }: TranscriptionImageViewerPro
     const handleFullscreenChange = () => {
       setIsFullscreen(!!document.fullscreenElement);
     };
-    document.addEventListener('fullscreenchange', handleFullscreenChange);
-    return () => document.removeEventListener('fullscreenchange', handleFullscreenChange);
+    document.addEventListener("fullscreenchange", handleFullscreenChange);
+    return () =>
+      document.removeEventListener("fullscreenchange", handleFullscreenChange);
   }, []);
 
   // Keyboard navigation
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (isCropMode) return;
-      if (e.key === 'ArrowRight') handleNext();
-      if (e.key === 'ArrowLeft') handlePrev();
-      if (e.key === 'Escape' && isFullscreen) document.exitFullscreen();
+      if (e.key === "ArrowRight") handleNext();
+      if (e.key === "ArrowLeft") handlePrev();
+      if (e.key === "Escape" && isFullscreen) document.exitFullscreen();
     };
-    window.addEventListener('keydown', handleKeyDown);
-    return () => window.removeEventListener('keydown', handleKeyDown);
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
   }, [isCropMode, isFullscreen, currentIndex, images.length]);
 
   const handleZoomIn = () => setZoom((prev) => Math.min(prev + 0.25, 3));
@@ -101,7 +120,7 @@ export function TranscriptionImageViewer({ images }: TranscriptionImageViewerPro
 
   const handlePrev = () => {
     if (currentIndex > 0) {
-      setCurrentIndex(prev => prev - 1);
+      setCurrentIndex((prev) => prev - 1);
       setZoom(1);
       setPan({ x: 0, y: 0 });
       setCrop(undefined);
@@ -110,7 +129,7 @@ export function TranscriptionImageViewer({ images }: TranscriptionImageViewerPro
 
   const handleNext = () => {
     if (currentIndex < images.length - 1) {
-      setCurrentIndex(prev => prev + 1);
+      setCurrentIndex((prev) => prev + 1);
       setZoom(1);
       setPan({ x: 0, y: 0 });
       setCrop(undefined);
@@ -138,7 +157,7 @@ export function TranscriptionImageViewer({ images }: TranscriptionImageViewerPro
 
   const toggleCropMode = () => {
     if (isFullscreen) {
-      document.exitFullscreen().catch(() => { });
+      document.exitFullscreen().catch(() => {});
     }
     setIsCropMode(!isCropMode);
     setCrop(undefined);
@@ -152,19 +171,23 @@ export function TranscriptionImageViewer({ images }: TranscriptionImageViewerPro
   // Metronome Drag Handlers
   const handleMetronomePointerDown = (e: React.PointerEvent) => {
     e.stopPropagation(); // Prevent image dragging
-    
+
     // Check if target is interactive or inside an interactive element
     const target = e.target as HTMLElement;
-    if (target.closest('button') || target.closest('[role="slider"]') || target.closest('.no-drag')) {
-        return;
+    if (
+      target.closest("button") ||
+      target.closest('[role="slider"]') ||
+      target.closest(".no-drag")
+    ) {
+      return;
     }
 
     setIsDraggingMetronome(true);
     // Calculate offset from current position
     // We want to track the delta, so we record where the click happened relative to the *current* x/y
     setMetronomeDragStart({
-        x: e.clientX - metronomePosition.x,
-        y: e.clientY - metronomePosition.y
+      x: e.clientX - metronomePosition.x,
+      y: e.clientY - metronomePosition.y,
     });
     (e.target as Element).setPointerCapture(e.pointerId);
   };
@@ -173,19 +196,22 @@ export function TranscriptionImageViewer({ images }: TranscriptionImageViewerPro
     if (!isDraggingMetronome) return;
     e.stopPropagation();
     setMetronomePosition({
-        x: e.clientX - metronomeDragStart.x,
-        y: e.clientY - metronomeDragStart.y
+      x: e.clientX - metronomeDragStart.x,
+      y: e.clientY - metronomeDragStart.y,
     });
   };
 
   const handleMetronomePointerUp = (e: React.PointerEvent) => {
-    if (isDraggingMetronome) { // Only save if we were dragging metronome
-         setIsDraggingMetronome(false);
-         (e.target as Element).releasePointerCapture(e.pointerId);
-         localStorage.setItem('metronome-position', JSON.stringify(metronomePosition));
+    if (isDraggingMetronome) {
+      // Only save if we were dragging metronome
+      setIsDraggingMetronome(false);
+      (e.target as Element).releasePointerCapture(e.pointerId);
+      localStorage.setItem(
+        "metronome-position",
+        JSON.stringify(metronomePosition)
+      );
     }
   };
-
 
   // Panning Event Handlers
   const handlePointerDown = (e: React.PointerEvent) => {
@@ -200,7 +226,7 @@ export function TranscriptionImageViewer({ images }: TranscriptionImageViewerPro
     if (!isDragging || isCropMode) return;
     setPan({
       x: e.clientX - dragStart.x,
-      y: e.clientY - dragStart.y
+      y: e.clientY - dragStart.y,
     });
   };
 
@@ -237,19 +263,19 @@ export function TranscriptionImageViewer({ images }: TranscriptionImageViewerPro
     );
 
     if (isDarkMode) {
-      ctx.globalCompositeOperation = 'difference';
-      ctx.fillStyle = 'white';
+      ctx.globalCompositeOperation = "difference";
+      ctx.fillStyle = "white";
       ctx.fillRect(0, 0, canvas.width, canvas.height);
-      ctx.globalCompositeOperation = 'source-over';
+      ctx.globalCompositeOperation = "source-over";
     }
 
     const blob = await new Promise<Blob | null>((resolve) =>
-      canvas.toBlob(resolve, 'image/png')
+      canvas.toBlob(resolve, "image/png")
     );
 
     if (blob) {
       const url = URL.createObjectURL(blob);
-      const link = document.createElement('a');
+      const link = document.createElement("a");
       link.download = `transcription-p${currentIndex + 1}-snippet.png`;
       link.href = url;
       link.click();
@@ -257,11 +283,26 @@ export function TranscriptionImageViewer({ images }: TranscriptionImageViewerPro
     }
   };
 
-  return (
-    <div ref={containerRef} className={`space-y-4 my-8 border rounded-lg p-4 bg-background ${isFullscreen ? 'fixed inset-0 z-50 overflow-auto flex flex-col justify-center' : ''}`}>
+  const handleImageLoad = (e: SyntheticEvent<HTMLImageElement>) => {
+    const { naturalWidth } = e.currentTarget;
+    if (naturalWidth < 1100) {
+      setIsSharpened(true);
+    } else {
+      setIsSharpened(false);
+    }
+  };
 
+  return (
+    <div
+      ref={containerRef}
+      className={`space-y-4 my-8 border rounded-lg p-4 bg-background ${
+        isFullscreen
+          ? "fixed inset-0 z-50 overflow-auto flex flex-col justify-center"
+          : ""
+      }`}
+    >
       {/* SVG Filter Definition */}
-      <svg style={{ display: 'none' }}>
+      <svg style={{ display: "none" }}>
         <defs>
           <filter id="sharpen">
             <feConvolveMatrix
@@ -274,37 +315,73 @@ export function TranscriptionImageViewer({ images }: TranscriptionImageViewerPro
       </svg>
 
       <div className="flex flex-wrap items-center justify-between gap-4 border-b pb-4 shrink-0">
-
         {/* Left Controls: Zoom & Pagination */}
         <div className="flex items-center gap-2">
           {images.length > 1 && (
             <div className="flex items-center gap-1 mr-2 bg-muted/30 p-1 rounded-md">
-              <Button variant="ghost" size="icon" onClick={handlePrev} disabled={currentIndex === 0 || isCropMode} title="Previous Page">
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={handlePrev}
+                disabled={currentIndex === 0 || isCropMode}
+                title="Previous Page"
+              >
                 <ChevronLeft className="h-4 w-4" />
               </Button>
               <span className="text-sm font-medium w-16 text-center tabular-nums">
                 {currentIndex + 1} / {images.length}
               </span>
-              <Button variant="ghost" size="icon" onClick={handleNext} disabled={currentIndex === images.length - 1 || isCropMode} title="Next Page">
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={handleNext}
+                disabled={currentIndex === images.length - 1 || isCropMode}
+                title="Next Page"
+              >
                 <ChevronRight className="h-4 w-4" />
               </Button>
             </div>
           )}
 
           <div className="flex items-center gap-1">
-            <Button variant="outline" size="icon" onClick={handleZoomOut} disabled={isCropMode} title="Zoom Out">
+            <Button
+              variant="outline"
+              size="icon"
+              onClick={handleZoomOut}
+              disabled={isCropMode}
+              title="Zoom Out"
+            >
               <ZoomOut className="h-4 w-4" />
             </Button>
-            <span className="w-12 text-center text-sm tabular-nums">{Math.round(zoom * 100)}%</span>
-            <Button variant="outline" size="icon" onClick={handleZoomIn} disabled={isCropMode} title="Zoom In">
+            <span className="w-12 text-center text-sm tabular-nums">
+              {Math.round(zoom * 100)}%
+            </span>
+            <Button
+              variant="outline"
+              size="icon"
+              onClick={handleZoomIn}
+              disabled={isCropMode}
+              title="Zoom In"
+            >
               <ZoomIn className="h-4 w-4" />
             </Button>
 
-            <Button variant="ghost" size="icon" onClick={handleRecenter} disabled={isCropMode || (pan.x === 0 && pan.y === 0)} title="Recenter Image">
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={handleRecenter}
+              disabled={isCropMode || (pan.x === 0 && pan.y === 0)}
+              title="Recenter Image"
+            >
               <Move className="h-4 w-4" />
             </Button>
 
-            <Button variant="ghost" size="icon" onClick={handleReset} title="Reset View">
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={handleReset}
+              title="Reset View"
+            >
               <RotateCcw className="h-4 w-4" />
             </Button>
           </div>
@@ -328,7 +405,11 @@ export function TranscriptionImageViewer({ images }: TranscriptionImageViewerPro
             onClick={toggleDarkMode}
             title="Toggle Dark Mode"
           >
-            {isDarkMode ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
+            {isDarkMode ? (
+              <Sun className="h-4 w-4" />
+            ) : (
+              <Moon className="h-4 w-4" />
+            )}
           </Button>
 
           <Button
@@ -337,7 +418,11 @@ export function TranscriptionImageViewer({ images }: TranscriptionImageViewerPro
             onClick={toggleFullscreen}
             title="Toggle Fullscreen"
           >
-            {isFullscreen ? <Minimize2 className="h-4 w-4" /> : <Maximize2 className="h-4 w-4" />}
+            {isFullscreen ? (
+              <Minimize2 className="h-4 w-4" />
+            ) : (
+              <Maximize2 className="h-4 w-4" />
+            )}
           </Button>
 
           <Button
@@ -352,15 +437,29 @@ export function TranscriptionImageViewer({ images }: TranscriptionImageViewerPro
           <div className="h-6 w-px bg-border mx-2" />
 
           {!isCropMode ? (
-            <Button variant="outline" onClick={toggleCropMode} className="gap-2">
+            <Button
+              variant="outline"
+              onClick={toggleCropMode}
+              className="gap-2"
+            >
               <Crop className="h-4 w-4" /> Crop
             </Button>
           ) : (
             <div className="flex items-center gap-2">
-              <Button variant="ghost" size="icon" onClick={toggleCropMode} title="Cancel Crop">
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={toggleCropMode}
+                title="Cancel Crop"
+              >
                 <X className="h-4 w-4" />
               </Button>
-              <Button variant="default" onClick={downloadCroppedImage} disabled={!completedCrop} className="gap-2">
+              <Button
+                variant="default"
+                onClick={downloadCroppedImage}
+                disabled={!completedCrop}
+                className="gap-2"
+              >
                 <Download className="h-4 w-4" /> Export
               </Button>
             </div>
@@ -370,26 +469,30 @@ export function TranscriptionImageViewer({ images }: TranscriptionImageViewerPro
 
       {isMetronomeVisible && (
         <div className="sticky top-4 z-40 flex justify-end px-4 h-0 pointer-events-none">
-            <div
-                className="pointer-events-auto w-64 animate-in fade-in slide-in-from-top-4 duration-200 cursor-move touch-none"
-                style={{
-                     transform: `translate(${metronomePosition.x}px, ${metronomePosition.y}px)`
-                }}
-                onPointerDown={handleMetronomePointerDown}
-                onPointerMove={handleMetronomePointerMove}
-                onPointerUp={handleMetronomePointerUp}
-                onPointerLeave={handleMetronomePointerUp}
-            >
-                <div className="shadow-2xl">
-                     <Metronome compact />
-                </div>
+          <div
+            className="pointer-events-auto w-64 animate-in fade-in slide-in-from-top-4 duration-200 cursor-move touch-none"
+            style={{
+              transform: `translate(${metronomePosition.x}px, ${metronomePosition.y}px)`,
+            }}
+            onPointerDown={handleMetronomePointerDown}
+            onPointerMove={handleMetronomePointerMove}
+            onPointerUp={handleMetronomePointerUp}
+            onPointerLeave={handleMetronomePointerUp}
+          >
+            <div className="shadow-2xl">
+              <Metronome compact />
             </div>
+          </div>
         </div>
       )}
 
       <div
-        className={`relative overflow-hidden flex justify-center bg-muted/20 rounded p-4 touch-none ${isFullscreen ? 'flex-1 items-center bg-black/90' : 'min-h-[200px]'}`}
-        style={{ cursor: isCropMode ? 'default' : isDragging ? 'grabbing' : 'grab' }}
+        className={`relative overflow-hidden flex justify-center bg-muted/20 rounded p-4 touch-none ${
+          isFullscreen ? "flex-1 items-center bg-black/90" : "min-h-[200px]"
+        }`}
+        style={{
+          cursor: isCropMode ? "default" : isDragging ? "grabbing" : "grab",
+        }}
         onPointerDown={handlePointerDown}
         onPointerMove={handlePointerMove}
         onPointerUp={handlePointerUp}
@@ -398,12 +501,19 @@ export function TranscriptionImageViewer({ images }: TranscriptionImageViewerPro
         <div
           style={{
             transform: `translate(${pan.x}px, ${pan.y}px) scale(${zoom})`,
-            transformOrigin: 'top center',
-            transition: isDragging ? 'none' : isCropMode ? 'none' : 'transform 0.2s ease-out',
-            filter: [
-              isDarkMode ? 'invert(1) hue-rotate(180deg)' : '',
-              isSharpened ? 'url(#sharpen)' : ''
-            ].filter(Boolean).join(' ') || 'none'
+            transformOrigin: "top center",
+            transition: isDragging
+              ? "none"
+              : isCropMode
+              ? "none"
+              : "transform 0.2s ease-out",
+            filter:
+              [
+                isDarkMode ? "invert(1) hue-rotate(180deg)" : "",
+                isSharpened ? "url(#sharpen)" : "",
+              ]
+                .filter(Boolean)
+                .join(" ") || "none",
           }}
           className="inline-block"
         >
@@ -418,7 +528,8 @@ export function TranscriptionImageViewer({ images }: TranscriptionImageViewerPro
                 src={currentImage.src}
                 alt={currentImage.alt}
                 className="max-w-full h-auto shadow-sm"
-                style={{ display: 'block' }} // Remove bottom gap
+                style={{ display: "block" }} // Remove bottom gap
+                onLoad={handleImageLoad}
               />
             </ReactCrop>
           ) : (
@@ -427,6 +538,7 @@ export function TranscriptionImageViewer({ images }: TranscriptionImageViewerPro
               alt={currentImage.alt}
               className="max-w-full h-auto shadow-sm pointer-events-none select-none"
               draggable={false}
+              onLoad={handleImageLoad}
             />
           )}
         </div>
@@ -437,8 +549,6 @@ export function TranscriptionImageViewer({ images }: TranscriptionImageViewerPro
           Drag to select an area to export.
         </p>
       )}
-
-
     </div>
   );
 }
