@@ -74,6 +74,7 @@ const PRESETS = [
     id: "cKPXX08Q-HI",
   },
   { label: "Rush - YYZ", id: "ftVTWDrtrlc" },
+  { label: "Primus - My Name Is Mud", id: "953PkxFNiko" },
 ];
 
 export default function VideoLooper() {
