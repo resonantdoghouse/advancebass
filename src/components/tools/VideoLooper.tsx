@@ -71,9 +71,9 @@ const PRESETS = [
   { label: "Michael Jackson - Billie Jean (Louis Johnson)", id: "Zi_XLOBDo_Y" },
   { label: "Richard Bona - Amazing Bass Solo", id: "6PnYOZyRL74" },
   {
-    label: "Oteil Burbridge - Aquarium Rescue Unit (Live 1996)",
     id: "cKPXX08Q-HI",
   },
+  { label: "Rush - YYZ", id: "ftVTWDrtrlc" },
 ];
 
 export default function VideoLooper() {
