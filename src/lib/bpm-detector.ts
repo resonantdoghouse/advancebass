@@ -129,8 +129,9 @@ export class BPMDetector {
       }
       const avg = sum / this.energyHistory.length;
       
-      // Threshold should be somewhere between avg and max
-      // e.g. 1.3x average, but at least 0.05 absolute
-      return Math.max(0.05, avg * 1.3);
+      // Reduce threshold sensitivity: 
+      // Was 1.3, let's try 1.15 to catch more beats in softer music
+      // But keep absolute min higher (0.05) to avoid noise
+      return Math.max(0.04, avg * 1.15);
     }
 }

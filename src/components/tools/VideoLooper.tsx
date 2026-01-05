@@ -95,6 +95,9 @@ export default function VideoLooper() {
 
   useEffect(() => {
     setIsMounted(true);
+    // Randomize initial video
+    const randomPreset = PRESETS[Math.floor(Math.random() * PRESETS.length)];
+    setVideoId(randomPreset.id);
   }, []);
 
   // Use a ref to access the player instance
@@ -705,40 +708,46 @@ export default function VideoLooper() {
             <CardContent className="space-y-4">
               {isAnalyzing ? (
                 <div className="space-y-4">
-                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                    <div className="flex flex-col items-center justify-center p-6 bg-background rounded-lg border shadow-inner">
-                      <span className="text-xs text-muted-foreground uppercase tracking-widest">
-                        Detected Note
+                  <div className="grid grid-cols-3 gap-2">
+                    <div className="flex flex-col items-center justify-center p-4 bg-background rounded-lg border shadow-inner overflow-hidden">
+                      <span className="text-[10px] text-muted-foreground uppercase tracking-widest truncate w-full text-center">
+                        Note
                       </span>
-                      <div className="text-4xl font-black text-primary my-2 tabular-nums">
+                      <div
+                        className="text-2xl md:text-3xl font-black text-primary my-1 tabular-nums truncate w-full text-center"
+                        title={detectedNote}
+                      >
                         {detectedNote}
                       </div>
-                      <div className="text-xs font-mono text-muted-foreground block">
+                      <div className="text-[10px] font-mono text-muted-foreground block truncate w-full text-center">
                         {detectedFreq > 0 ? `${detectedFreq} Hz` : "--"}
                       </div>
                     </div>
 
-                    <div className="flex flex-col items-center justify-center p-6 bg-background rounded-lg border shadow-inner">
-                      <span className="text-xs text-muted-foreground uppercase tracking-widest">
-                        Detected Chord
+                    <div className="flex flex-col items-center justify-center p-4 bg-background rounded-lg border shadow-inner overflow-hidden">
+                      <span className="text-[10px] text-muted-foreground uppercase tracking-widest truncate w-full text-center">
+                        Chord
                       </span>
-                      <div className="text-4xl font-black text-secondary-foreground my-2 tabular-nums">
+                      <div
+                        className="text-xl md:text-3xl font-black text-secondary-foreground my-1 tabular-nums truncate w-full text-center"
+                        title={detectedChord}
+                      >
                         {detectedChord}
                       </div>
-                      <div className="text-xs font-mono text-muted-foreground block">
+                      <div className="text-[10px] font-mono text-muted-foreground block">
                         &nbsp;
                       </div>
                     </div>
 
-                    <div className="flex flex-col items-center justify-center p-6 bg-background rounded-lg border shadow-inner">
-                      <span className="text-xs text-muted-foreground uppercase tracking-widest">
-                        Detected BPM
+                    <div className="flex flex-col items-center justify-center p-4 bg-background rounded-lg border shadow-inner overflow-hidden">
+                      <span className="text-[10px] text-muted-foreground uppercase tracking-widest truncate w-full text-center">
+                        BPM
                       </span>
-                      <div className="text-4xl font-black text-accent-foreground my-2 tabular-nums">
+                      <div className="text-2xl md:text-3xl font-black text-accent-foreground my-1 tabular-nums truncate w-full text-center">
                         {detectedBpm > 0 ? detectedBpm : "--"}
                       </div>
-                      <div className="text-xs font-mono text-muted-foreground block">
-                        Est. Tempo
+                      <div className="text-[10px] font-mono text-muted-foreground block">
+                        Tempo
                       </div>
                     </div>
                   </div>
