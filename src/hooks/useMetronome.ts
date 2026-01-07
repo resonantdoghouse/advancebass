@@ -144,6 +144,8 @@ export const useMetronome = () => {
     }
   }, []);
 
+  const schedulerRef = useRef<() => void>(() => {});
+
   const scheduler = useCallback(() => {
     if (!audioContext.current) return;
 
@@ -154,8 +156,12 @@ export const useMetronome = () => {
       scheduleNote(tickRef.current, nextNoteTime.current);
       nextNote();
     }
-    timerID.current = window.setTimeout(scheduler, lookahead);
+    timerID.current = window.setTimeout(() => schedulerRef.current(), lookahead);
   }, [nextNote, scheduleNote]);
+
+  useEffect(() => {
+    schedulerRef.current = scheduler;
+  }, [scheduler]);
 
   const start = useCallback(() => {
     if (isPlaying) return;

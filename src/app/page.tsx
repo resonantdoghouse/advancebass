@@ -12,17 +12,10 @@ import {
   Zap,
   FileText,
 } from "lucide-react";
-import { getAllArticles } from "@/lib/data";
+import { getAllArticles, Article } from "@/lib/data";
 import { FEATURED_TRANSCRIPTION_SLUGS } from "@/lib/featured";
 import { TranscriptionCard } from "@/components/content/TranscriptionCard";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
-
+import { ToolCard } from "@/components/ui/ToolCard";
 import { Metadata } from "next";
 
 export const metadata: Metadata = {
@@ -35,7 +28,7 @@ export default async function Home() {
   const allArticles = await getAllArticles();
   const featuredArticles = FEATURED_TRANSCRIPTION_SLUGS.map((slug) =>
     allArticles.find((article) => article.slug === slug)
-  ).filter((article) => article !== undefined); // Simple way to filter out not founds securely
+  ).filter((article): article is Article => article !== undefined);
 
   return (
     <>
@@ -120,101 +113,48 @@ export default async function Home() {
         </div>
 
         <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
-          <Link href="/tools/metronome">
-            <Card className="h-full hover:bg-muted/50 transition-colors cursor-pointer border-primary/20 group">
-              <CardHeader>
-                <Timer className="w-10 h-10 mb-2 text-primary group-hover:scale-110 transition-transform" />
-                <CardTitle>Metronome</CardTitle>
-                <CardDescription>Develop Internal Clock</CardDescription>
-              </CardHeader>
-              <CardContent>
-                <p className="text-sm text-muted-foreground">
-                  Advanced metronome with subdivision controls, accent patterns,
-                  and tap tempo.
-                </p>
-              </CardContent>
-            </Card>
-          </Link>
-
-          <Link href="/tools/tuner">
-            <Card className="h-full hover:bg-muted/50 transition-colors cursor-pointer border-primary/20 group">
-              <CardHeader>
-                <Mic2 className="w-10 h-10 mb-2 text-primary group-hover:scale-110 transition-transform" />
-                <CardTitle>Tuner</CardTitle>
-                <CardDescription>Precision Tuning</CardDescription>
-              </CardHeader>
-              <CardContent>
-                <p className="text-sm text-muted-foreground">
-                  Chromatic tuner with high-accuracy frequency detection for 4,
-                  5, and 6 string basses.
-                </p>
-              </CardContent>
-            </Card>
-          </Link>
-
-          <Link href="/tools/scale-visualizer">
-            <Card className="h-full hover:bg-muted/50 transition-colors cursor-pointer border-primary/20 group">
-              <CardHeader>
-                <Grid className="w-10 h-10 mb-2 text-primary group-hover:scale-110 transition-transform" />
-                <CardTitle>Scale Visualizer</CardTitle>
-                <CardDescription>Fretboard Mastery</CardDescription>
-              </CardHeader>
-              <CardContent>
-                <p className="text-sm text-muted-foreground">
-                  Interactive fretboard map for all modes, scales, and keys.
-                  perfect for memorization.
-                </p>
-              </CardContent>
-            </Card>
-          </Link>
-
-          <Link href="/tools/circle-of-fifths">
-            <Card className="h-full hover:bg-muted/50 transition-colors cursor-pointer border-primary/20 group">
-              <CardHeader>
-                <Disc className="w-10 h-10 mb-2 text-primary group-hover:scale-110 transition-transform" />
-                <CardTitle>Circle of Fifths</CardTitle>
-                <CardDescription>Theory Decoder</CardDescription>
-              </CardHeader>
-              <CardContent>
-                <p className="text-sm text-muted-foreground">
-                  Visual reference for key signatures, relative minors, and
-                  harmonic progression.
-                </p>
-              </CardContent>
-            </Card>
-          </Link>
-
-          <Link href="/tools/arpeggio-visualizer">
-            <Card className="h-full hover:bg-muted/50 transition-colors cursor-pointer border-primary/20 group">
-              <CardHeader>
-                <Music2 className="w-10 h-10 mb-2 text-primary group-hover:scale-110 transition-transform" />
-                <CardTitle>Arpeggios</CardTitle>
-                <CardDescription>Chord Tones</CardDescription>
-              </CardHeader>
-              <CardContent>
-                <p className="text-sm text-muted-foreground">
-                  Map chord tones across the neck. Essential for walking bass
-                  lines and improvisation.
-                </p>
-              </CardContent>
-            </Card>
-          </Link>
-
-          <Link href="/tools/video-looper">
-            <Card className="h-full bg-primary/5 hover:bg-primary/10 border-primary/40 transition-colors cursor-pointer group">
-              <CardHeader>
-                <Repeat className="w-10 h-10 mb-2 text-primary group-hover:scale-110 transition-transform" />
-                <CardTitle>Video Looper</CardTitle>
-                <CardDescription>Practice Assistant</CardDescription>
-              </CardHeader>
-              <CardContent>
-                <p className="text-sm text-muted-foreground">
-                  The ultimate practice tool. Loop, slow down, and analyze
-                  YouTube videos.
-                </p>
-              </CardContent>
-            </Card>
-          </Link>
+          <ToolCard
+            href="/tools/metronome"
+            title="Metronome"
+            subtitle="Develop Internal Clock"
+            icon={Timer}
+            description="Advanced metronome with subdivision controls, accent patterns, and tap tempo."
+          />
+          <ToolCard
+            href="/tools/tuner"
+            title="Tuner"
+            subtitle="Precision Tuning"
+            icon={Mic2}
+            description="Chromatic tuner with high-accuracy frequency detection for 4, 5, and 6 string basses."
+          />
+          <ToolCard
+            href="/tools/scale-visualizer"
+            title="Scale Visualizer"
+            subtitle="Fretboard Mastery"
+            icon={Grid}
+            description="Interactive fretboard map for all modes, scales, and keys. perfect for memorization."
+          />
+          <ToolCard
+            href="/tools/circle-of-fifths"
+            title="Circle of Fifths"
+            subtitle="Theory Decoder"
+            icon={Disc}
+            description="Visual reference for key signatures, relative minors, and harmonic progression."
+          />
+          <ToolCard
+            href="/tools/arpeggio-visualizer"
+            title="Arpeggios"
+            subtitle="Chord Tones"
+            icon={Music2}
+            description="Map chord tones across the neck. Essential for walking bass lines and improvisation."
+          />
+          <ToolCard
+            href="/tools/video-looper"
+            title="Video Looper"
+            subtitle="Practice Assistant"
+            icon={Repeat}
+            description="The ultimate practice tool. Loop, slow down, and analyze YouTube videos."
+          />
         </div>
       </section>
 
@@ -302,7 +242,7 @@ export default async function Home() {
 
         <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
           {featuredArticles.map((article) => (
-            <TranscriptionCard key={article.id} article={article as any} />
+            <TranscriptionCard key={article.id} article={article} />
           ))}
         </div>
 

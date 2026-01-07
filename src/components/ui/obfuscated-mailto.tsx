@@ -2,37 +2,45 @@
 
 import { useEffect, useState, AnchorHTMLAttributes } from "react";
 
-interface ObfuscatedMailtoProps extends AnchorHTMLAttributes<HTMLAnchorElement> {
-    user: string;
-    domain: string;
-    subject?: string;
+interface ObfuscatedMailtoProps
+  extends AnchorHTMLAttributes<HTMLAnchorElement> {
+  user: string;
+  domain: string;
+  subject?: string;
 }
 
 /**
  * Obfuscates email addresses by constructing the mailto link on the client side.
  * This helps prevent simple scrapers from harvesting the email from the static HTML.
  */
-export function ObfuscatedMailto({ user, domain, subject, children, className, ...props }: ObfuscatedMailtoProps) {
-    const [href, setHref] = useState("#");
+export function ObfuscatedMailto({
+  user,
+  domain,
+  subject,
+  children,
+  className,
+  ...props
+}: ObfuscatedMailtoProps) {
+  const [isMounted, setIsMounted] = useState(false);
 
-    useEffect(() => {
-        const email = `${user}@${domain}`;
-        const subjectParam = subject ? `?subject=${encodeURIComponent(subject)}` : "";
-        setHref(`mailto:${email}${subjectParam}`);
-    }, [user, domain, subject]);
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
 
-    const handleClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
-        if (href === "#") {
-            e.preventDefault();
-            const email = `${user}@${domain}`;
-            const subjectParam = subject ? `?subject=${encodeURIComponent(subject)}` : "";
-            window.location.href = `mailto:${email}${subjectParam}`;
-        }
-    };
+  const email = `${user}@${domain}`;
+  const subjectParam = subject ? `?subject=${encodeURIComponent(subject)}` : "";
+  const href = isMounted ? `mailto:${email}${subjectParam}` : "#";
 
-    return (
-        <a href={href} onClick={handleClick} className={className} {...props}>
-            {children || "Contact Me"}
-        </a>
-    );
+  const handleClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
+    if (!isMounted) {
+      e.preventDefault();
+      window.location.href = `mailto:${email}${subjectParam}`;
+    }
+  };
+
+  return (
+    <a href={href} onClick={handleClick} className={className} {...props}>
+      {children || "Contact Me"}
+    </a>
+  );
 }

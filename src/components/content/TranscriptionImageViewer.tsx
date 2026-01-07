@@ -86,6 +86,24 @@ export function TranscriptionImageViewer({
       document.removeEventListener("fullscreenchange", handleFullscreenChange);
   }, []);
 
+  const handlePrev = () => {
+    if (currentIndex > 0) {
+      setCurrentIndex((prev) => prev - 1);
+      setZoom(1);
+      setPan({ x: 0, y: 0 });
+      setCrop(undefined);
+    }
+  };
+
+  const handleNext = () => {
+    if (currentIndex < images.length - 1) {
+      setCurrentIndex((prev) => prev + 1);
+      setZoom(1);
+      setPan({ x: 0, y: 0 });
+      setCrop(undefined);
+    }
+  };
+
   // Keyboard navigation
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -96,7 +114,7 @@ export function TranscriptionImageViewer({
     };
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [isCropMode, isFullscreen, currentIndex, images.length]);
+  }, [isCropMode, isFullscreen, currentIndex, images.length]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const handleZoomIn = () => setZoom((prev) => Math.min(prev + 0.25, 3));
   const handleZoomOut = () => {
@@ -116,24 +134,6 @@ export function TranscriptionImageViewer({
 
   const handleRecenter = () => {
     setPan({ x: 0, y: 0 });
-  };
-
-  const handlePrev = () => {
-    if (currentIndex > 0) {
-      setCurrentIndex((prev) => prev - 1);
-      setZoom(1);
-      setPan({ x: 0, y: 0 });
-      setCrop(undefined);
-    }
-  };
-
-  const handleNext = () => {
-    if (currentIndex < images.length - 1) {
-      setCurrentIndex((prev) => prev + 1);
-      setZoom(1);
-      setPan({ x: 0, y: 0 });
-      setCrop(undefined);
-    }
   };
 
   const toggleDarkMode = () => setIsDarkMode(!isDarkMode);
@@ -523,6 +523,7 @@ export function TranscriptionImageViewer({
               onChange={(_, percentCrop) => setCrop(percentCrop)}
               onComplete={(c) => setCompletedCrop(c)}
             >
+              {/* eslint-disable-next-line @next/next/no-img-element */}
               <img
                 ref={imgRef}
                 src={currentImage.src}
@@ -533,6 +534,7 @@ export function TranscriptionImageViewer({
               />
             </ReactCrop>
           ) : (
+            /* eslint-disable-next-line @next/next/no-img-element */
             <img
               src={currentImage.src}
               alt={currentImage.alt}

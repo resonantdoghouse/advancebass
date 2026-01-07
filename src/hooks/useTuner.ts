@@ -21,6 +21,37 @@ export function useTuner() {
   const [isPlayingTone, setIsPlayingTone] = useState(false);
   const toneTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
+  const updatePitchRef = useRef<() => void>(() => {});
+
+  const updatePitch = useCallback(() => {
+    if (!analyserRef.current || !audioContextRef.current) return;
+
+    const bufferLength = analyserRef.current.fftSize;
+    const buffer = new Float32Array(bufferLength);
+    analyserRef.current.getFloatTimeDomainData(buffer);
+
+    // Calculate volume roughly for UI feedback
+    let sum = 0;
+    for (let i = 0; i < buffer.length; i++) {
+        sum += buffer[i] * buffer[i];
+    }
+    const rms = Math.sqrt(sum / buffer.length);
+    setVolume(Math.min(1, rms * 5)); // Amplify a bit for visual
+
+    const frequency = autoCorrelate(buffer, audioContextRef.current.sampleRate);
+    
+    if (frequency !== -1) {
+      const note = getNoteFromFrequency(frequency);
+      setDetectedNote(note);
+    } 
+
+    rafIdRef.current = requestAnimationFrame(() => updatePitchRef.current());
+  }, []);
+
+  useEffect(() => {
+    updatePitchRef.current = updatePitch;
+  }, [updatePitch]);
+
   const startListening = async () => {
     try {
       // Ensure we have a valid, running context
@@ -69,31 +100,6 @@ export function useTuner() {
     setDetectedNote(null);
     setVolume(0);
   };
-
-  const updatePitch = useCallback(() => {
-    if (!analyserRef.current || !audioContextRef.current) return;
-
-    const bufferLength = analyserRef.current.fftSize;
-    const buffer = new Float32Array(bufferLength);
-    analyserRef.current.getFloatTimeDomainData(buffer);
-
-    // Calculate volume roughly for UI feedback
-    let sum = 0;
-    for (let i = 0; i < buffer.length; i++) {
-        sum += buffer[i] * buffer[i];
-    }
-    const rms = Math.sqrt(sum / buffer.length);
-    setVolume(Math.min(1, rms * 5)); // Amplify a bit for visual
-
-    const frequency = autoCorrelate(buffer, audioContextRef.current.sampleRate);
-    
-    if (frequency !== -1) {
-      const note = getNoteFromFrequency(frequency);
-      setDetectedNote(note);
-    } 
-
-    rafIdRef.current = requestAnimationFrame(updatePitch);
-  }, []);
 
   const playTone = (frequency: number) => {
     // Check if context exists and is not closed
