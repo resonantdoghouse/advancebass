@@ -6,7 +6,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { Timer, Music, Repeat } from "lucide-react";
+import { Timer, Music, Repeat, Crosshair } from "lucide-react";
 
 export const metadata = {
   title: "Practice Tools | Advance Bass",
@@ -28,6 +28,27 @@ export default function ToolsPage() {
       </div>
 
       <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+        <Link
+          href="/tools/fretboard-trainer"
+          className="block transition-transform hover:scale-105"
+        >
+          <Card className="h-full hover:border-primary/50 transition-colors border-primary/50 bg-primary/5">
+            <CardHeader>
+              <Crosshair className="h-8 w-8 text-primary mb-2" />
+              <CardTitle>Fretboard Trainer</CardTitle>
+              <CardDescription>
+                Gamified fretboard memorization. Race against the clock to find
+                notes.
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <span className="text-sm font-medium text-primary">
+                Open Tool &rarr;
+              </span>
+            </CardContent>
+          </Card>
+        </Link>
+
         <Link
           href="/tools/metronome"
           className="block transition-transform hover:scale-105"
