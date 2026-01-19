@@ -7,7 +7,7 @@ interface MetronomeState {
   currentBeat: number;
 }
 
-type ToneType = "digital" | "woodblock" | "drum";
+type ToneType = "digital" | "woodblock" | "drum" | "ping" | "blip";
 
 export const useMetronome = () => {
   const [isPlaying, setIsPlaying] = useState(false);
@@ -127,6 +127,14 @@ export const useMetronome = () => {
     } else if (currentTone === "drum") {
       osc.frequency.value = level === 2 ? 150 : 100;
       osc.type = "triangle";
+    } else if (currentTone === "ping") {
+      osc.frequency.value = level === 2 ? 1400 : 1000;
+      osc.type = "sine";
+      duration = 0.08;
+    } else if (currentTone === "blip") {
+      osc.frequency.value = level === 2 ? 600 : 400;
+      osc.type = "sawtooth";
+      duration = 0.05;
     }
 
     const baseVolume = level === 2 ? 1.0 : 0.6;

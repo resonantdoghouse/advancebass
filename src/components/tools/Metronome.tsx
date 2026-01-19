@@ -8,7 +8,6 @@ import {
   Play,
   Square,
   GripHorizontal,
-  Music,
   Rewind,
   FastForward,
   Palette,
@@ -26,7 +25,7 @@ interface MetronomeProps {
   onThemeChange?: (theme: Theme) => void;
 }
 
-const TONE_OPTIONS = ["digital", "woodblock", "drum"] as const;
+const TONE_OPTIONS = ["digital", "woodblock", "drum", "ping", "blip"] as const;
 
 export type Theme =
   | "default"
@@ -206,7 +205,6 @@ export function Metronome({
     setBeatsPerMeasure(Math.min(16, beatsPerMeasure + 1));
   const decreaseNoteValue = () => setNoteValue(Math.max(1, noteValue / 2));
   const increaseNoteValue = () => setNoteValue(Math.min(32, noteValue * 2));
-  const toggleSubdivision = () => setSubdivision(subdivision === 3 ? 1 : 3);
 
   return (
     <Card
@@ -368,17 +366,16 @@ export function Metronome({
                 <label className="text-xs font-semibold text-muted-foreground uppercase">
                   Subdivision
                 </label>
-                <button
-                  onClick={toggleSubdivision}
-                  className={`w-full h-10 rounded-md border px-3 py-2 text-sm flex items-center justify-between transition-all outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 ${
-                    subdivision === 3
-                      ? "bg-primary text-primary-foreground border-primary"
-                      : "bg-black/10 border-white/10 hover:bg-black/20 text-inherit"
-                  }`}
+                <select
+                  className="w-full h-10 rounded-md border border-white/10 bg-black/10 px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 [&>option]:bg-background [&>option]:text-foreground"
+                  value={subdivision}
+                  onChange={(e) => setSubdivision(Number(e.target.value))}
                 >
-                  <Music className="h-4 w-4" />
-                  {subdivision === 3 ? "Triplet" : "Standard"}
-                </button>
+                  <option value={1}>Quarter</option>
+                  <option value={2}>Eighth</option>
+                  <option value={3}>Triplet</option>
+                  <option value={4}>Sixteenth</option>
+                </select>
               </div>
 
               <div className="flex-1 space-y-2">
