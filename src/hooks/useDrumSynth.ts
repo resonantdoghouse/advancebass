@@ -35,12 +35,12 @@ export function useDrumSynth() {
     const loadSamples = async () => {
         const ctx = new (window.AudioContext || (window as any).webkitAudioContext)();
         const urls = {
-            kick: "https://raw.githubusercontent.com/wesbos/JavaScript30/master/01%20-%20JavaScript%20Drum%20Kit/sounds/kick.wav",
-            snare: "https://raw.githubusercontent.com/wesbos/JavaScript30/master/01%20-%20JavaScript%20Drum%20Kit/sounds/snare.wav",
-            hihat: "https://raw.githubusercontent.com/wesbos/JavaScript30/master/01%20-%20JavaScript%20Drum%20Kit/sounds/hihat.wav",
-            openhat: "https://raw.githubusercontent.com/wesbos/JavaScript30/master/01%20-%20JavaScript%20Drum%20Kit/sounds/openhat.wav",
-            ride: "https://raw.githubusercontent.com/wesbos/JavaScript30/master/01%20-%20JavaScript%20Drum%20Kit/sounds/ride.wav",
-            tom: "https://raw.githubusercontent.com/wesbos/JavaScript30/master/01%20-%20JavaScript%20Drum%20Kit/sounds/tom.wav"
+            kick: "/sounds/kick.wav",
+            snare: "/sounds/snare.wav",
+            hihat: "/sounds/hihat.wav",
+            openhat: "/sounds/openhat.wav",
+            ride: "/sounds/ride.wav",
+            tom: "/sounds/tom.wav",
         };
         try {
             const keys = Object.keys(urls) as (keyof typeof urls)[];
