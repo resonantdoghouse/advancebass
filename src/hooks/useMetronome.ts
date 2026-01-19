@@ -13,10 +13,14 @@ export const useMetronome = () => {
   const [isPlaying, setIsPlaying] = useState(false);
   const [bpm, setBpm] = useState(120);
   const [beatsPerMeasure, setBeatsPerMeasure] = useState(4);
+  const [noteValue, setNoteValue] = useState(4);
   const [currentBeat, setCurrentBeat] = useState(0);
   const [subdivision, setSubdivision] = useState(1);
   const [tone, setTone] = useState<ToneType>("digital");
   const [accentPattern, setAccentPattern] = useState<number[]>([2, 1, 1, 1]); // 0: mute, 1: normal, 2: accent
+  const [volume, setVolume] = useState(0.8);
+
+  const tapTimes = useRef<number[]>([]);
 
   const audioContext = useRef<AudioContext | null>(null);
   const nextNoteTime = useRef(0);
@@ -31,6 +35,7 @@ export const useMetronome = () => {
   const subdivisionRef = useRef(subdivision);
   const toneRef = useRef(tone);
   const accentPatternRef = useRef(accentPattern);
+  const volumeRef = useRef(volume);
 
   // Sync refs with state
   useEffect(() => {
@@ -48,6 +53,9 @@ export const useMetronome = () => {
   useEffect(() => {
     accentPatternRef.current = accentPattern;
   }, [accentPattern]);
+  useEffect(() => {
+    volumeRef.current = volume;
+  }, [volume]);
 
   // Sync accent pattern length with beatsPerMeasure
   useEffect(() => {
@@ -81,6 +89,7 @@ export const useMetronome = () => {
     const currentBeatsPerMeasure = beatsPerMeasureRef.current;
     const currentAccentPattern = accentPatternRef.current;
     const currentTone = toneRef.current;
+    const currentVolume = volumeRef.current;
 
     const beatIndex =
       Math.floor(tickIndex / currentSubdivision) % currentBeatsPerMeasure;
@@ -120,14 +129,16 @@ export const useMetronome = () => {
       osc.type = "triangle";
     }
 
-    const volume = level === 2 ? 1.0 : 0.6;
+    const baseVolume = level === 2 ? 1.0 : 0.6;
+    const finalVolume = baseVolume * currentVolume;
+
     if (subIndex !== 0) {
-      envelope.gain.value = 0.3;
+      envelope.gain.value = 0.3 * currentVolume;
     } else {
-      envelope.gain.value = volume;
+      envelope.gain.value = finalVolume;
     }
 
-    envelope.gain.exponentialRampToValueAtTime(volume, time + 0.001);
+    envelope.gain.exponentialRampToValueAtTime(finalVolume, time + 0.001);
     envelope.gain.exponentialRampToValueAtTime(0.001, time + duration);
 
     osc.connect(envelope);
@@ -217,6 +228,32 @@ export const useMetronome = () => {
     });
   };
 
+  const tapTempo = () => {
+    const now = performance.now();
+    const times = tapTimes.current;
+
+    // Reset if > 2 seconds since last tap
+    if (times.length > 0 && now - times[times.length - 1] > 2000) {
+      times.length = 0;
+    }
+
+    times.push(now);
+    if (times.length > 4) times.shift(); // Keep last 4 taps
+
+    if (times.length > 1) {
+      const intervals = [];
+      for (let i = 1; i < times.length; i++) {
+        intervals.push(times[i] - times[i - 1]);
+      }
+      const avgInterval =
+        intervals.reduce((a, b) => a + b, 0) / intervals.length;
+      const newBpm = Math.round(60000 / avgInterval);
+      if (newBpm >= 30 && newBpm <= 300) {
+        setBpm(newBpm);
+      }
+    }
+  };
+
   return {
     isPlaying,
     start,
@@ -225,6 +262,8 @@ export const useMetronome = () => {
     setBpm,
     beatsPerMeasure,
     setBeatsPerMeasure,
+    noteValue,
+    setNoteValue,
     currentBeat,
     subdivision,
     setSubdivision,
@@ -232,5 +271,8 @@ export const useMetronome = () => {
     setTone,
     accentPattern,
     toggleAccent,
+    volume,
+    setVolume,
+    tapTempo,
   };
 };
