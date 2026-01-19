@@ -29,6 +29,7 @@ import {
   DEFAULT_PATTERN,
   PRESETS,
 } from "@/data/drum-patterns";
+import { DrumInfoDialog } from "@/components/tools/drum-machine/DrumInfoDialog";
 
 export function DrumMachine() {
   const {
@@ -212,6 +213,7 @@ export function DrumMachine() {
             <CardTitle className="text-2xl flex items-center gap-2">
               <Volume2 className="h-6 w-6" />
               Drum Machine
+              <DrumInfoDialog />
             </CardTitle>
             <CardDescription>
               Create backing beats with realistic Swing and Sounds.

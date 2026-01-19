@@ -7,28 +7,33 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { Settings } from "lucide-react";
+import { Info } from "lucide-react";
 
-export function SettingsDialog() {
+export function DrumInfoDialog() {
   return (
     <Dialog>
       <DialogTrigger asChild>
-        <Button variant="ghost" size="icon" title="Settings & Info">
-          <Settings className="h-[1.2rem] w-[1.2rem] rotate-0 scale-100 transition-all" />
-          <span className="sr-only">Settings</span>
+        <Button
+          variant="ghost"
+          size="icon"
+          title="Drum Machine Info"
+          className="h-8 w-8"
+        >
+          <Info className="h-4 w-4" />
+          <span className="sr-only">Info</span>
         </Button>
       </DialogTrigger>
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
-          <DialogTitle>Settings & About</DialogTitle>
+          <DialogTitle>Drum Machine Info</DialogTitle>
           <DialogDescription>
-            Configuration and information about Advance Bass.
+            Details about the drum machine and sound sources.
           </DialogDescription>
         </DialogHeader>
 
         <div className="grid gap-4 py-4">
           <div className="space-y-4">
-            <h4 className="font-medium leading-none">Attribution</h4>
+            <h4 className="font-medium leading-none">Sound Attribution</h4>
             <div className="text-sm text-muted-foreground">
               <p>
                 Drum machine sound samples src:{" "}
@@ -46,12 +51,13 @@ export function SettingsDialog() {
           </div>
 
           <div className="space-y-4 pt-4 border-t">
-            <h4 className="font-medium leading-none">About</h4>
+            <h4 className="font-medium leading-none">Usage</h4>
             <div className="text-sm text-muted-foreground">
-              <p>
-                Advance Bass is a collection of tools and resources for bass
-                players, built by a bass player.
-              </p>
+              <ul className="list-disc pl-4 space-y-1">
+                <li>Click grid squares to toggle beats.</li>
+                <li>Adjust Swing to add groove (human feel).</li>
+                <li>Select different kits for various styles.</li>
+              </ul>
             </div>
           </div>
         </div>

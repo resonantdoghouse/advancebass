@@ -1,7 +1,6 @@
 import Link from "next/link";
 import { Music4 } from "lucide-react";
 import { ThemeToggle } from "@/components/ThemeToggle";
-import { SettingsDialog } from "@/components/layout/SettingsDialog";
 
 export function Header() {
   return (
@@ -42,8 +41,7 @@ export function Header() {
               Contact
             </Link>
           </nav>
-          <nav className="flex items-center gap-2">
-            <SettingsDialog />
+          <nav className="flex items-center">
             <ThemeToggle />
           </nav>
         </div>
