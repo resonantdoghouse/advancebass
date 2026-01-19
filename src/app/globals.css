@@ -120,7 +120,7 @@
   --ring: 142 69% 58%;
 }
 
-/* Wood Theme - High Contrast Earth Tones */
+/* Wood Theme */
 [data-theme="wood"] {
   --background: 30 20% 96%; /* Light grainy wood */
   --foreground: 25 35% 15%; /* Deep mahogany text */
@@ -138,12 +138,34 @@
   --accent-foreground: 25 45% 25%;
   --destructive: 0 84.2% 60.2%;
   --destructive-foreground: 0 0% 98%;
-  --border: 25 20% 78%; /* Distinct border */
+  --border: 25 20% 78%;
   --input: 25 20% 78%;
   --ring: 25 45% 30%;
 }
 
-/* Forest Theme - Readable Greens */
+[data-theme="wood"].dark {
+  --background: 25 30% 12%; /* Dark charred wood */
+  --foreground: 30 20% 90%; /* Light Ash */
+  --card: 25 30% 15%;
+  --card-foreground: 30 20% 90%;
+  --popover: 25 30% 12%;
+  --popover-foreground: 30 20% 90%;
+  --primary: 30 40% 50%; /* Golden Oak */
+  --primary-foreground: 25 30% 10%;
+  --secondary: 25 25% 25%;
+  --secondary-foreground: 30 20% 90%;
+  --muted: 25 25% 20%;
+  --muted-foreground: 30 15% 60%;
+  --accent: 25 25% 25%;
+  --accent-foreground: 30 20% 90%;
+  --destructive: 0 62.8% 30.6%;
+  --destructive-foreground: 0 0% 98%;
+  --border: 25 20% 25%;
+  --input: 25 20% 25%;
+  --ring: 30 40% 50%;
+}
+
+/* Forest Theme */
 [data-theme="forest"] {
   --background: 145 15% 97%; /* Very pale mint/mist */
   --foreground: 155 40% 12%; /* Dark Pine */
@@ -166,7 +188,29 @@
   --ring: 150 50% 28%;
 }
 
-/* Marble Theme - Crisp Monochrome */
+[data-theme="forest"].dark {
+  --background: 150 40% 8%; /* Deep Night Forest */
+  --foreground: 145 20% 90%; /* Moonlight */
+  --card: 150 40% 10%;
+  --card-foreground: 145 20% 90%;
+  --popover: 150 40% 8%;
+  --popover-foreground: 145 20% 90%;
+  --primary: 150 50% 45%; /* Bright Fern */
+  --primary-foreground: 150 40% 5%;
+  --secondary: 150 30% 20%;
+  --secondary-foreground: 145 20% 90%;
+  --muted: 150 30% 15%;
+  --muted-foreground: 150 15% 60%;
+  --accent: 150 30% 20%;
+  --accent-foreground: 145 20% 90%;
+  --destructive: 0 62.8% 30.6%;
+  --destructive-foreground: 0 0% 98%;
+  --border: 150 30% 20%;
+  --input: 150 30% 20%;
+  --ring: 150 50% 45%;
+}
+
+/* Marble Theme */
 [data-theme="marble"] {
   --background: 210 10% 98%; /* Cool White */
   --foreground: 210 15% 10%; /* Slate Black */
@@ -187,6 +231,28 @@
   --border: 210 10% 82%; /* Visible grey border */
   --input: 210 10% 82%;
   --ring: 210 10% 25%;
+}
+
+[data-theme="marble"].dark {
+  --background: 210 10% 10%; /* Dark Slate/Marble */
+  --foreground: 210 10% 90%; /* White Marble Text */
+  --card: 210 10% 12%;
+  --card-foreground: 210 10% 90%;
+  --popover: 210 10% 10%;
+  --popover-foreground: 210 10% 90%;
+  --primary: 210 10% 80%; /* Light Grey/White */
+  --primary-foreground: 210 10% 10%;
+  --secondary: 210 10% 20%;
+  --secondary-foreground: 210 10% 90%;
+  --muted: 210 10% 15%;
+  --muted-foreground: 210 10% 60%;
+  --accent: 210 10% 20%;
+  --accent-foreground: 210 10% 90%;
+  --destructive: 0 62.8% 30.6%;
+  --destructive-foreground: 0 0% 98%;
+  --border: 210 10% 25%;
+  --input: 210 10% 25%;
+  --ring: 210 10% 80%;
 }
 
 body {
