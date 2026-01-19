@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { Music4 } from "lucide-react";
 import { ThemeToggle } from "@/components/ThemeToggle";
+import { ThemeSelect } from "@/components/ThemeSelect";
 
 export function Header() {
   return (
@@ -41,7 +42,8 @@ export function Header() {
               Contact
             </Link>
           </nav>
-          <nav className="flex items-center">
+          <nav className="flex items-center gap-2">
+            <ThemeSelect />
             <ThemeToggle />
           </nav>
         </div>

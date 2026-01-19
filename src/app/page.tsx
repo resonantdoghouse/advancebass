@@ -11,11 +11,13 @@ import {
   Repeat,
   Zap,
   FileText,
+  Volume2,
+  Crosshair,
 } from "lucide-react";
 import { getAllArticles, Article } from "@/lib/data";
 import { FEATURED_TRANSCRIPTION_SLUGS } from "@/lib/featured";
 import { TranscriptionCard } from "@/components/content/TranscriptionCard";
-import { ToolCard } from "@/components/ui/ToolCard";
+import { ToolsGallery } from "@/app/tools/ToolsGallery";
 import { Metadata } from "next";
 
 export const metadata: Metadata = {
@@ -27,135 +29,125 @@ export const metadata: Metadata = {
 export default async function Home() {
   const allArticles = await getAllArticles();
   const featuredArticles = FEATURED_TRANSCRIPTION_SLUGS.map((slug) =>
-    allArticles.find((article) => article.slug === slug)
+    allArticles.find((article) => article.slug === slug),
   ).filter((article): article is Article => article !== undefined);
 
   return (
     <>
-      <section className="flex-1 flex flex-col items-center justify-center space-y-10 py-24 px-4 text-center md:py-32 lg:py-40 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-primary/10 via-background to-background">
-        <div className="space-y-4 max-w-3xl">
-          <h1 className="text-4xl font-bold tracking-tighter sm:text-5xl md:text-6xl lg:text-7xl bg-clip-text text-transparent bg-gradient-to-r from-foreground to-foreground/70">
-            Bass Transcriptions &{" "}
-            <span className="text-primary">Practice Tools</span>
-          </h1>
-          <p className="mx-auto max-w-[700px] text-muted-foreground md:text-xl">
-            Professional transcriptions and interactive study tools to master
-            the low end.
-          </p>
-        </div>
-        <div className="space-x-4">
-          <Button asChild size="lg" className="rounded-full">
-            <Link href="/transcriptions">
-              Browse Transcriptions <ArrowRight className="ml-2 h-4 w-4" />
-            </Link>
-          </Button>
+      <section className="relative overflow-hidden py-24 lg:py-32 xl:py-40">
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-indigo-500/20 via-background to-background" />
+        <div className="absolute inset-0 bg-[url('/noise.png')] opacity-20 mix-blend-overlay" />
+
+        <div className="container relative mx-auto px-4 text-center">
+          <div className="mx-auto max-w-4xl space-y-6">
+            <div className="inline-flex items-center rounded-full border border-primary/20 bg-primary/10 px-3 py-1 text-sm font-medium text-primary backdrop-blur-sm">
+              <Zap className="mr-2 h-4 w-4" />
+              <span>New: Interactive Drum Machine & Fretboard Trainer</span>
+            </div>
+
+            <h1 className="text-5xl font-extrabold tracking-tight sm:text-6xl md:text-7xl lg:text-8xl">
+              Master the{" "}
+              <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary via-indigo-400 to-purple-400 animate-gradient-x">
+                Low End
+              </span>
+            </h1>
+
+            <p className="mx-auto max-w-2xl text-lg text-muted-foreground md:text-xl leading-relaxed">
+              The ultimate suite of professional practice tools and
+              transcriptions for the modern bass player.
+            </p>
+
+            <div className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-4">
+              <Button
+                asChild
+                size="lg"
+                className="h-12 rounded-full px-8 text-base shadow-lg shadow-primary/25 hover:shadow-primary/40 transition-shadow"
+              >
+                <Link href="#tools">
+                  Explore Tools <ArrowRight className="ml-2 h-4 w-4" />
+                </Link>
+              </Button>
+              <Button
+                asChild
+                size="lg"
+                variant="outline"
+                className="h-12 rounded-full px-8 text-base border-white/10 bg-white/5 backdrop-blur-sm hover:bg-white/10"
+              >
+                <Link href="/transcriptions">Browse Transcriptions</Link>
+              </Button>
+            </div>
+          </div>
         </div>
       </section>
 
       {/* Feature Spotlight: Video Looper */}
       <section className="container mx-auto px-4 md:px-8 py-16">
-        <div className="relative rounded-3xl overflow-hidden bg-gradient-to-br from-primary/20 via-background to-muted/50 border border-primary/20 shadow-2xl">
-          <div className="absolute inset-0 bg-grid-white/10 [mask-image:linear-gradient(0deg,white,rgba(255,255,255,0.6))]" />
-          <div className="relative grid gap-8 lg:grid-cols-2 p-8 md:p-16 items-center">
+        <div className="group relative rounded-3xl overflow-hidden bg-gradient-to-b from-card to-background border border-primary/10 shadow-2xl transition-transform hover:-translate-y-1 duration-500">
+          <div className="absolute inset-0 bg-grid-white/5 [mask-image:linear-gradient(0deg,transparent,black)]" />
+          <div className="absolute inset-0 bg-gradient-to-r from-primary/10 to-secondary/10 opacity-50 group-hover:opacity-100 transition-opacity duration-500" />
+
+          <div className="relative grid gap-8 lg:grid-cols-2 p-8 md:p-12 lg:p-16 items-center">
             <div className="space-y-6">
-              <div className="inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 border-transparent bg-primary text-primary-foreground shadow hover:bg-primary/80">
-                New Feature
+              <div className="inline-flex items-center gap-2 text-primary font-semibold tracking-wide uppercase text-sm">
+                <Repeat className="h-5 w-5" />
+                Featured Tool
               </div>
-              <h2 className="text-3xl font-bold tracking-tight sm:text-4xl">
-                Master Any Song with the <br className="hidden lg:block" />
-                <span className="text-primary">Video Looper</span>
+              <h2 className="text-3xl font-bold tracking-tight sm:text-4xl lg:text-5xl">
+                Video Looper
               </h2>
-              <p className="text-muted-foreground text-lg">
-                Practice effectively with our advanced YouTube looper. Detect
-                notes and chords in real-time, slow down difficult sections
-                without changing pitch, and loop specific parts until you nail
-                them.
+              <p className="text-muted-foreground text-lg leading-relaxed">
+                Transform any YouTube video into a powerful backing track. Loop
+                specific sections, slow down complex fills, and analyze harmony
+                in real-time.
               </p>
-              <ul className="space-y-2 text-muted-foreground">
+              <ul className="grid sm:grid-cols-2 gap-3 text-muted-foreground">
                 <li className="flex items-center gap-2">
-                  <Repeat className="h-4 w-4 text-primary" />
-                  <span>Precise A/B Looping controls</span>
+                  <div className="h-1.5 w-1.5 rounded-full bg-primary" />
+                  <span>A/B Looping</span>
                 </li>
                 <li className="flex items-center gap-2">
-                  <Timer className="h-4 w-4 text-primary" />
-                  <span>Variable speed playback (50% - 200%)</span>
+                  <div className="h-1.5 w-1.5 rounded-full bg-primary" />
+                  <span>Speed Control</span>
                 </li>
                 <li className="flex items-center gap-2">
-                  <Mic2 className="h-4 w-4 text-primary" />
-                  <span>AI-powered Real-time Note & Chord Detection</span>
+                  <div className="h-1.5 w-1.5 rounded-full bg-primary" />
+                  <span>Pitch Shifting</span>
+                </li>
+                <li className="flex items-center gap-2">
+                  <div className="h-1.5 w-1.5 rounded-full bg-primary" />
+                  <span>Save Favorites</span>
                 </li>
               </ul>
-              <Button asChild size="lg" className="mt-4 rounded-full">
+              <Button asChild size="lg" className="rounded-full mt-2">
                 <Link href="/tools/video-looper">
-                  Try Video Looper <ArrowRight className="ml-2 h-4 w-4" />
+                  Launch Looper <ArrowRight className="ml-2 h-4 w-4" />
                 </Link>
               </Button>
             </div>
-            <div className="relative aspect-video rounded-xl overflow-hidden shadow-2xl border bg-black/50 flex items-center justify-center group">
-              {/* Abstract Representation of the Tool */}
-              <div className="absolute inset-0 bg-gradient-to-tr from-primary/20 to-transparent opacity-50" />
-              <Repeat className="h-24 w-24 text-primary/50 group-hover:text-primary transition-colors duration-500 group-hover:scale-110" />
+
+            <div className="relative aspect-video rounded-xl overflow-hidden shadow-2xl border border-white/10 bg-black/40 flex items-center justify-center group-hover:border-primary/30 transition-colors duration-500">
+              <div className="absolute inset-0 bg-gradient-to-tr from-primary/20 via-transparent to-purple-500/20" />
+              <Repeat className="h-24 w-24 text-white/20 group-hover:text-primary transition-all duration-500 group-hover:scale-110 drop-shadow-[0_0_15px_rgba(255,255,255,0.1)]" />
             </div>
           </div>
         </div>
       </section>
 
       {/* Practice Tools Section */}
-      <section className="container py-20 space-y-12 mx-auto px-4 md:px-8 bg-muted/30 rounded-3xl">
+      <section
+        id="tools"
+        className="container mx-auto px-4 md:px-8 py-24 space-y-16"
+      >
         <div className="text-center space-y-4">
-          <h2 className="text-3xl font-bold tracking-tight sm:text-4xl">
-            Essential Practice Tools
+          <h2 className="text-4xl font-bold tracking-tight sm:text-5xl bg-clip-text text-transparent bg-gradient-to-b from-foreground to-foreground/60">
+            Your Digital Woodshed
           </h2>
           <p className="text-muted-foreground text-lg max-w-2xl mx-auto">
-            Curated collection of interactive utilities designed to accelerate
-            your bass playing progress.
+            Everything you need to practice efficiently, all in one place.
           </p>
         </div>
 
-        <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
-          <ToolCard
-            href="/tools/metronome"
-            title="Metronome"
-            subtitle="Develop Internal Clock"
-            icon={Timer}
-            description="Advanced metronome with subdivision controls, accent patterns, and tap tempo."
-          />
-          <ToolCard
-            href="/tools/tuner"
-            title="Tuner"
-            subtitle="Precision Tuning"
-            icon={Mic2}
-            description="Chromatic tuner with high-accuracy frequency detection for 4, 5, and 6 string basses."
-          />
-          <ToolCard
-            href="/tools/scale-visualizer"
-            title="Scale Visualizer"
-            subtitle="Fretboard Mastery"
-            icon={Grid}
-            description="Interactive fretboard map for all modes, scales, and keys. perfect for memorization."
-          />
-          <ToolCard
-            href="/tools/circle-of-fifths"
-            title="Circle of Fifths"
-            subtitle="Theory Decoder"
-            icon={Disc}
-            description="Visual reference for key signatures, relative minors, and harmonic progression."
-          />
-          <ToolCard
-            href="/tools/arpeggio-visualizer"
-            title="Arpeggios"
-            subtitle="Chord Tones"
-            icon={Music2}
-            description="Map chord tones across the neck. Essential for walking bass lines and improvisation."
-          />
-          <ToolCard
-            href="/tools/video-looper"
-            title="Video Looper"
-            subtitle="Practice Assistant"
-            icon={Repeat}
-            description="The ultimate practice tool. Loop, slow down, and analyze YouTube videos."
-          />
-        </div>
+        <ToolsGallery />
       </section>
 
       {/* Why Advance Bass Section */}

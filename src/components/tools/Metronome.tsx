@@ -18,49 +18,25 @@ import {
   RotateCcw,
 } from "lucide-react";
 import React, { memo, useState, useEffect } from "react";
+import {
+  useGlobalTheme,
+  GlobalTheme,
+  THEMES,
+} from "@/components/theme-provider";
 
 interface MetronomeProps {
   compact?: boolean;
-  theme?: Theme;
-  onThemeChange?: (theme: Theme) => void;
+  theme?: GlobalTheme;
+  onThemeChange?: (theme: GlobalTheme) => void;
 }
 
 const TONE_OPTIONS = ["digital", "woodblock", "drum", "ping", "blip"] as const;
 
-export type Theme =
-  | "default"
-  | "wood"
-  | "forest"
-  | "marble"
-  | "emerald"
-  | "stone";
-
-export const THEMES: { id: Theme; label: string; offsetClass: string }[] = [
-  { id: "default", label: "Default", offsetClass: "bg-background" },
-  { id: "wood", label: "Wood", offsetClass: "bg-amber-900" },
-  { id: "forest", label: "Forest", offsetClass: "bg-green-900" },
-  { id: "marble", label: "Marble", offsetClass: "bg-zinc-200" },
-  { id: "emerald", label: "Emerald", offsetClass: "bg-emerald-900" },
-  { id: "stone", label: "Stone", offsetClass: "bg-slate-700" },
-];
-
-const THEME_STYLES: Record<Theme, string> = {
-  default: "bg-card border-border",
-  wood: "bg-gradient-to-br from-stone-900 via-neutral-900 to-amber-950 border-amber-900/50 text-amber-50 shadow-2xl shadow-amber-950/20 [&_.text-muted-foreground]:text-amber-200/60",
-  forest:
-    "bg-gradient-to-br from-slate-950 via-green-950 to-emerald-950 border-emerald-900/50 text-emerald-50 shadow-2xl shadow-emerald-950/20 [&_.text-muted-foreground]:text-emerald-200/60",
-  marble:
-    "bg-gradient-to-br from-white via-zinc-50 to-zinc-200 border-zinc-200 text-zinc-900 shadow-2xl shadow-zinc-500/10 [&_.text-muted-foreground]:text-zinc-500",
-  emerald:
-    "bg-gradient-to-br from-teal-950 via-teal-900 to-emerald-950 border-teal-800/50 text-teal-50 shadow-2xl shadow-teal-950/20 [&_.text-muted-foreground]:text-teal-200/60",
-  stone:
-    "bg-gradient-to-br from-slate-900 via-slate-800 to-gray-900 border-slate-700/50 text-slate-50 shadow-2xl shadow-slate-950/20 [&_.text-muted-foreground]:text-slate-300/60",
-};
-
 // Extracted Timer Component
-const SessionTimer = memo(({ theme }: { theme: Theme }) => {
+const SessionTimer = memo(() => {
   const [time, setTime] = useState(0);
   const [isRunning, setIsRunning] = useState(false);
+  const { theme } = useGlobalTheme();
 
   useEffect(() => {
     let interval: NodeJS.Timeout;
@@ -185,13 +161,12 @@ export function Metronome({
     setVolume,
     tapTempo,
   } = useMetronome();
-  const [internalTheme, setInternalTheme] = useState<Theme>("default");
+  const { theme: globalTheme, setTheme } = useGlobalTheme();
+  // Use controlled theme, or fall back to the global theme context
+  const theme = controlledTheme ?? globalTheme;
 
-  const theme = controlledTheme ?? internalTheme;
-
-  const handleThemeChange = (newTheme: Theme) => {
-    setInternalTheme(newTheme);
-    onThemeChange?.(newTheme);
+  const handleThemeChange = (newTheme: GlobalTheme) => {
+    setTheme(newTheme);
   };
 
   // Memoized handlers
@@ -208,9 +183,9 @@ export function Metronome({
 
   return (
     <Card
-      className={`shadow-xl border-2 transition-colors duration-300 ${
-        THEME_STYLES[theme]
-      } ${compact ? "w-64" : "w-full max-w-3xl mx-auto"}`}
+      className={`shadow-xl border-2 transition-colors duration-300 bg-card border-border text-card-foreground ${
+        compact ? "w-64" : "w-full max-w-3xl mx-auto"
+      }`}
     >
       {compact && (
         <div className="flex justify-center h-5 items-center cursor-move text-muted-foreground/50 hover:text-foreground/80">
@@ -425,7 +400,9 @@ export function Metronome({
                 <select
                   className="h-8 rounded-md border border-white/10 bg-black/10 px-2 text-xs font-medium focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 [&>option]:bg-background [&>option]:text-foreground uppercase tracking-wide cursor-pointer"
                   value={theme}
-                  onChange={(e) => handleThemeChange(e.target.value as Theme)}
+                  onChange={(e) =>
+                    handleThemeChange(e.target.value as GlobalTheme)
+                  }
                   title="Select Theme"
                 >
                   {THEMES.map((t) => (
@@ -436,7 +413,7 @@ export function Metronome({
                 </select>
               </div>
 
-              <SessionTimer theme={theme} />
+              <SessionTimer />
             </div>
           </div>
         </div>
