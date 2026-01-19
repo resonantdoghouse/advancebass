@@ -93,9 +93,18 @@ export type StringConfig = {
     frequency: number;
 };
 
-export const TUNING_PRESETS = {
+export type InstrumentType = "bass" | "guitar";
+
+export type TuningPreset = {
+    name: string;
+    instrument: InstrumentType;
+    strings: StringConfig[];
+};
+
+export const TUNING_PRESETS: Record<string, TuningPreset> = {
     "4-string-standard": {
         name: "Standard (4 String)",
+        instrument: "bass",
         strings: [
             { note: "E", octave: 1, frequency: 41.203 },
             { note: "A", octave: 1, frequency: 55.000 },
@@ -105,6 +114,7 @@ export const TUNING_PRESETS = {
     },
      "5-string-standard-low-b": {
         name: "Standard (5 String Low B)",
+        instrument: "bass",
         strings: [
             { note: "B", octave: 0, frequency: 30.868 },
             { note: "E", octave: 1, frequency: 41.203 },
@@ -115,6 +125,7 @@ export const TUNING_PRESETS = {
     },
     "5-string-standard-high-c": {
         name: "Standard (5 String High C)",
+        instrument: "bass",
         strings: [
             { note: "E", octave: 1, frequency: 41.203 },
             { note: "A", octave: 1, frequency: 55.000 },
@@ -125,6 +136,7 @@ export const TUNING_PRESETS = {
     },
     "6-string-standard": {
         name: "Standard (6 String)",
+        instrument: "bass",
         strings: [
             { note: "B", octave: 0, frequency: 30.868 },
             { note: "E", octave: 1, frequency: 41.203 },
@@ -136,11 +148,49 @@ export const TUNING_PRESETS = {
     },
     "drop-d": {
         name: "Drop D (4 String)",
+        instrument: "bass",
         strings: [
              { note: "D", octave: 1, frequency: 36.708 },
              { note: "A", octave: 1, frequency: 55.000 },
              { note: "D", octave: 2, frequency: 73.416 },
              { note: "G", octave: 2, frequency: 97.999 },
+        ]
+    },
+    // Guitar Presets
+    "guitar-standard": {
+        name: "Standard (6 String)",
+        instrument: "guitar",
+        strings: [
+            { note: "E", octave: 2, frequency: 82.41 },
+            { note: "A", octave: 2, frequency: 110.00 },
+            { note: "D", octave: 3, frequency: 146.83 },
+            { note: "G", octave: 3, frequency: 196.00 },
+            { note: "B", octave: 3, frequency: 246.94 },
+            { note: "E", octave: 4, frequency: 329.63 },
+        ]
+    },
+    "guitar-drop-d": {
+        name: "Drop D",
+        instrument: "guitar",
+        strings: [
+            { note: "D", octave: 2, frequency: 73.42 },
+            { note: "A", octave: 2, frequency: 110.00 },
+            { note: "D", octave: 3, frequency: 146.83 },
+            { note: "G", octave: 3, frequency: 196.00 },
+            { note: "B", octave: 3, frequency: 246.94 },
+            { note: "E", octave: 4, frequency: 329.63 },
+        ]
+    },
+    "guitar-open-g": {
+        name: "Open G",
+        instrument: "guitar",
+        strings: [
+            { note: "D", octave: 2, frequency: 73.42 },
+            { note: "G", octave: 2, frequency: 98.00 },
+            { note: "D", octave: 3, frequency: 146.83 },
+            { note: "G", octave: 3, frequency: 196.00 },
+            { note: "B", octave: 3, frequency: 246.94 },
+            { note: "D", octave: 4, frequency: 293.66 },
         ]
     }
 };

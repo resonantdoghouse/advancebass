@@ -42,9 +42,9 @@ type Tool = {
 const TOOLS: Tool[] = [
   {
     id: "tuner",
-    title: "Bass Tuner",
+    title: "Tuner",
     description:
-      "Chromatic tuner with microphone input and reference tones for 4, 5, and 6 string basses.",
+      "Chromatic, Bass, and Guitar tuner with strobe visualization and reference tones.",
     href: "/tools/tuner",
     icon: <Music className="h-8 w-8 text-primary mb-2" />,
   },
