@@ -38,10 +38,10 @@
   --secondary: 210 40% 96.1%;
   --secondary-foreground: 222.2 47.4% 11.2%;
   --muted: 210 40% 96.1%;
-  --muted-foreground: 215.4 16.3% 46.9%;
+  --muted-foreground: 215.4 16.3% 40%; /* Darkened from 46.9% */
   --accent: 210 40% 96.1%;
   --accent-foreground: 222.2 47.4% 11.2%;
-  --destructive: 0 84.2% 60.2%;
+  --destructive: 0 72% 51%; /* Darkened from 60.2% */
   --destructive-foreground: 210 40% 98%;
   --border: 214.3 31.8% 91.4%;
   --input: 214.3 31.8% 91.4%;
@@ -76,6 +76,7 @@
 }
 
 /* Zelda Theme */
+/* Zelda Theme */
 [data-theme="zelda"] {
   --background: 43 33% 97%; /* Parchment */
   --foreground: 27 30% 15%; /* Darker Wood for text contrast */
@@ -85,13 +86,13 @@
   --popover-foreground: 27 30% 15%;
   --primary: 132 69% 25%; /* Darker Green for better contrast against parchment */
   --primary-foreground: 45 60% 95%; /* Very light gold/cream */
-  --secondary: 49 73% 45%; /* Triforce Gold */
-  --secondary-foreground: 27 30% 10%; /* Dark text on Gold */
+  --secondary: 45 40% 90%; /* Much lighter gold/cream for tags background */
+  --secondary-foreground: 27 40% 15%; /* Dark brown for tags text */
   --muted: 40 20% 88%;
-  --muted-foreground: 27 20% 40%;
+  --muted-foreground: 27 20% 35%; /* Darkened from 40% */
   --accent: 49 60% 90%;
   --accent-foreground: 27 30% 15%;
-  --destructive: 0 84.2% 60.2%;
+  --destructive: 0 72% 51%; /* Darkened from 60.2% */
   --destructive-foreground: 0 0% 98%;
   --border: 27 20% 80%; /* Darker border for visibility */
   --input: 27 20% 80%; /* Darker input border */
@@ -107,8 +108,8 @@
   --popover-foreground: 134 40% 95%;
   --primary: 142 69% 55%; /* Glowing Spirit Green */
   --primary-foreground: 120 7% 5%;
-  --secondary: 45 93% 50%; /* Ancient Gold */
-  --secondary-foreground: 120 7% 5%;
+  --secondary: 120 15% 15%; /* Dark dungeon green for tags bg */
+  --secondary-foreground: 45 80% 60%; /* Bright gold for tags text */
   --muted: 120 5% 15%;
   --muted-foreground: 134 15% 70%;
   --accent: 120 5% 15%;
@@ -118,6 +119,51 @@
   --border: 120 5% 20%;
   --input: 120 5% 20%;
   --ring: 142 69% 58%;
+}
+
+/* Gold Theme */
+[data-theme="gold"] {
+  --background: 0 0% 98%; /* Off-white */
+  --foreground: 20 10% 10%; /* Very dark grey/brown */
+  --card: 0 0% 100%;
+  --card-foreground: 20 10% 10%;
+  --popover: 0 0% 100%;
+  --popover-foreground: 20 10% 10%;
+  --primary: 45 90% 40%; /* Classic Gold */
+  --primary-foreground: 0 0% 100%;
+  --secondary: 45 40% 95%; /* Light Gold wash */
+  --secondary-foreground: 45 90% 30%; /* Darker Gold text */
+  --muted: 45 20% 95%;
+  --muted-foreground: 45 10% 40%;
+  --accent: 45 30% 96%;
+  --accent-foreground: 45 90% 30%;
+  --destructive: 0 84% 60%;
+  --destructive-foreground: 0 0% 98%;
+  --border: 45 30% 85%;
+  --input: 45 30% 85%;
+  --ring: 45 90% 40%;
+}
+
+[data-theme="gold"].dark {
+  --background: 20 5% 10%; /* Dark luxury grey */
+  --foreground: 45 30% 90%; /* Pale Gold */
+  --card: 20 5% 12%;
+  --card-foreground: 45 30% 90%;
+  --popover: 20 5% 10%;
+  --popover-foreground: 45 30% 90%;
+  --primary: 45 80% 60%; /* Bright Gold */
+  --primary-foreground: 20 5% 10%;
+  --secondary: 45 15% 20%; /* Dark Gold background */
+  --secondary-foreground: 45 80% 60%; /* Bright Gold text */
+  --muted: 45 10% 15%;
+  --muted-foreground: 45 20% 65%;
+  --accent: 45 15% 18%;
+  --accent-foreground: 45 80% 60%;
+  --destructive: 0 62.8% 30.6%;
+  --destructive-foreground: 0 0% 98%;
+  --border: 45 20% 20%;
+  --input: 45 20% 20%;
+  --ring: 45 80% 60%;
 }
 
 /* Wood Theme */
@@ -133,10 +179,10 @@
   --secondary: 30 30% 85%;
   --secondary-foreground: 25 45% 25%;
   --muted: 30 15% 88%;
-  --muted-foreground: 25 20% 40%;
+  --muted-foreground: 25 20% 35%; /* Darkened from 40% */
   --accent: 30 30% 90%;
   --accent-foreground: 25 45% 25%;
-  --destructive: 0 84.2% 60.2%;
+  --destructive: 0 72% 51%; /* Darkened from 60.2% */
   --destructive-foreground: 0 0% 98%;
   --border: 25 20% 78%;
   --input: 25 20% 78%;
@@ -178,10 +224,10 @@
   --secondary: 150 25% 88%;
   --secondary-foreground: 150 50% 25%;
   --muted: 150 20% 90%;
-  --muted-foreground: 155 20% 40%;
+  --muted-foreground: 155 20% 35%; /* Darkened from 40% */
   --accent: 150 25% 92%;
   --accent-foreground: 150 50% 25%;
-  --destructive: 0 84.2% 60.2%;
+  --destructive: 0 72% 51%; /* Darkened from 60.2% */
   --destructive-foreground: 0 0% 98%;
   --border: 150 20% 80%;
   --input: 150 20% 80%;
@@ -223,10 +269,10 @@
   --secondary: 210 10% 92%;
   --secondary-foreground: 210 15% 10%;
   --muted: 210 10% 94%;
-  --muted-foreground: 210 10% 45%;
+  --muted-foreground: 210 10% 40%; /* Darkened from 45% */
   --accent: 210 10% 92%;
   --accent-foreground: 210 15% 10%;
-  --destructive: 0 84.2% 60.2%;
+  --destructive: 0 72% 51%; /* Darkened from 60.2% */
   --destructive-foreground: 0 0% 98%;
   --border: 210 10% 82%; /* Visible grey border */
   --input: 210 10% 82%;

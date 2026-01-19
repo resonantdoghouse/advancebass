@@ -3,7 +3,13 @@
 import React, { createContext, useContext, useEffect, useState } from "react";
 import { ThemeProvider as NextThemesProvider } from "next-themes";
 
-export type GlobalTheme = "default" | "zelda" | "wood" | "forest" | "marble";
+export type GlobalTheme =
+  | "default"
+  | "zelda"
+  | "wood"
+  | "forest"
+  | "marble"
+  | "gold";
 
 export const THEMES: { id: GlobalTheme; label: string; offsetClass: string }[] =
   [
@@ -12,6 +18,7 @@ export const THEMES: { id: GlobalTheme; label: string; offsetClass: string }[] =
     { id: "wood", label: "Wood", offsetClass: "bg-amber-900" },
     { id: "forest", label: "Forest", offsetClass: "bg-green-900" },
     { id: "marble", label: "Marble", offsetClass: "bg-zinc-200" },
+    { id: "gold", label: "Gold", offsetClass: "bg-amber-400" },
   ];
 
 interface GlobalThemeContextType {

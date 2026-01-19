@@ -40,11 +40,6 @@ export default async function Home() {
 
         <div className="container relative mx-auto px-4 text-center">
           <div className="mx-auto max-w-4xl space-y-6">
-            <div className="inline-flex items-center rounded-full border border-primary/20 bg-primary/10 px-3 py-1 text-sm font-medium text-primary backdrop-blur-sm">
-              <Zap className="mr-2 h-4 w-4" />
-              <span>New: Interactive Drum Machine & Fretboard Trainer</span>
-            </div>
-
             <h1 className="text-5xl font-extrabold tracking-tight sm:text-6xl md:text-7xl lg:text-8xl">
               Master the{" "}
               <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary via-indigo-400 to-purple-400 animate-gradient-x">
@@ -138,8 +133,8 @@ export default async function Home() {
         id="tools"
         className="container mx-auto px-4 md:px-8 py-24 space-y-16"
       >
-        <div className="text-center space-y-4">
-          <h2 className="text-4xl font-bold tracking-tight sm:text-5xl bg-clip-text text-transparent bg-gradient-to-b from-foreground to-foreground/60">
+        <div className="text-center space-y-8">
+          <h2 className="text-4xl font-bold tracking-tight sm:text-5xl bg-clip-text text-transparent bg-gradient-to-b from-foreground to-foreground/60 pb-2">
             Your Digital Woodshed
           </h2>
           <p className="text-muted-foreground text-lg max-w-2xl mx-auto">
