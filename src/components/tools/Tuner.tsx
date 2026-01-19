@@ -95,24 +95,45 @@ export function Tuner() {
       // If cents < 0 (flat), moves left.
       let speed = 0;
       if (detectedNote) {
-        speed = detectedNote.cents * 0.15; // Tuning factor
+        // Reduced speed multiplier and clamped max speed to prevent motion sickness
+        speed = detectedNote.cents * 0.08;
+        if (speed > 12) speed = 12;
+        if (speed < -12) speed = -12;
       }
 
       phaseRef.current += speed;
-      // Keep phase bounded
-      if (phaseRef.current > 50) phaseRef.current -= 50;
-      if (phaseRef.current < -50) phaseRef.current += 50;
 
-      // Draw Pattern
-      const barWidth = 20;
-      const gap = 20;
-      const totalWidth = barWidth + gap;
+      // Pattern Period (width of one cycle)
+      const barWidth = 60;
+      const gap = 60;
+      const totalWidth = barWidth + gap; // 120px
 
-      ctx.fillStyle = isNoteInTune ? "rgb(34, 197, 94)" : "rgb(156, 163, 175)"; // Green or Gray
-      if (!detectedNote) ctx.fillStyle = "rgba(156, 163, 175, 0.2)";
+      // seamless wrapping
+      if (phaseRef.current >= totalWidth) phaseRef.current -= totalWidth;
+      if (phaseRef.current <= -totalWidth) phaseRef.current += totalWidth;
 
-      for (let x = -50; x < canvas.width + 50; x += totalWidth) {
-        ctx.fillRect(x + phaseRef.current, 0, barWidth, canvas.height);
+      // Draw Pattern with Soft Gradients
+      for (
+        let x = -totalWidth;
+        x < canvas.width + totalWidth;
+        x += totalWidth
+      ) {
+        const xPos = x + phaseRef.current;
+
+        // Soft gradient for less jarring effect
+        const gradient = ctx.createLinearGradient(xPos, 0, xPos + barWidth, 0);
+
+        // Green if in tune, otherwise zinc-500
+        const colorBase = isNoteInTune ? "34, 197, 94" : "113, 113, 122";
+        // Fade out if no note detected
+        const opacity = detectedNote ? 0.6 : 0.1;
+
+        gradient.addColorStop(0, `rgba(${colorBase}, 0)`);
+        gradient.addColorStop(0.5, `rgba(${colorBase}, ${opacity})`);
+        gradient.addColorStop(1, `rgba(${colorBase}, 0)`);
+
+        ctx.fillStyle = gradient;
+        ctx.fillRect(xPos, 0, barWidth, canvas.height);
       }
 
       animationRef.current = requestAnimationFrame(draw);
