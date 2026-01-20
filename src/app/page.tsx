@@ -41,10 +41,7 @@ export default async function Home() {
         <div className="container relative mx-auto px-4 text-center">
           <div className="mx-auto max-w-4xl space-y-6">
             <h1 className="text-5xl font-extrabold tracking-tight sm:text-6xl md:text-7xl lg:text-8xl">
-              Master the{" "}
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary via-indigo-400 to-purple-400 animate-gradient-x">
-                Low End
-              </span>
+              Master the <span className="text-primary">Low End</span>
             </h1>
 
             <p className="mx-auto max-w-2xl text-lg text-muted-foreground md:text-xl leading-relaxed">

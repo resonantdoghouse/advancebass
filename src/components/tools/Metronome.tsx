@@ -10,7 +10,6 @@ import {
   GripHorizontal,
   Rewind,
   FastForward,
-  Palette,
   Volume2,
   VolumeX,
   Timer as TimerIcon,
@@ -18,16 +17,9 @@ import {
   RotateCcw,
 } from "lucide-react";
 import React, { memo, useState, useEffect } from "react";
-import {
-  useGlobalTheme,
-  GlobalTheme,
-  THEMES,
-} from "@/components/theme-provider";
 
 interface MetronomeProps {
   compact?: boolean;
-  theme?: GlobalTheme;
-  onThemeChange?: (theme: GlobalTheme) => void;
 }
 
 const TONE_OPTIONS = ["digital", "woodblock", "drum", "ping", "blip"] as const;
@@ -36,7 +28,6 @@ const TONE_OPTIONS = ["digital", "woodblock", "drum", "ping", "blip"] as const;
 const SessionTimer = memo(() => {
   const [time, setTime] = useState(0);
   const [isRunning, setIsRunning] = useState(false);
-  const { theme } = useGlobalTheme();
 
   useEffect(() => {
     let interval: NodeJS.Timeout;
@@ -56,13 +47,7 @@ const SessionTimer = memo(() => {
   };
 
   return (
-    <div
-      className={`flex items-center gap-2 px-3 py-1.5 rounded-full border text-xs font-mono tabular-nums ${
-        theme === "marble" || theme === "default"
-          ? "bg-muted/50 border-border"
-          : "bg-black/20 border-white/10"
-      }`}
-    >
+    <div className="flex items-center gap-2 px-3 py-1.5 rounded-full border text-xs font-mono tabular-nums bg-muted/50 border-border">
       <TimerIcon className="h-3 w-3 opacity-70" />
       <span className="min-w-[48px] text-center">{formatTime(time)}</span>
       <button
@@ -135,11 +120,7 @@ const BeatsDisplay = memo(
 );
 BeatsDisplay.displayName = "BeatsDisplay";
 
-export function Metronome({
-  compact = false,
-  theme: controlledTheme,
-  onThemeChange,
-}: MetronomeProps) {
+export function Metronome({ compact = false }: MetronomeProps) {
   const {
     isPlaying,
     start,
@@ -161,13 +142,6 @@ export function Metronome({
     setVolume,
     tapTempo,
   } = useMetronome();
-  const { theme: globalTheme, setTheme } = useGlobalTheme();
-  // Use controlled theme, or fall back to the global theme context
-  const theme = controlledTheme ?? globalTheme;
-
-  const handleThemeChange = (newTheme: GlobalTheme) => {
-    setTheme(newTheme);
-  };
 
   // Memoized handlers
   const handleBpmChange = (value: number[]) => setBpm(value[0]);
@@ -276,15 +250,15 @@ export function Metronome({
           </div>
 
           {/* Right Column: Settings & Features */}
-          <div className="space-y-6 flex flex-col justify-center bg-black/5 p-6 rounded-2xl border border-black/5">
+          <div className="space-y-6 flex flex-col justify-center bg-muted/20 p-6 rounded-2xl border border-border/10">
             {/* Time Signature */}
             <div className="space-y-2">
               <label className="text-xs font-semibold text-muted-foreground uppercase">
                 Time Signature
               </label>
-              <div className="flex items-center gap-2 bg-black/5 rounded-lg p-1 border border-white/5 shadow-sm">
+              <div className="flex items-center gap-2 bg-muted/20 rounded-lg p-1 border border-border/10 shadow-sm">
                 {/* Numerator */}
-                <div className="flex items-center flex-1 justify-between bg-black/10 rounded-md">
+                <div className="flex items-center flex-1 justify-between bg-muted/30 rounded-md">
                   <Button
                     variant="ghost"
                     size="icon"
@@ -311,7 +285,7 @@ export function Metronome({
                 </span>
 
                 {/* Denominator */}
-                <div className="flex items-center flex-1 justify-between bg-black/10 rounded-md">
+                <div className="flex items-center flex-1 justify-between bg-muted/30 rounded-md">
                   <Button
                     variant="ghost"
                     size="icon"
@@ -342,7 +316,7 @@ export function Metronome({
                   Subdivision
                 </label>
                 <select
-                  className="w-full h-10 rounded-md border border-white/10 bg-black/10 px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 [&>option]:bg-background [&>option]:text-foreground"
+                  className="w-full h-10 rounded-md border border-border/10 bg-muted/30 px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 [&>option]:bg-background [&>option]:text-foreground"
                   value={subdivision}
                   onChange={(e) => setSubdivision(Number(e.target.value))}
                 >
@@ -358,7 +332,7 @@ export function Metronome({
                   Sound
                 </label>
                 <select
-                  className="w-full h-10 rounded-md border border-white/10 bg-black/10 px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 [&>option]:bg-background [&>option]:text-foreground"
+                  className="w-full h-10 rounded-md border border-border/10 bg-muted/30 px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 [&>option]:bg-background [&>option]:text-foreground"
                   value={tone}
                   onChange={(e) => setTone(e.target.value as any)}
                 >
@@ -393,26 +367,8 @@ export function Metronome({
 
             <div className="h-px bg-border/50" />
 
-            {/* Bottom Row: Theme & Timer */}
-            <div className="flex justify-between items-center">
-              <div className="flex gap-2 items-center">
-                <Palette className="h-4 w-4 opacity-50" />
-                <select
-                  className="h-8 rounded-md border border-white/10 bg-black/10 px-2 text-xs font-medium focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 [&>option]:bg-background [&>option]:text-foreground uppercase tracking-wide cursor-pointer"
-                  value={theme}
-                  onChange={(e) =>
-                    handleThemeChange(e.target.value as GlobalTheme)
-                  }
-                  title="Select Theme"
-                >
-                  {THEMES.map((t) => (
-                    <option key={t.id} value={t.id}>
-                      {t.label}
-                    </option>
-                  ))}
-                </select>
-              </div>
-
+            {/* Bottom Row: Timer (removed theme select) */}
+            <div className="flex justify-end items-center">
               <SessionTimer />
             </div>
           </div>

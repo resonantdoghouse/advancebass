@@ -1,7 +1,6 @@
 import Link from "next/link";
 import { Music4 } from "lucide-react";
 import { ThemeToggle } from "@/components/ThemeToggle";
-import { ThemeSelect } from "@/components/ThemeSelect";
 
 export function Header() {
   return (
@@ -19,31 +18,30 @@ export function Header() {
           <nav className="flex items-center gap-6 text-sm">
             <Link
               href="/"
-              className="transition-colors hover:text-foreground/80 text-foreground/60"
+              className="transition-colors hover:text-foreground text-foreground/80 font-medium"
             >
               Home
             </Link>
             <Link
               href="/transcriptions"
-              className="transition-colors hover:text-foreground/80 text-foreground/60"
+              className="transition-colors hover:text-foreground text-foreground/80 font-medium"
             >
               Transcriptions
             </Link>
             <Link
               href="/tools"
-              className="transition-colors hover:text-foreground/80 text-foreground/60"
+              className="transition-colors hover:text-foreground text-foreground/80 font-medium"
             >
               Tools
             </Link>
             <Link
               href="/contact"
-              className="transition-colors hover:text-foreground/80 text-foreground/60"
+              className="transition-colors hover:text-foreground text-foreground/80 font-medium"
             >
               Contact
             </Link>
           </nav>
           <nav className="flex items-center gap-2">
-            <ThemeSelect />
             <ThemeToggle />
           </nav>
         </div>
