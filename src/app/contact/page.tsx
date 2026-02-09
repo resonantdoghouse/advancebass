@@ -31,9 +31,11 @@ export default function ContactPage() {
           </div>
           <h2 className="text-2xl font-bold mb-4">Bass Lessons</h2>
           <p className="text-center text-muted-foreground mb-6">
-            Private instruction tailored to your goals. From beginner
-            fundamentals to advanced theory and technique. Available in-person
-            or online.
+            Private instruction tailored to your goals. Specialized in{" "}
+            <strong>Electric & Upright Bass</strong>. Expert guidance in Jazz,
+            Theory, Slap, and Tapping. Available{" "}
+            <strong>in-person in Vancouver</strong> or{" "}
+            <strong>online worldwide</strong>.
           </p>
           <Button asChild variant="outline" className="mt-auto">
             <ObfuscatedMailto

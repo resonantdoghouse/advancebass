@@ -21,9 +21,10 @@ import { ToolsGallery } from "@/app/tools/ToolsGallery";
 import { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Advance Bass | Professional Bass Transcriptions & Resources",
+  title:
+    "Advance Bass | Online & Vancouver Bass Lessons, Transcriptions & Tools",
   description:
-    "Free high-quality bass transcriptions, technique articles, and gear reviews. Learn bass lines from Daft Punk, Bach, and more.",
+    "Professional bass instruction by Jim Bennett. In-person lessons in Vancouver, BC and online lessons worldwide. Plus free transcriptions and practice tools.",
 };
 
 export default async function Home() {
@@ -55,8 +56,8 @@ export default async function Home() {
                 size="lg"
                 className="h-12 rounded-full px-8 text-base shadow-lg shadow-primary/25 hover:shadow-primary/40 transition-shadow"
               >
-                <Link href="#tools">
-                  Explore Tools <ArrowRight className="ml-2 h-4 w-4" />
+                <Link href="/contact">
+                  Book a Lesson <ArrowRight className="ml-2 h-4 w-4" />
                 </Link>
               </Button>
               <Button
@@ -67,6 +68,108 @@ export default async function Home() {
               >
                 <Link href="/transcriptions">Browse Transcriptions</Link>
               </Button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Instructor Spotlight & Lessons */}
+      <section className="container mx-auto px-4 md:px-8 py-16 md:py-24 border-b border-white/5">
+        <div className="grid lg:grid-cols-2 gap-12 items-center">
+          <div className="space-y-8">
+            <div className="space-y-4">
+              <h2 className="text-3xl font-bold tracking-tight sm:text-5xl">
+                Learn from a <span className="text-primary">Pro</span>
+              </h2>
+              <p className="text-xl text-muted-foreground leading-relaxed">
+                Study with <strong>Jim Bennett</strong>, a professional touring
+                bassist and McGill University Jazz Performance graduate.
+              </p>
+            </div>
+
+            <div className="grid gap-6">
+              <div className="flex gap-4 items-start">
+                <div className="h-12 w-12 rounded-full bg-primary/10 flex items-center justify-center shrink-0">
+                  <Music2 className="h-6 w-6 text-primary" />
+                </div>
+                <div>
+                  <h3 className="font-bold text-lg">World-Class Experience</h3>
+                  <p className="text-muted-foreground">
+                    Toured with Juno award-winning bands and built a{" "}
+                    <a
+                      href="https://www.youtube.com/@JimBennettBassist"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-primary hover:underline"
+                    >
+                      YouTube community
+                    </a>{" "}
+                    with millions of views.
+                  </p>
+                </div>
+              </div>
+
+              <div className="flex gap-4 items-start">
+                <div className="h-12 w-12 rounded-full bg-primary/10 flex items-center justify-center shrink-0">
+                  <Crosshair className="h-6 w-6 text-primary" />
+                </div>
+                <div>
+                  <h3 className="font-bold text-lg">Technical Mastery</h3>
+                  <p className="text-muted-foreground">
+                    Specialized instruction in Slap, Tap, Fingerstyle, and
+                    advanced Jazz harmony for both Electric and Upright bass.
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            <div className="flex flex-col sm:flex-row gap-4 pt-4">
+              <div className="p-6 rounded-2xl bg-muted/30 border flex-1 text-center sm:text-left hover:bg-muted/50 transition-colors">
+                <div className="font-bold text-lg mb-1">Vancouver, BC</div>
+                <div className="text-muted-foreground text-sm mb-4">
+                  In-Person Lessons
+                </div>
+                <Button
+                  asChild
+                  size="sm"
+                  variant="secondary"
+                  className="w-full"
+                >
+                  <Link href="/contact">Inquire Local</Link>
+                </Button>
+              </div>
+              <div className="p-6 rounded-2xl bg-muted/30 border flex-1 text-center sm:text-left hover:bg-muted/50 transition-colors">
+                <div className="font-bold text-lg mb-1">Online</div>
+                <div className="text-muted-foreground text-sm mb-4">
+                  Worldwide via Zoom
+                </div>
+                <Button
+                  asChild
+                  size="sm"
+                  variant="secondary"
+                  className="w-full"
+                >
+                  <Link href="/contact">Inquire Online</Link>
+                </Button>
+              </div>
+            </div>
+          </div>
+
+          <div className="relative rounded-2xl overflow-hidden aspect-square lg:aspect-[4/3] shadow-2xl border border-white/10 bg-muted">
+            {/* Placeholder for instructor image - could use generate_image if needed, but for now using a gradient/pattern or keeping it abstract if no image provided */}
+            <div className="absolute inset-0 bg-gradient-to-br from-zinc-900 to-black" />
+            <div className="absolute inset-0 flex items-center justify-center">
+              <div className="text-center space-y-4 p-8">
+                <div className="inline-block p-4 rounded-full bg-primary/20 backdrop-blur-md mb-4 border border-primary/20">
+                  <Music2 className="h-16 w-16 text-primary" />
+                </div>
+                <div className="text-2xl font-bold">Jim Bennett</div>
+                <div className="text-muted-foreground">
+                  B.Mus Jazz Performance
+                  <br />
+                  McGill University
+                </div>
+              </div>
             </div>
           </div>
         </div>

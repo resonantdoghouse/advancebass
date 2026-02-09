@@ -18,19 +18,26 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   metadataBase: new URL("https://advancebass.com"),
   title: {
-    default: "Advance Bass | Modern Bass Resources",
+    default: "Advance Bass | Bass Lessons Vancouver & Online",
     template: "%s | Advance Bass",
   },
   description:
-    "A premium resource for bass players featuring high-quality transcriptions, articles, and tools for modern and classic bass lines.",
+    "Professional bass lessons in Vancouver and online by Jim Bennett. Learn electric and upright bass, jazz theory, slapping, tapping, and advanced techniques. McGill University graduate.",
   keywords: [
+    "bass lessons vancouver",
+    "online bass lessons",
+    "electric bass teacher",
+    "upright bass teacher",
+    "jazz bass lessons",
+    "slap bass lessons",
+    "tapping bass lessons",
     "bass",
     "bass guitar",
     "transcriptions",
     "bass tabs",
     "music theory",
-    "bass lessons",
     "advance bass",
+    "jim bennett bass",
   ],
   authors: [{ name: "Jim Bennett" }],
   creator: "Jim Bennett",
@@ -38,16 +45,16 @@ export const metadata: Metadata = {
     type: "website",
     locale: "en_US",
     url: "https://advancebass.com",
-    title: "Advance Bass | Modern Bass Resources",
+    title: "Advance Bass | Professional Bass Instruction & Resources",
     description:
-      "High-quality, accurate transcriptions of modern and classic bass lines, completely free.",
+      "Study with a professional touring bassist. Lessons in Vancouver or online. High-quality transcriptions and tools for modern bass players.",
     siteName: "Advance Bass",
   },
   twitter: {
     card: "summary_large_image",
-    title: "Advance Bass | Modern Bass Resources",
+    title: "Advance Bass | Jim Bennett",
     description:
-      "High-quality, accurate transcriptions of modern and classic bass lines, completely free.",
+      "Professional bass lessons and premium resources. Learn from a touring pro with millions of YouTube views.",
     creator: "@advancebass",
   },
   robots: {
@@ -65,14 +72,72 @@ export const metadata: Metadata = {
 
 const jsonLd = {
   "@context": "https://schema.org",
-  "@type": "WebSite",
-  name: "Advance Bass",
-  url: "https://advancebass.com",
-  potentialAction: {
-    "@type": "SearchAction",
-    target: "https://advancebass.com/search?q={search_term_string}",
-    "query-input": "required name=search_term_string",
-  },
+  "@graph": [
+    {
+      "@type": "Person",
+      "@id": "https://advancebass.com/#person",
+      name: "Jim Bennett",
+      url: "https://advancebass.com",
+      jobTitle: "Professional Bassist & Educator",
+      alumniOf: {
+        "@type": "CollegeOrUniversity",
+        name: "McGill University",
+      },
+      knowsAbout: [
+        "Electric Bass",
+        "Upright Bass",
+        "Jazz Harmony",
+        "Music Theory",
+        "Slap Bass",
+        "Tapping",
+        "Fingerstyle",
+      ],
+      description:
+        "Professional bassist and educator specializing in electric and upright bass. McGill University graduate with extensive touring experience.",
+      sameAs: [
+        "https://www.youtube.com/@JimBennettBassist",
+        "https://www.instagram.com/advancebass",
+      ],
+    },
+    {
+      "@type": "MusicSchool",
+      "@id": "https://advancebass.com/#school",
+      name: "Advance Bass Lessons",
+      url: "https://advancebass.com",
+      image: "https://advancebass.com/icon.png",
+      description:
+        "Premium bass education offering in-person lessons in Vancouver and online instruction worldwide.",
+      address: {
+        "@type": "PostalAddress",
+        addressLocality: "Vancouver",
+        addressRegion: "BC",
+        addressCountry: "CA",
+      },
+      geo: {
+        "@type": "GeoCoordinates",
+        latitude: 49.2827,
+        longitude: -123.1207,
+      },
+      priceRange: "$$",
+      founder: {
+        "@id": "https://advancebass.com/#person",
+      },
+    },
+    {
+      "@type": "WebSite",
+      "@id": "https://advancebass.com/#website",
+      url: "https://advancebass.com",
+      name: "Advance Bass",
+      publisher: {
+        "@id": "https://advancebass.com/#person",
+      },
+      potentialAction: {
+        "@type": "SearchAction",
+        target: "https://advancebass.com/search?q={search_term_string}",
+        "query-input": "required name=search_term_string",
+      },
+    },
+  ],
 };
 
 import { JsonLd } from "@/components/seo/JsonLd";
