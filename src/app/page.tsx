@@ -82,8 +82,8 @@ export default async function Home() {
                 Learn from a <span className="text-primary">Pro</span>
               </h2>
               <p className="text-xl text-muted-foreground leading-relaxed">
-                Study with <strong>Jim Bennett</strong>, a professional touring
-                bassist and McGill University Jazz Performance graduate.
+                Study with <strong>Jim Bennett</strong>, a professional bassist
+                and educator.
               </p>
             </div>
 
@@ -93,9 +93,9 @@ export default async function Home() {
                   <Music2 className="h-6 w-6 text-primary" />
                 </div>
                 <div>
-                  <h3 className="font-bold text-lg">World-Class Experience</h3>
+                  <h3 className="font-bold text-lg">Proven Educator</h3>
                   <p className="text-muted-foreground">
-                    Toured with Juno award-winning bands and built a{" "}
+                    Built a{" "}
                     <a
                       href="https://www.youtube.com/@JimBennettBassist"
                       target="_blank"
@@ -165,9 +165,7 @@ export default async function Home() {
                 </div>
                 <div className="text-2xl font-bold">Jim Bennett</div>
                 <div className="text-muted-foreground">
-                  B.Mus Jazz Performance
-                  <br />
-                  McGill University
+                  Professional Bassist & Educator
                 </div>
               </div>
             </div>
