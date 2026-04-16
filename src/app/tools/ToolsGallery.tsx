@@ -11,6 +11,7 @@ import {
   Volume2,
   Search,
   Shuffle,
+  Ear,
 } from "lucide-react";
 import {
   Card,
@@ -101,6 +102,14 @@ const TOOLS: Tool[] = [
       "Gamified fretboard memorization. Race against the clock to find notes.",
     href: "/tools/fretboard-trainer",
     icon: <Crosshair className="h-8 w-8 text-primary mb-2" />,
+  },
+  {
+    id: "ear-training",
+    title: "Ear Training",
+    description:
+      "Identify intervals and chord qualities by ear. Timed game for all levels.",
+    href: "/tools/ear-training",
+    icon: <Ear className="h-8 w-8 text-primary mb-2" />,
   },
   {
     id: "circle-of-fifths",
