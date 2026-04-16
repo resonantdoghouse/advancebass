@@ -365,8 +365,11 @@ export default function VideoLooper() {
                     placeholder="e.g. a3113eNj4IA"
                     value={videoId}
                     onChange={(e) => {
-                      setVideoId(e.target.value);
-                      setCurrentPreset(null); // Clear preset if manual ID
+                      const val = e.target.value;
+                      if (val === "" || /^[a-zA-Z0-9_-]{0,11}$/.test(val)) {
+                        setVideoId(val);
+                        setCurrentPreset(null);
+                      }
                     }}
                     className="h-8 text-sm"
                   />
