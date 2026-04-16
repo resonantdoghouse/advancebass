@@ -1,6 +1,8 @@
 import { Mail, Music2, Mic2, GraduationCap } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { ObfuscatedMailto } from "@/components/ui/obfuscated-mailto";
+import { InquiryForm } from "@/components/ui/InquiryForm";
+import Link from "next/link";
 
 import { Metadata } from "next";
 
@@ -47,13 +49,7 @@ export default function ContactPage() {
             <strong>online worldwide</strong>.
           </p>
           <Button asChild variant="outline" className="mt-auto">
-            <ObfuscatedMailto
-              user="jim"
-              domain="advancebass.com"
-              subject="Bass Lesson Inquiry"
-            >
-              Inquire About Lessons
-            </ObfuscatedMailto>
+            <Link href="/bass-lessons#inquire">Book a Lesson</Link>
           </Button>
         </div>
 
@@ -68,13 +64,7 @@ export default function ContactPage() {
             files delivered with quick turnaround times.
           </p>
           <Button asChild variant="outline" className="mt-auto">
-            <ObfuscatedMailto
-              user="jim"
-              domain="advancebass.com"
-              subject="Recording Session Inquiry"
-            >
-              Book a Session
-            </ObfuscatedMailto>
+            <Link href="/recording#inquire">Book a Session</Link>
           </Button>
         </div>
 
@@ -100,20 +90,58 @@ export default function ContactPage() {
         </div>
       </div>
 
-      <div className="max-w-2xl mx-auto text-center p-8 rounded-2xl bg-muted/30">
-        <h2 className="text-2xl font-bold mb-6 flex items-center justify-center gap-3">
-          <Mail className="w-6 h-6" />
-          Get in Touch
-        </h2>
-        <p className="text-muted-foreground mb-8">
-          Have a general question or want to discuss a custom project? Drop me
-          an email and I&apos;ll get back to you as soon as possible.
-        </p>
-        <Button size="lg" asChild className="text-base px-8">
-          <ObfuscatedMailto user="jim" domain="advancebass.com">
-            Contact Me
-          </ObfuscatedMailto>
-        </Button>
+      {/* General Inquiry Form */}
+      <div className="max-w-xl mx-auto">
+        <div className="text-center mb-10">
+          <div className="inline-flex items-center justify-center p-3 rounded-full bg-primary/10 mb-4">
+            <Mail className="w-7 h-7 text-primary" />
+          </div>
+          <h2 className="text-3xl font-bold mb-3">Get in Touch</h2>
+          <p className="text-muted-foreground">
+            Have a general question or not sure which service fits? Fill in the
+            form and Jim will get back to you.
+          </p>
+        </div>
+        <InquiryForm
+          subject="Website Inquiry"
+          successMessage="Message sent! Jim will get back to you as soon as possible."
+          fields={[
+            {
+              name: "from_name",
+              label: "Your Name",
+              type: "text",
+              placeholder: "Jane Smith",
+              required: true,
+            },
+            {
+              name: "reply_to",
+              label: "Email Address",
+              type: "email",
+              placeholder: "jane@example.com",
+              required: true,
+            },
+            {
+              name: "service",
+              label: "What are you enquiring about?",
+              type: "select",
+              required: true,
+              options: [
+                "Bass Lessons — In-Person (Vancouver)",
+                "Bass Lessons — Online (Zoom)",
+                "Recording Session",
+                "Live Performance / Booking",
+                "General Question",
+              ],
+            },
+            {
+              name: "message",
+              label: "Message",
+              type: "textarea",
+              placeholder: "Tell Jim a bit about what you're looking for…",
+              required: true,
+            },
+          ]}
+        />
       </div>
     </div>
   );

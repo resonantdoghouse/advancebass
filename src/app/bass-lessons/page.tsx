@@ -3,6 +3,7 @@ import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { ObfuscatedMailto } from "@/components/ui/obfuscated-mailto";
 import { JsonLd } from "@/components/seo/JsonLd";
+import { InquiryForm } from "@/components/ui/InquiryForm";
 import {
   GraduationCap,
   MapPin,
@@ -455,24 +456,64 @@ export default function BassLessonsPage() {
         </div>
       </section>
 
-      {/* CTA */}
-      <section className="py-16 border-t">
-        <div className="container mx-auto px-4 text-center max-w-xl">
-          <Mic2 className="h-10 w-10 text-primary mx-auto mb-4" />
-          <h2 className="text-3xl font-bold mb-4">Ready to Start?</h2>
-          <p className="text-muted-foreground mb-8">
-            Send Jim a message and he&apos;ll get back to you to discuss
-            availability and answer any questions.
-          </p>
-          <Button asChild size="lg" className="rounded-full px-10">
-            <ObfuscatedMailto
-              user="jim"
-              domain="advancebass.com"
-              subject="Bass Lesson Inquiry"
-            >
-              Book a Lesson
-            </ObfuscatedMailto>
-          </Button>
+      {/* Inquiry Form */}
+      <section className="py-16 border-t" id="inquire">
+        <div className="container mx-auto px-4 max-w-xl">
+          <div className="text-center mb-10">
+            <Mic2 className="h-10 w-10 text-primary mx-auto mb-4" />
+            <h2 className="text-3xl font-bold mb-3">Book a Lesson</h2>
+            <p className="text-muted-foreground">
+              Fill in the form below and Jim will get back to you to confirm
+              availability and answer any questions.
+            </p>
+          </div>
+          <InquiryForm
+            subject="Bass Lesson Inquiry"
+            successMessage="Thanks! Jim will be in touch shortly to discuss availability."
+            fields={[
+              {
+                name: "from_name",
+                label: "Your Name",
+                type: "text",
+                placeholder: "Jane Smith",
+                required: true,
+              },
+              {
+                name: "reply_to",
+                label: "Email Address",
+                type: "email",
+                placeholder: "jane@example.com",
+                required: true,
+              },
+              {
+                name: "lesson_format",
+                label: "Lesson Format",
+                type: "select",
+                required: true,
+                options: ["In-Person (Vancouver)", "Online (Zoom)", "Not sure yet"],
+              },
+              {
+                name: "experience_level",
+                label: "Experience Level",
+                type: "select",
+                required: true,
+                options: [
+                  "Complete beginner",
+                  "Some experience (< 2 years)",
+                  "Intermediate (2–5 years)",
+                  "Advanced (5+ years)",
+                ],
+              },
+              {
+                name: "message",
+                label: "What are your goals?",
+                type: "textarea",
+                placeholder:
+                  "Tell Jim what you'd like to work on — styles, techniques, goals, or anything else.",
+                required: true,
+              },
+            ]}
+          />
         </div>
       </section>
     </>

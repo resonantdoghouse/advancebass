@@ -2,6 +2,7 @@ import { Metadata } from "next";
 import { Button } from "@/components/ui/button";
 import { ObfuscatedMailto } from "@/components/ui/obfuscated-mailto";
 import { JsonLd } from "@/components/seo/JsonLd";
+import { InquiryForm } from "@/components/ui/InquiryForm";
 import {
   Mic2,
   CheckCircle2,
@@ -258,25 +259,66 @@ export default function RecordingPage() {
         </div>
       </section>
 
-      {/* CTA */}
-      <section className="py-16 border-t">
-        <div className="container mx-auto px-4 text-center max-w-xl">
-          <h2 className="text-3xl font-bold mb-4">
-            Ready to Add Bass to Your Track?
-          </h2>
-          <p className="text-muted-foreground mb-8">
-            Share your project details — genre, tempo, key, and any reference
-            tracks — and Jim will come back with availability and a quote.
-          </p>
-          <Button asChild size="lg" className="rounded-full px-10">
-            <ObfuscatedMailto
-              user="jim"
-              domain="advancebass.com"
-              subject="Recording Session Inquiry"
-            >
-              Get in Touch
-            </ObfuscatedMailto>
-          </Button>
+      {/* Inquiry Form */}
+      <section className="py-16 border-t" id="inquire">
+        <div className="container mx-auto px-4 max-w-xl">
+          <div className="text-center mb-10">
+            <Mic2 className="h-10 w-10 text-primary mx-auto mb-4" />
+            <h2 className="text-3xl font-bold mb-3">
+              Book a Recording Session
+            </h2>
+            <p className="text-muted-foreground">
+              Share your project details below and Jim will get back to you with
+              availability and a quote.
+            </p>
+          </div>
+          <InquiryForm
+            subject="Recording Session Inquiry"
+            successMessage="Thanks! Jim will review your project and be in touch soon."
+            fields={[
+              {
+                name: "from_name",
+                label: "Your Name",
+                type: "text",
+                placeholder: "Jane Smith",
+                required: true,
+              },
+              {
+                name: "reply_to",
+                label: "Email Address",
+                type: "email",
+                placeholder: "jane@example.com",
+                required: true,
+              },
+              {
+                name: "genre",
+                label: "Genre / Style",
+                type: "select",
+                required: true,
+                options: [
+                  "Rock",
+                  "Funk",
+                  "Jazz",
+                  "Soul / R&B",
+                  "Pop",
+                  "Blues",
+                  "Gospel",
+                  "Fusion",
+                  "Country",
+                  "Electronic",
+                  "Other",
+                ],
+              },
+              {
+                name: "project_details",
+                label: "Project Details",
+                type: "textarea",
+                placeholder:
+                  "Tell Jim about your project — tempo, key, number of tracks, reference songs, and anything else that would help him understand the vibe.",
+                required: true,
+              },
+            ]}
+          />
         </div>
       </section>
     </>
