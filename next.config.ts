@@ -48,6 +48,7 @@ const securityHeaders = [
 ];
 
 const nextConfig: NextConfig = {
+  serverExternalPackages: ["gray-matter", "remark", "remark-html"],
   async headers() {
     return [
       {

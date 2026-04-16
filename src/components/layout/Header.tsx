@@ -23,6 +23,12 @@ export function Header() {
               Home
             </Link>
             <Link
+              href="/bass-lessons"
+              className="transition-colors hover:text-foreground text-foreground/80 font-medium"
+            >
+              Lessons
+            </Link>
+            <Link
               href="/transcriptions"
               className="transition-colors hover:text-foreground text-foreground/80 font-medium"
             >

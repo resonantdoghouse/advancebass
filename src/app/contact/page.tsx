@@ -5,9 +5,18 @@ import { ObfuscatedMailto } from "@/components/ui/obfuscated-mailto";
 import { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Contact | Advance Bass",
+  title: "Bass Lessons, Recording & Live Performance | Work With Jim Bennett",
   description:
-    "Get in touch for bass lessons, recording sessions, or live performances.",
+    "Book private bass lessons in Vancouver or online, hire Jim Bennett as a session bassist for remote recording, or book him for live performance. Get in touch to discuss your project.",
+  openGraph: {
+    title: "Work With Jim Bennett | Bass Lessons, Recording & Live Performance",
+    description:
+      "Private bass lessons in Vancouver & online, remote session recording, and live performance bookings. Professional bassist Jim Bennett — contact to get started.",
+    url: "https://advancebass.com/contact",
+  },
+  alternates: {
+    canonical: "https://advancebass.com/contact",
+  },
 };
 
 export default function ContactPage() {
@@ -15,11 +24,11 @@ export default function ContactPage() {
     <div className="container max-w-screen-xl mx-auto px-4 py-12 md:py-20">
       <div className="max-w-3xl mx-auto text-center mb-16 space-y-4">
         <h1 className="text-4xl font-bold tracking-tight sm:text-6xl text-primary">
-          Work With Me
+          Bass Lessons, Recording &amp; Live Performance
         </h1>
         <p className="text-xl text-muted-foreground">
-          Professional bass services for your musical journey or creative
-          project.
+          Professional bass services — private instruction in Vancouver &amp;
+          online, remote session recording, and live performance bookings.
         </p>
       </div>
 

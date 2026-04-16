@@ -12,16 +12,37 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     priority: 0.7,
   }))
 
-  const routes = [
+  const serviceRoutes = [
     '',
+    '/bass-lessons',
+    '/bassist-for-hire',
+    '/recording',
     '/contact',
+  ].map((route) => ({
+    url: `${baseUrl}${route}`,
+    lastModified: new Date(),
+    changeFrequency: 'monthly' as const,
+    priority: 1.0,
+  }))
+
+  const contentRoutes = [
     '/transcriptions',
+    '/tools',
+    '/tools/metronome',
+    '/tools/tuner',
+    '/tools/fretboard-trainer',
+    '/tools/arpeggio-visualizer',
+    '/tools/scale-visualizer',
+    '/tools/circle-of-fifths',
+    '/tools/ear-training',
+    '/tools/drum-machine',
+    '/tools/video-looper',
   ].map((route) => ({
     url: `${baseUrl}${route}`,
     lastModified: new Date(),
     changeFrequency: 'weekly' as const,
-    priority: 1.0,
+    priority: 0.8,
   }))
 
-  return [...routes, ...articles]
+  return [...serviceRoutes, ...contentRoutes, ...articles]
 }

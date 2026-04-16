@@ -122,6 +122,58 @@ const jsonLd = {
       founder: {
         "@id": "https://advancebass.com/#person",
       },
+      hasOfferCatalog: {
+        "@type": "OfferCatalog",
+        name: "Bass Services",
+        itemListElement: [
+          {
+            "@type": "Offer",
+            itemOffered: {
+              "@type": "Service",
+              name: "In-Person Bass Lessons",
+              description:
+                "Private bass instruction in Vancouver, BC. Electric and upright bass, jazz theory, slap, tapping, and fingerstyle for all levels.",
+              url: "https://advancebass.com/bass-lessons",
+              areaServed: { "@type": "City", name: "Vancouver" },
+              provider: { "@id": "https://advancebass.com/#person" },
+            },
+          },
+          {
+            "@type": "Offer",
+            itemOffered: {
+              "@type": "Service",
+              name: "Online Bass Lessons",
+              description:
+                "Private online bass lessons worldwide via Zoom. All levels, all styles.",
+              url: "https://advancebass.com/bass-lessons",
+              areaServed: "Worldwide",
+              provider: { "@id": "https://advancebass.com/#person" },
+            },
+          },
+          {
+            "@type": "Offer",
+            itemOffered: {
+              "@type": "Service",
+              name: "Remote Session Recording",
+              description:
+                "Professional bass tracks recorded and delivered remotely. High-quality WAV files, fast turnaround.",
+              url: "https://advancebass.com/recording",
+              provider: { "@id": "https://advancebass.com/#person" },
+            },
+          },
+          {
+            "@type": "Offer",
+            itemOffered: {
+              "@type": "Service",
+              name: "Bassist for Hire — Live Performance",
+              description:
+                "Experienced live bassist available for gigs, tours, and showcases across Rock, Funk, Soul, Jazz, and R&B.",
+              url: "https://advancebass.com/bassist-for-hire",
+              provider: { "@id": "https://advancebass.com/#person" },
+            },
+          },
+        ],
+      },
     },
     {
       "@type": "WebSite",
@@ -130,11 +182,6 @@ const jsonLd = {
       name: "Advance Bass",
       publisher: {
         "@id": "https://advancebass.com/#person",
-      },
-      potentialAction: {
-        "@type": "SearchAction",
-        target: "https://advancebass.com/search?q={search_term_string}",
-        "query-input": "required name=search_term_string",
       },
     },
   ],
