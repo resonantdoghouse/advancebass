@@ -290,7 +290,6 @@ export default function StrudelGeneratorPage() {
           <div className="flex-1 w-full h-full min-h-[500px] relative bg-background">
             {/* The web component wrapper styling ensures it expands to full bounds */}
             <div className="absolute inset-0 p-2">
-              {/* @ts-expect-error - Next.js strict TS flags custom web components without deeper registry configs */}
               <strudel-repl
                 key={`${activePreset.id}-${effect}-${tempoCommit}`}
                 code={activeCode}
