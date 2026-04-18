@@ -256,16 +256,20 @@ export default function StrudelGeneratorPage() {
             
             <div className="flex flex-wrap items-center gap-6 border-t md:border-t-0 pt-2 md:pt-0">
               <div className="flex items-center gap-3">
-                <Label className="text-xs text-muted-foreground whitespace-nowrap">Tempo: {tempo.toFixed(2)}</Label>
-                <div className="w-24">
-                  <Slider 
-                    value={[tempo]} 
-                    min={0.2} 
-                    max={1.5} 
-                    step={0.05} 
-                    onValueChange={handleTempoChange} 
-                    onValueCommit={handleTempoCommit}
-                  />
+                <Label className="text-xs text-muted-foreground whitespace-nowrap min-w-[70px]">Tempo: {tempo.toFixed(2)}</Label>
+                <div className="flex items-center gap-2">
+                  <span className="text-[10px] text-muted-foreground">0.2</span>
+                  <div className="w-24">
+                    <Slider 
+                      value={[tempo]} 
+                      min={0.2} 
+                      max={1.5} 
+                      step={0.05} 
+                      onValueChange={handleTempoChange} 
+                      onValueCommit={handleTempoCommit}
+                    />
+                  </div>
+                  <span className="text-[10px] text-muted-foreground">1.5</span>
                 </div>
               </div>
 
