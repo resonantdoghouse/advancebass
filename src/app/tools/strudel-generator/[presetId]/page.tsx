@@ -27,17 +27,7 @@ import {
 // no scroll area import
 import Link from "next/link";
 
-// Declare the custom web component types for React
-declare global {
-  namespace JSX {
-    interface IntrinsicElements {
-      "strudel-repl": React.DetailedHTMLProps<
-        React.HTMLAttributes<HTMLElement> & { code?: string },
-        HTMLElement
-      >;
-    }
-  }
-}
+
 
 export default function StrudelGeneratorPage() {
   const params = useParams();
