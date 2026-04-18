@@ -12,6 +12,7 @@ import {
   Search,
   Shuffle,
   Ear,
+  Settings2,
 } from "lucide-react";
 import {
   Card,
@@ -122,6 +123,14 @@ const TOOLS: Tool[] = [
         5th
       </div>
     ),
+  },
+  {
+    id: "strudel-generator",
+    title: "Strudel Music Generator",
+    description:
+      "Live code beats, loops, and polyrhythms in your browser using Strudel JS.",
+    href: "/tools/strudel-generator",
+    icon: <Settings2 className="h-8 w-8 text-primary mb-2" />,
   },
 ];
 

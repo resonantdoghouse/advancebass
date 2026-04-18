@@ -64,7 +64,7 @@ export default async function Home() {
                 asChild
                 size="lg"
                 variant="outline"
-                className="h-12 rounded-full px-8 text-base border-white/10 bg-white/5 backdrop-blur-sm hover:bg-white/10"
+                className="h-12 rounded-full px-8 text-base border-black/10 dark:border-white/10 bg-black/5 dark:bg-white/5 backdrop-blur-sm hover:bg-black/10 dark:hover:bg-white/10"
               >
                 <Link href="/transcriptions">Browse Transcriptions</Link>
               </Button>
@@ -74,7 +74,7 @@ export default async function Home() {
       </section>
 
       {/* Instructor Spotlight & Lessons */}
-      <section className="container mx-auto px-4 md:px-8 py-16 md:py-24 border-b border-white/5">
+      <section className="container mx-auto px-4 md:px-8 py-16 md:py-24 border-b border-black/5 dark:border-white/5">
         <div className="grid lg:grid-cols-2 gap-12 items-center">
           <div className="space-y-8">
             <div className="space-y-4">
@@ -155,7 +155,7 @@ export default async function Home() {
             </div>
           </div>
 
-          <div className="relative rounded-2xl overflow-hidden aspect-square lg:aspect-[4/3] shadow-2xl border border-white/10 bg-muted">
+          <div className="relative rounded-2xl overflow-hidden aspect-square lg:aspect-[4/3] shadow-2xl border border-black/10 dark:border-white/10 bg-muted">
             {/* Placeholder for instructor image - could use generate_image if needed, but for now using a gradient/pattern or keeping it abstract if no image provided */}
             <div className="absolute inset-0 bg-gradient-to-br from-zinc-900 to-black" />
             <div className="absolute inset-0 flex items-center justify-center">
@@ -163,8 +163,8 @@ export default async function Home() {
                 <div className="inline-block p-4 rounded-full bg-primary/20 backdrop-blur-md mb-4 border border-primary/20">
                   <Music2 className="h-16 w-16 text-primary" />
                 </div>
-                <div className="text-2xl font-bold">Jim Bennett</div>
-                <div className="text-muted-foreground">
+                <div className="text-2xl font-bold text-white">Jim Bennett</div>
+                <div className="text-zinc-300">
                   Professional Bassist & Educator
                 </div>
               </div>
@@ -218,7 +218,7 @@ export default async function Home() {
               </Button>
             </div>
 
-            <div className="relative aspect-video rounded-xl overflow-hidden shadow-2xl border border-white/10 bg-black/40 flex items-center justify-center group-hover:border-primary/30 transition-colors duration-500">
+            <div className="relative aspect-video rounded-xl overflow-hidden shadow-2xl border border-black/10 dark:border-white/10 bg-black/40 flex items-center justify-center group-hover:border-primary/30 transition-colors duration-500">
               <div className="absolute inset-0 bg-gradient-to-tr from-primary/20 via-transparent to-purple-500/20" />
               <Repeat className="h-24 w-24 text-white/20 group-hover:text-primary transition-all duration-500 group-hover:scale-110 drop-shadow-[0_0_15px_rgba(255,255,255,0.1)]" />
             </div>
