@@ -30,7 +30,7 @@ export function VideoControls({
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 gap-4 items-center bg-muted/40 p-3 rounded-lg border border-border/50">
       {/* Transport */}
-      <div className="flex items-center gap-2">
+      <div className="flex flex-wrap items-center gap-2">
         <Button
           variant="default"
           size="icon"
@@ -77,7 +77,7 @@ export function VideoControls({
       </div>
 
       {/* Speed Controls */}
-      <div className="flex flex-wrap justify-end gap-1">
+      <div className="flex flex-wrap justify-start md:justify-end gap-1 mt-2 md:mt-0">
         {[0.5, 0.75, 1, 1.25, 1.5, 2].map((rate) => (
           <Button
             key={rate}

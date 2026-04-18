@@ -170,7 +170,7 @@ export function VideoTimeline({
         </div>
 
         {loop && (
-          <div className="grid grid-cols-2 gap-4 p-3 bg-background/50">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 p-3 bg-background/50">
             <div className="space-y-1.5">
               <Label className="text-xs text-muted-foreground">
                 Start Time
