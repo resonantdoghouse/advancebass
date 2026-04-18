@@ -118,24 +118,24 @@ export function Fretboard({
                     {/* Side Dot (Top Edge) */}
                     <div className="absolute top-[-24px] flex justify-center w-20">
                       {i + 1 === 12 ? (
-                        <div className="flex gap-1">
-                          <div className="w-2 h-2 rounded-full bg-neutral-400 dark:bg-neutral-500 shadow-sm"></div>
-                          <div className="w-2 h-2 rounded-full bg-neutral-400 dark:bg-neutral-500 shadow-sm"></div>
+                        <div className="flex gap-2">
+                          <div className="w-3 h-3 rounded-full bg-stone-200 shadow-sm border border-stone-300"></div>
+                          <div className="w-3 h-3 rounded-full bg-stone-200 shadow-sm border border-stone-300"></div>
                         </div>
                       ) : (
-                        <div className="w-2 h-2 rounded-full bg-neutral-400 dark:bg-neutral-500 shadow-sm"></div>
+                        <div className="w-3 h-3 rounded-full bg-stone-200 shadow-sm border border-stone-300"></div>
                       )}
                     </div>
 
                     {/* Board Inlay (Middle) */}
-                    <div className="absolute top-1/2 -translate-y-1/2 flex justify-center opacity-40 mix-blend-overlay">
+                    <div className="absolute top-1/2 -translate-y-1/2 flex justify-center opacity-80">
                       {i + 1 === 12 ? (
-                        <div className="flex gap-8">
-                          <div className="w-6 h-6 rounded-full bg-black/40 backdrop-blur-sm shadow-inner"></div>
-                          <div className="w-6 h-6 rounded-full bg-black/40 backdrop-blur-sm shadow-inner"></div>
+                        <div className="flex flex-col gap-6">
+                          <div className="w-7 h-7 rounded-full bg-stone-200 shadow-[inset_0_2px_4px_rgba(0,0,0,0.4)] border border-stone-400"></div>
+                          <div className="w-7 h-7 rounded-full bg-stone-200 shadow-[inset_0_2px_4px_rgba(0,0,0,0.4)] border border-stone-400"></div>
                         </div>
                       ) : (
-                        <div className="w-6 h-6 rounded-full bg-black/40 backdrop-blur-sm shadow-inner"></div>
+                        <div className="w-7 h-7 rounded-full bg-stone-200 shadow-[inset_0_2px_4px_rgba(0,0,0,0.4)] border border-stone-400"></div>
                       )}
                     </div>
                   </div>
