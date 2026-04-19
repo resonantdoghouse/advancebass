@@ -52,7 +52,7 @@ export function VideoControls({
           <RotateCcw className="h-4 w-4" aria-label="Reset" />
         </Button>
 
-        <div className="flex items-center gap-2 ml-2 px-2 py-1 bg-background rounded-full border shrink-0">
+        <div className="flex items-center justify-between flex-1 min-w-[120px] gap-2 px-2 py-1 bg-background rounded-full border">
           <Button
             variant="ghost"
             size="icon"
@@ -65,7 +65,7 @@ export function VideoControls({
               <Volume2 className="h-3 w-3" aria-label="Mute" />
             )}
           </Button>
-          <div className="w-20 shrink-0">
+          <div className="flex-1 max-w-[100px] shrink-0">
             <Slider
               value={[muted ? 0 : volume]}
               max={1}

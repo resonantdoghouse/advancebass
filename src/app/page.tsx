@@ -41,7 +41,7 @@ export default async function Home() {
 
         <div className="container relative mx-auto px-4 text-center">
           <div className="mx-auto max-w-4xl space-y-6">
-            <h1 className="text-5xl font-extrabold tracking-tight sm:text-6xl md:text-7xl lg:text-8xl">
+            <h1 className="text-4xl font-extrabold tracking-tight sm:text-5xl md:text-6xl lg:text-8xl">
               Master the <span className="text-primary">Low End</span>
             </h1>
 
@@ -54,17 +54,17 @@ export default async function Home() {
               <Button
                 asChild
                 size="lg"
-                className="h-12 rounded-full px-8 text-base shadow-lg shadow-primary/25 hover:shadow-primary/40 transition-shadow"
+                className="h-12 w-full sm:w-auto rounded-full px-8 text-base shadow-lg shadow-primary/25 hover:shadow-primary/40 transition-shadow"
               >
                 <Link href="/contact">
-                  Book a Lesson <ArrowRight className="ml-2 h-4 w-4" />
+                  Book a Lesson <ArrowRight className="ml-2 h-4 w-4 shrink-0" />
                 </Link>
               </Button>
               <Button
                 asChild
                 size="lg"
                 variant="outline"
-                className="h-12 rounded-full px-8 text-base border-black/10 dark:border-white/10 bg-black/5 dark:bg-white/5 backdrop-blur-sm hover:bg-black/10 dark:hover:bg-white/10"
+                className="h-12 w-full sm:w-auto rounded-full px-8 text-base border-black/10 dark:border-white/10 bg-black/5 dark:bg-white/5 backdrop-blur-sm hover:bg-black/10 dark:hover:bg-white/10"
               >
                 <Link href="/transcriptions">Browse Transcriptions</Link>
               </Button>

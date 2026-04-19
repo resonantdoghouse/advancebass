@@ -122,9 +122,9 @@ export default function StrudelGeneratorPage() {
 
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4">
         <div>
-          <h1 className="text-4xl font-extrabold tracking-tight bg-gradient-to-r from-purple-500 to-blue-500 bg-clip-text text-transparent inline-flex items-center gap-3">
-            <Settings2 className="h-10 w-10 text-purple-500" />
-            Strudel Music Generator
+          <h1 className="text-3xl sm:text-4xl font-extrabold tracking-tight bg-gradient-to-r from-purple-500 to-blue-500 bg-clip-text text-transparent flex flex-wrap items-center gap-2 sm:gap-3">
+            <Settings2 className="h-8 w-8 sm:h-10 sm:w-10 text-purple-500 shrink-0" />
+            <span className="leading-tight">Strudel Music Generator</span>
           </h1>
           <p className="text-muted-foreground mt-2 text-lg">
             Live code beats, loops, and polyrhythms in your browser using Strudel JS.

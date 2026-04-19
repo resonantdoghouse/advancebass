@@ -13,10 +13,10 @@ export function Header() {
   return (
     <header className="sticky top-0 z-50 w-full border-b border-border/40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
       <div className="container flex h-14 max-w-screen-2xl items-center justify-between mx-auto px-4 md:px-8">
-        <div className="flex">
-          <Link href="/" className="mr-6 flex items-center space-x-2" onClick={closeMenu}>
-            <Music4 className="h-6 w-6 text-primary" />
-            <span className="font-bold inline-block">
+        <div className="flex shrink-0">
+          <Link href="/" className="mr-4 md:mr-6 flex items-center space-x-2 shrink-0" onClick={closeMenu}>
+            <Music4 className="h-6 w-6 text-primary shrink-0" />
+            <span className="font-bold inline-block whitespace-nowrap text-lg sm:text-xl">
               Advance Bass
             </span>
           </Link>
@@ -62,10 +62,10 @@ export function Header() {
         </div>
 
         {/* Mobile Navigation Toggle */}
-        <div className="flex md:hidden items-center gap-2">
+        <div className="flex md:hidden items-center gap-1 sm:gap-2">
           <ThemeToggle />
           <button
-            className="p-2 -mr-2 text-foreground/80 hover:text-foreground transition-colors"
+            className="p-2 -mr-2 text-foreground/80 hover:text-foreground transition-colors shrink-0 flex items-center justify-center min-h-[44px] min-w-[44px]"
             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
             aria-label="Toggle mobile menu"
           >
@@ -80,39 +80,39 @@ export function Header() {
 
       {/* Mobile Navigation Menu */}
       {isMobileMenuOpen && (
-        <div className="md:hidden border-t border-border/40 bg-background">
-          <nav className="container mx-auto px-4 py-4 flex flex-col space-y-4 shadow-lg">
+        <div className="md:hidden fixed inset-x-0 top-14 bottom-0 z-40 bg-background/95 backdrop-blur-md border-t border-border/40 overflow-y-auto w-full">
+          <nav className="container mx-auto px-4 py-8 flex flex-col space-y-6">
             <Link
               href="/"
-              className="transition-colors hover:text-foreground py-2 text-foreground/80 font-medium block w-full border-b border-border/40"
+              className="transition-colors hover:text-primary py-3 text-foreground/90 font-medium text-lg block w-full border-b border-border/20"
               onClick={closeMenu}
             >
               Home
             </Link>
             <Link
               href="/bass-lessons"
-              className="transition-colors hover:text-foreground py-2 text-foreground/80 font-medium block w-full border-b border-border/40"
+              className="transition-colors hover:text-primary py-3 text-foreground/90 font-medium text-lg block w-full border-b border-border/20"
               onClick={closeMenu}
             >
               Lessons
             </Link>
             <Link
               href="/transcriptions"
-              className="transition-colors hover:text-foreground py-2 text-foreground/80 font-medium block w-full border-b border-border/40"
+              className="transition-colors hover:text-primary py-3 text-foreground/90 font-medium text-lg block w-full border-b border-border/20"
               onClick={closeMenu}
             >
               Transcriptions
             </Link>
             <Link
               href="/tools"
-              className="transition-colors hover:text-foreground py-2 text-foreground/80 font-medium block w-full border-b border-border/40"
+              className="transition-colors hover:text-primary py-3 text-foreground/90 font-medium text-lg block w-full border-b border-border/20"
               onClick={closeMenu}
             >
               Tools
             </Link>
             <Link
               href="/contact"
-              className="transition-colors hover:text-foreground py-2 text-foreground/80 font-medium block w-full"
+              className="transition-colors hover:text-primary py-3 text-foreground/90 font-medium text-lg block w-full"
               onClick={closeMenu}
             >
               Contact
