@@ -80,7 +80,7 @@ export function Header() {
 
       {/* Mobile Navigation Menu */}
       {isMobileMenuOpen && (
-        <div className="md:hidden fixed inset-x-0 top-14 bottom-0 z-40 bg-background/95 backdrop-blur-md border-t border-border/40 overflow-y-auto w-full">
+        <div className="md:hidden absolute top-full left-0 w-full h-[calc(100vh-3.5rem)] z-40 bg-background/95 backdrop-blur-md border-t border-border/40 overflow-y-auto">
           <nav className="container mx-auto px-4 py-8 flex flex-col space-y-6">
             <Link
               href="/"
