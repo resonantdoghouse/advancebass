@@ -530,6 +530,7 @@ export function TranscriptionImageViewer({
                 alt={currentImage.alt}
                 className="max-w-full h-auto shadow-sm"
                 style={{ display: "block" }} // Remove bottom gap
+                loading={currentIndex === 0 ? "eager" : "lazy"}
                 onLoad={handleImageLoad}
               />
             </ReactCrop>
@@ -540,6 +541,7 @@ export function TranscriptionImageViewer({
               alt={currentImage.alt}
               className="max-w-full h-auto shadow-sm pointer-events-none select-none"
               draggable={false}
+              loading={currentIndex === 0 ? "eager" : "lazy"}
               onLoad={handleImageLoad}
             />
           )}
