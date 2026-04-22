@@ -2,13 +2,26 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { Music4, Menu, X } from "lucide-react";
 import { ThemeToggle } from "@/components/ThemeToggle";
 
+const navLinks = [
+  { href: "/", label: "Home", exact: true },
+  { href: "/bass-lessons", label: "Lessons" },
+  { href: "/transcriptions", label: "Transcriptions" },
+  { href: "/tools", label: "Tools" },
+  { href: "/contact", label: "Contact" },
+];
+
 export function Header() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const pathname = usePathname();
 
   const closeMenu = () => setIsMobileMenuOpen(false);
+
+  const isActive = (href: string, exact?: boolean) =>
+    exact ? pathname === href : pathname === href || pathname.startsWith(href + "/");
 
   return (
     <header className="sticky top-0 z-50 w-full border-b border-border/40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
@@ -25,36 +38,19 @@ export function Header() {
         {/* Desktop Navigation */}
         <div className="hidden md:flex flex-1 items-center justify-end space-x-4">
           <nav className="flex items-center gap-6 text-sm">
-            <Link
-              href="/"
-              className="transition-colors hover:text-foreground text-foreground/80 font-medium"
-            >
-              Home
-            </Link>
-            <Link
-              href="/bass-lessons"
-              className="transition-colors hover:text-foreground text-foreground/80 font-medium"
-            >
-              Lessons
-            </Link>
-            <Link
-              href="/transcriptions"
-              className="transition-colors hover:text-foreground text-foreground/80 font-medium"
-            >
-              Transcriptions
-            </Link>
-            <Link
-              href="/tools"
-              className="transition-colors hover:text-foreground text-foreground/80 font-medium"
-            >
-              Tools
-            </Link>
-            <Link
-              href="/contact"
-              className="transition-colors hover:text-foreground text-foreground/80 font-medium"
-            >
-              Contact
-            </Link>
+            {navLinks.map(({ href, label, exact }) => (
+              <Link
+                key={href}
+                href={href}
+                className={`transition-colors font-medium ${
+                  isActive(href, exact)
+                    ? "text-foreground underline underline-offset-4 decoration-primary decoration-2"
+                    : "text-foreground/60 hover:text-foreground"
+                }`}
+              >
+                {label}
+              </Link>
+            ))}
           </nav>
           <nav className="flex items-center gap-2 ml-4">
             <ThemeToggle />
@@ -82,41 +78,22 @@ export function Header() {
       {isMobileMenuOpen && (
         <div className="md:hidden absolute top-full left-0 w-full h-[calc(100vh-3.5rem)] z-40 bg-background/95 backdrop-blur-md border-t border-border/40 overflow-y-auto">
           <nav className="container mx-auto px-4 py-8 flex flex-col space-y-6">
-            <Link
-              href="/"
-              className="transition-colors hover:text-primary py-3 text-foreground/90 font-medium text-lg block w-full border-b border-border/20"
-              onClick={closeMenu}
-            >
-              Home
-            </Link>
-            <Link
-              href="/bass-lessons"
-              className="transition-colors hover:text-primary py-3 text-foreground/90 font-medium text-lg block w-full border-b border-border/20"
-              onClick={closeMenu}
-            >
-              Lessons
-            </Link>
-            <Link
-              href="/transcriptions"
-              className="transition-colors hover:text-primary py-3 text-foreground/90 font-medium text-lg block w-full border-b border-border/20"
-              onClick={closeMenu}
-            >
-              Transcriptions
-            </Link>
-            <Link
-              href="/tools"
-              className="transition-colors hover:text-primary py-3 text-foreground/90 font-medium text-lg block w-full border-b border-border/20"
-              onClick={closeMenu}
-            >
-              Tools
-            </Link>
-            <Link
-              href="/contact"
-              className="transition-colors hover:text-primary py-3 text-foreground/90 font-medium text-lg block w-full"
-              onClick={closeMenu}
-            >
-              Contact
-            </Link>
+            {navLinks.map(({ href, label, exact }, index) => (
+              <Link
+                key={href}
+                href={href}
+                className={`transition-colors py-3 font-medium text-lg block w-full ${
+                  index < navLinks.length - 1 ? "border-b border-border/20" : ""
+                } ${
+                  isActive(href, exact)
+                    ? "text-primary"
+                    : "text-foreground/90 hover:text-primary"
+                }`}
+                onClick={closeMenu}
+              >
+                {label}
+              </Link>
+            ))}
           </nav>
         </div>
       )}
