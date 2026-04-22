@@ -44,6 +44,7 @@ export default function StrudelGeneratorPage() {
   const [tempo, setTempo] = useState<number>(0.5);
   const [tempoCommit, setTempoCommit] = useState<number>(0.5);
   const [effect, setEffect] = useState<string>("none");
+  const [mobileTab, setMobileTab] = useState<"library" | "editor">("editor");
 
   // Sync state if the URL changes (e.g. from browser Back/Forward navigation)
   useEffect(() => {
@@ -122,8 +123,8 @@ export default function StrudelGeneratorPage() {
 
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4">
         <div>
-          <h1 className="text-3xl sm:text-4xl font-extrabold tracking-tight bg-gradient-to-r from-purple-500 to-blue-500 bg-clip-text text-transparent flex flex-wrap items-center gap-2 sm:gap-3">
-            <Settings2 className="h-8 w-8 sm:h-10 sm:w-10 text-purple-500 shrink-0" />
+          <h1 className="text-3xl sm:text-4xl font-extrabold tracking-tight bg-gradient-to-r from-primary to-amber-500 bg-clip-text text-transparent flex flex-wrap items-center gap-2 sm:gap-3">
+            <Settings2 className="h-8 w-8 sm:h-10 sm:w-10 text-primary shrink-0 drop-shadow-sm" />
             <span className="leading-tight">Strudel Music Generator</span>
           </h1>
           <p className="text-muted-foreground mt-2 text-lg">
@@ -147,10 +148,10 @@ export default function StrudelGeneratorPage() {
       </div>
 
       {showDocs && (
-        <Card className="mb-8 border-purple-500/20 bg-purple-500/5">
+        <Card className="mb-8 border-primary/20 bg-primary/5 shadow-sm">
           <CardHeader>
-            <CardTitle className="text-lg flex items-center gap-2">
-              <Code className="h-5 w-5 text-purple-400" /> Let&#39;s get creative
+            <CardTitle className="text-lg flex items-center gap-2 text-primary">
+              <Code className="h-5 w-5 text-primary" /> Let&#39;s get creative
             </CardTitle>
           </CardHeader>
           <CardContent className="text-sm space-y-4">
@@ -165,9 +166,27 @@ export default function StrudelGeneratorPage() {
         </Card>
       )}
 
+      {/* Mobile Tab Control */}
+      <div className="flex lg:hidden mb-4 bg-muted/60 p-1 rounded-xl shadow-inner border border-border/40 w-full max-w-sm mx-auto">
+        <button 
+          onClick={() => setMobileTab("library")} 
+          className={`flex-1 flex items-center justify-center gap-2 py-2.5 text-sm font-semibold rounded-lg transition-all duration-200 ${mobileTab === 'library' ? 'bg-background shadow-md text-primary ring-1 ring-border' : 'text-muted-foreground hover:text-foreground'}`}
+        >
+          <Music className="h-4 w-4" />
+          Library
+        </button>
+        <button 
+          onClick={() => setMobileTab("editor")} 
+          className={`flex-1 flex items-center justify-center gap-2 py-2.5 text-sm font-semibold rounded-lg transition-all duration-200 ${mobileTab === 'editor' ? 'bg-background shadow-md text-primary ring-1 ring-border' : 'text-muted-foreground hover:text-foreground'}`}
+        >
+          <Code className="h-4 w-4" />
+          Editor
+        </button>
+      </div>
+
       <div className="grid grid-cols-1 lg:grid-cols-4 gap-6 min-h-[600px]">
         {/* Preset Library Sidebar */}
-        <div className="lg:col-span-1 space-y-4 flex flex-col h-full bg-muted/40 rounded-xl p-4 border shadow-sm">
+        <div className={`lg:col-span-1 space-y-4 flex-col h-full bg-muted/30 rounded-xl p-4 border border-border/50 shadow-sm ${mobileTab === 'library' ? 'flex' : 'hidden lg:flex'}`}>
           <div className="flex items-center gap-2 font-semibold pb-2 border-b">
             <Music className="h-5 w-5 text-primary" />
             Starter Beats Library
@@ -233,7 +252,7 @@ export default function StrudelGeneratorPage() {
         </div>
 
         {/* Main Editor Environment */}
-        <div className="lg:col-span-3 rounded-xl overflow-hidden border shadow-sm bg-black/5 flex flex-col">
+        <div className={`lg:col-span-3 rounded-xl overflow-hidden border border-border/60 shadow-sm flex-col bg-background relative ${mobileTab === 'editor' ? 'flex' : 'hidden lg:flex'}`}>
           <div className="bg-muted p-2 flex flex-col md:flex-row md:items-center px-4 border-b gap-4">
             <div className="flex items-center gap-2">
               <span className="flex h-3 w-3 rounded-full bg-red-400"></span>
@@ -244,8 +263,8 @@ export default function StrudelGeneratorPage() {
               {activePreset.name.toLowerCase().replace(/\\s+/g, '-')}.strudel
             </div>
             
-            <div className="flex flex-wrap items-center gap-6 border-t md:border-t-0 pt-2 md:pt-0">
-              <div className="flex items-center gap-3">
+            <div className="flex flex-wrap items-center justify-between md:justify-end w-full md:w-auto gap-4 lg:gap-6 border-t md:border-t-0 pt-3 md:pt-0 mt-2 md:mt-0">
+              <div className="flex items-center gap-3 w-full sm:w-auto">
                 <Label className="text-xs text-muted-foreground whitespace-nowrap min-w-[70px]">Tempo: {tempo.toFixed(2)}</Label>
                 <div className="flex items-center gap-2">
                   <span className="text-[10px] text-muted-foreground">0.2</span>

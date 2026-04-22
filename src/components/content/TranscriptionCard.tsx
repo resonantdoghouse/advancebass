@@ -7,9 +7,10 @@ import { Article, getArticleUrl } from "@/lib/data";
 
 interface TranscriptionCardProps {
     article: Article;
+    priority?: boolean;
 }
 
-export function TranscriptionCard({ article }: TranscriptionCardProps) {
+export function TranscriptionCard({ article, priority = false }: TranscriptionCardProps) {
     return (
         <Link href={getArticleUrl(article)} className="group h-full">
             <Card className="h-full flex flex-col hover:border-primary/50 transition-all duration-300 hover:shadow-2xl hover:-translate-y-1 bg-card/40 backdrop-blur-sm overflow-hidden border-muted">
@@ -21,6 +22,7 @@ export function TranscriptionCard({ article }: TranscriptionCardProps) {
                             fill
                             sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                             className="object-cover w-full h-full transition-transform duration-500 group-hover:scale-110 opacity-90 group-hover:opacity-100"
+                            priority={priority}
                         />
                         <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
                         <Badge variant="secondary" className="absolute bottom-2 left-2 bg-background/80 backdrop-blur text-xs">{article.category}</Badge>

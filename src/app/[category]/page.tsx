@@ -55,8 +55,8 @@ export default async function CategoryPage({ params }: Props) {
             </div>
 
             <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-                {categoryArticles.map((article) => (
-                    <TranscriptionCard key={article.id} article={article} />
+                {categoryArticles.map((article, index) => (
+                    <TranscriptionCard key={article.id} article={article} priority={index === 0} />
                 ))}
             </div>
 
