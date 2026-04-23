@@ -73,6 +73,46 @@ Built with performance and developer experience in mind:
 4. **Open your browser**
    Navigate to [http://localhost:3000](http://localhost:3000) to see the application.
 
+## 🖼️ Open Graph Images
+
+Branded 1200×630 social preview images are generated dynamically using [`next/og`](https://nextjs.org/docs/app/api-reference/file-conventions/opengraph-image). Each image shares the same dark-background, gold-accent design with a sine-wave decoration.
+
+| Route | OG Image URL | Notes |
+|---|---|---|
+| `/` (home) | `/opengraph-image` | Static default image |
+| `/tools` and all `/tools/*` | `/tools/opengraph-image` | Cascades to all tool sub-routes |
+| `/transcriptions/[slug]` | `/transcriptions/[slug]/opengraph-image` | Dynamic — renders article title & tags |
+
+**Testing locally**
+
+```bash
+# Default / home
+open http://localhost:3000/opengraph-image
+
+# Tools section
+open http://localhost:3000/tools/opengraph-image
+
+# A specific transcription (swap slug as needed)
+open http://localhost:3000/transcriptions/get-lucky-bass-cover-tabs/opengraph-image
+```
+
+**Validating social previews**
+
+Once deployed, paste any page URL into one of these tools to confirm `og:image` is resolved correctly:
+
+- [opengraph.xyz](https://www.opengraph.xyz)
+- [Twitter/X Card Validator](https://cards-dev.twitter.com/validator)
+- [Facebook Sharing Debugger](https://developers.facebook.com/tools/debug/)
+
+**Source files**
+
+| File | Purpose |
+|---|---|
+| `src/lib/og-image.tsx` | Shared `OgCard` layout component (brand, sine wave, typography) |
+| `src/app/opengraph-image.tsx` | Default OG image (edge runtime) |
+| `src/app/tools/opengraph-image.tsx` | Tools OG image (edge runtime) |
+| `src/app/[category]/[slug]/opengraph-image.tsx` | Dynamic transcription OG image (nodejs runtime — reads filesystem) |
+
 ## 🎨 Theme
 
 The application supports both Light and Dark modes, automatically adapting to your system preferences.
