@@ -5,6 +5,102 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Music4, Menu, X } from "lucide-react";
 import { ThemeToggle } from "@/components/ThemeToggle";
+import { cn } from "@/lib/utils";
+
+// 4 full periods of a sine wave in a 200×12 viewBox.
+// Animating translateX(0 → -50%) scrolls exactly one seamless loop.
+const SINE_WAVE_PATH =
+  "M 0 6 C 10 2, 15 2, 25 6 C 35 10, 40 10, 50 6 " +
+  "C 60 2, 65 2, 75 6 C 85 10, 90 10, 100 6 " +
+  "C 110 2, 115 2, 125 6 C 135 10, 140 10, 150 6 " +
+  "C 160 2, 165 2, 175 6 C 185 10, 190 10, 200 6";
+
+function NavLink({ href, label, isActive }: { href: string; label: string; isActive: boolean }) {
+  const [hovered, setHovered] = useState(false);
+
+  const show    = isActive || hovered;
+  const scaleY  = hovered ? 0.5 : isActive ? 0.2 : 0;
+  // Only animate on hover; active state is static
+  const animCls = hovered ? "nav-wave-hover" : "";
+
+  return (
+    <Link
+      href={href}
+      className={cn(
+        "relative pb-3 font-medium transition-colors duration-200",
+        isActive ? "text-foreground" : "text-foreground/60 hover:text-foreground"
+      )}
+      onMouseEnter={() => setHovered(true)}
+      onMouseLeave={() => setHovered(false)}
+    >
+      {label}
+
+      {/* Sine-wave underline */}
+      <span
+        aria-hidden="true"
+        className="absolute bottom-0 left-0 right-0 h-3 overflow-hidden pointer-events-none"
+      >
+        <svg
+          className={animCls}
+          viewBox="0 0 200 12"
+          preserveAspectRatio="none"
+          style={{
+            width: "200%",
+            height: "100%",
+            opacity: show ? 1 : 0,
+            transition: "opacity 0.2s ease",
+          }}
+          aria-hidden="true"
+        >
+          {/* Soft glow layer — wider, semi-transparent */}
+          <g
+            style={{
+              transform: `scaleY(${scaleY})`,
+              transformOrigin: "center",
+              transition: "transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1)",
+            }}
+          >
+            <path
+              d={SINE_WAVE_PATH}
+              fill="none"
+              stroke="hsl(var(--primary))"
+              strokeWidth="5"
+              strokeLinecap="round"
+              vectorEffect="non-scaling-stroke"
+              opacity={isActive ? 0.12 : 0.07}
+            />
+          </g>
+
+          {/* Main wave line */}
+          <g
+            style={{
+              transform: `scaleY(${scaleY})`,
+              transformOrigin: "center",
+              transition: "transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1)",
+            }}
+          >
+            <path
+              d={SINE_WAVE_PATH}
+              fill="none"
+              stroke="hsl(var(--primary))"
+              strokeWidth={hovered ? "2" : "1.5"}
+              strokeLinecap="round"
+              vectorEffect="non-scaling-stroke"
+              style={{
+                filter: isActive
+                  ? `drop-shadow(0 0 ${hovered ? "3px" : "2px"} hsl(var(--primary) / 0.45))`
+                  : hovered
+                  ? "drop-shadow(0 0 2px hsl(var(--primary) / 0.3))"
+                  : "none",
+                transition: "stroke-width 0.2s ease, filter 0.3s ease",
+              }}
+            />
+          </g>
+        </svg>
+      </span>
+    </Link>
+  );
+}
 
 const navLinks = [
   { href: "/", label: "Home", exact: true },
@@ -39,17 +135,12 @@ export function Header() {
         <div className="hidden md:flex flex-1 items-center justify-end space-x-4">
           <nav className="flex items-center gap-6 text-sm">
             {navLinks.map(({ href, label, exact }) => (
-              <Link
+              <NavLink
                 key={href}
                 href={href}
-                className={`transition-colors font-medium ${
-                  isActive(href, exact)
-                    ? "text-foreground underline underline-offset-4 decoration-primary decoration-2"
-                    : "text-foreground/60 hover:text-foreground"
-                }`}
-              >
-                {label}
-              </Link>
+                label={label}
+                isActive={isActive(href, exact)}
+              />
             ))}
           </nav>
           <nav className="flex items-center gap-2 ml-4">

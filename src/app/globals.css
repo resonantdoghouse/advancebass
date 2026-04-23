@@ -94,3 +94,21 @@ body {
 ::-webkit-scrollbar-thumb {
   @apply bg-muted rounded-full hover:bg-muted-foreground/50 transition-colors;
 }
+
+/* ── Nav link sine wave underline ─────────────────────────────── */
+@keyframes nav-wave-travel {
+  from { transform: translateX(0); }
+  to   { transform: translateX(-50%); }
+}
+
+/* Hover: slow, gentle oscillation */
+.nav-wave-hover {
+  animation: nav-wave-travel 4s linear infinite;
+}
+
+/* Reduced motion: no animation */
+@media (prefers-reduced-motion: reduce) {
+  .nav-wave-hover {
+    animation: none;
+  }
+}
