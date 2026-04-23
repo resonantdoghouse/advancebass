@@ -2,103 +2,89 @@
 
 **Professional Bass Transcriptions & Interactive Practice Tools**
 
-Advance Bass is a modern, open-source web application designed for bass players of all levels. It combines studio-quality transcriptions with a powerful suite of browser-based practice tools, helping you master the low end without needing expensive standalone software.
+Advance Bass is a modern web application for bass players of all levels. It combines studio-quality transcriptions with a suite of browser-based practice tools — no expensive standalone software required.
 
-## 🎯 Mission
+## Mission
 
-Our mission is to make professional bass education accessible to everyone. Whether you're learning your first line or transcribing jazz fusion solos, Advance Bass provides the tools you need—completely free, with no ads or paywalls.
+Make professional bass education accessible to everyone. Free tools, no ads, no paywalls.
 
-## 🚀 Features
+---
 
-### 🎸 Advanced Video Looper
+## Features
 
-The crown jewel of our practice suite. Transform any YouTube video into a powerful lesson:
+### Video Looper
 
-- **Curated Library**: Instant access to presets for iconic bass lines from legends like Jaco Pastorius, James Jamerson, Flea, and more.
-- **Custom Video Support**: Load any YouTube video by ID to practice your favorite songs.
-- **Precision Controls**:
-  - **A/B Looping**: Set precise start and end points to drill difficult sections.
-  - **Speed Control**: Slow down to 50% or speed up to 200% without changing pitch.
-  - **Pitch Shifting**: Adjust tuning to match the recording.
-- **Audio Analysis**: Real-time DSP-based detection for **Notes**, **Chords**, and **BPM** (requires microphone/system audio).
-- **Visual Timeline**: Drag-and-drop timeline for easy loop management.
+Transform any YouTube video into a practice session:
 
-### 🛠️ Digital Woodshed (Practice Tools)
+- Load any YouTube video by ID or choose from a curated preset library
+- A/B loop — set precise start and end points to drill difficult sections
+- Speed control — slow down to 50% or up to 200% without pitch change
+- Pitch shifting — tune the recording to match your instrument
 
-A complete set of essential tools running directly in your browser:
+### Practice Tools
 
-- **Tools Gallery**: Searchable and sortable interface to quickly find the right tool.
-- **Tuner**: Accurate chromatic tuner for 4, 5, and 6-string basses with strobe visualization.
-- **Metronome**: Rock-solid timing with accent controls and visual indicators.
-- **Drum Machine**: Practice with various drum beats and patterns instead of a click.
-- **Scale Visualizer**: interactive fretboard map for all modes and keys.
-- **Arpeggio Visualizer**: Map chord tones across the neck to master your shapes.
-- **Circle of Fifths**: Visual theory decoder for understanding key signatures and harmony.
-- **Fretboard Trainer**: Gamified "Note Rush" mode to master fretboard memorization.
+A complete woodshed running in the browser. All tools are free and require no account.
 
-### 🎼 Content Library
+| Tool | Description |
+|---|---|
+| **Tuner** | Chromatic tuner for 4, 5, and 6-string bass with strobe visualization and reference tones |
+| **Metronome** | Adjustable BPM with accent controls, odd time signatures, and visual beat indicators |
+| **Drum Machine** | Step sequencer for building drum patterns to practice against |
+| **Scale Visualizer** | Interactive fretboard showing scales and modes across 4, 5, and 6-string basses |
+| **Arpeggio Visualizer** | Color-coded chord tone map across the fretboard for any chord type and root |
+| **Fretboard Trainer** | Gamified note-finding — race against the clock to memorize the fretboard |
+| **Ear Training** | Identify intervals and chord qualities by ear; timed game for all levels |
+| **Circle of Fifths** | Visual guide to key signatures, relative minors, and scale relationships |
+| **Strudel Generator** | Live-code beats, loops, and polyrhythms in the browser using Strudel JS |
 
-- **Studio-Quality Transcriptions**: Meticulously transcribed tabs and notation (Markdown-based).
-- **Technique Articles**: Deep dives into playing styles, from slap to fingerstyle.
-- **Theory & Gear**: Educational resources to expand your knowledge beyond the instrument.
+### Transcriptions
 
-## ⚡ Tech Stack
+- Studio-quality bass transcriptions — tabs and notation, meticulously verified
+- Markdown-based content with image viewer for multi-page scores
 
-Built with performance and developer experience in mind:
+---
 
-- **Framework**: [Next.js 16](https://nextjs.org/) (App Router)
-- **Library**: [React 19](https://react.dev/)
-- **Styling**: [Tailwind CSS 4](https://tailwindcss.com/)
-- **UI Components**: [Radix UI](https://www.radix-ui.com/) & [Shadcn/ui](https://ui.shadcn.com/)
-- **Icons**: [Lucide React](https://lucide.dev/)
-- **Animations**: [Framer Motion](https://www.framer.com/motion/)
-- **Audio/Video**: Web Audio API & React Player
+## Tech Stack
 
-## 🏃 Getting Started
+- **Framework**: Next.js 16 (App Router)
+- **Library**: React 19
+- **Styling**: Tailwind CSS 4
+- **UI Components**: Radix UI / shadcn/ui
+- **Icons**: Lucide React
+- **Audio/Video**: Web Audio API, React Player
 
-1. **Clone the repository**
+---
 
-2. **Install dependencies**
+## Getting Started
 
-   ```bash
-   npm install
-   ```
+```bash
+npm install
+npm run dev
+```
 
-3. **Run the development server**
+Open [http://localhost:3000](http://localhost:3000).
 
-   ```bash
-   npm run dev
-   ```
+---
 
-4. **Open your browser**
-   Navigate to [http://localhost:3000](http://localhost:3000) to see the application.
+## Open Graph Images
 
-## 🖼️ Open Graph Images
-
-Branded 1200×630 social preview images are generated dynamically using [`next/og`](https://nextjs.org/docs/app/api-reference/file-conventions/opengraph-image). Each image shares the same dark-background, gold-accent design with a sine-wave decoration.
+Branded 1200×630 social preview images are generated dynamically using [`next/og`](https://nextjs.org/docs/app/api-reference/file-conventions/opengraph-image). Each image uses the same dark-background, gold-accent design with a sine-wave decoration.
 
 | Route | OG Image URL | Notes |
 |---|---|---|
-| `/` (home) | `/opengraph-image` | Static default image |
+| `/` (home) | `/opengraph-image` | Static default |
 | `/tools` and all `/tools/*` | `/tools/opengraph-image` | Cascades to all tool sub-routes |
-| `/transcriptions/[slug]` | `/transcriptions/[slug]/opengraph-image` | Dynamic — renders article title & tags |
+| `/transcriptions/[slug]` | `/transcriptions/[slug]/opengraph-image` | Dynamic — renders article title and tags |
 
 **Testing locally**
 
 ```bash
-# Default / home
 open http://localhost:3000/opengraph-image
-
-# Tools section
 open http://localhost:3000/tools/opengraph-image
-
-# A specific transcription (swap slug as needed)
 open http://localhost:3000/transcriptions/get-lucky-bass-cover-tabs/opengraph-image
 ```
 
 **Validating social previews**
-
-Once deployed, paste any page URL into one of these tools to confirm `og:image` is resolved correctly:
 
 - [opengraph.xyz](https://www.opengraph.xyz)
 - [Twitter/X Card Validator](https://cards-dev.twitter.com/validator)
@@ -108,14 +94,16 @@ Once deployed, paste any page URL into one of these tools to confirm `og:image` 
 
 | File | Purpose |
 |---|---|
-| `src/lib/og-image.tsx` | Shared `OgCard` layout component (brand, sine wave, typography) |
+| `src/lib/og-image.tsx` | Shared `OgCard` layout (brand, sine wave, typography) |
 | `src/app/opengraph-image.tsx` | Default OG image (edge runtime) |
 | `src/app/tools/opengraph-image.tsx` | Tools OG image (edge runtime) |
-| `src/app/[category]/[slug]/opengraph-image.tsx` | Dynamic transcription OG image (nodejs runtime — reads filesystem) |
+| `src/app/[category]/[slug]/opengraph-image.tsx` | Dynamic transcription OG image (nodejs runtime) |
 
-## 🎨 Theme
+---
 
-The application supports both Light and Dark modes, automatically adapting to your system preferences.
+## Theme
+
+Supports light and dark mode, adapting to system preferences.
 
 ---
 
