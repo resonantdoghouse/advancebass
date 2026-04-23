@@ -10,22 +10,24 @@ export const PRESETS: StrudelPreset[] = [
   {
     id: "teen-town",
     name: "Teen Town",
-    description: "Detailed syncopated drum groove. Perfect for practicing the active bass line.",
+    description: "Alex Acuña's syncopated funk groove at the original 128 BPM. The kick's 'du-du' anticipation into beat 3 locks with Jaco's bass line.",
     category: "Funk",
-    code: `// Jaco Pastorius' iconic Teen Town drum groove
-setcps(0.55)
+    code: `// Jaco Pastorius' Teen Town - Alex Acuna's drum groove
+// 128 BPM (original tempo)
+setcps(0.533)
 
 stack(
-  // The driving 16th-note hi-hats
-  s("hh hh hh hh hh hh hh hh hh hh hh hh hh hh hh hh").gain(0.7),
-  // The primary backbeat snare on 2 and 4
-  s("~ ~ ~ ~ sd ~ ~ ~ ~ ~ ~ ~ sd ~ ~ ~"),
-  // Jaco's signature snare ghost notes alternating every cycle
-  s("<~ ~ ~ ~ ~ sd sd ~ ~ ~ ~ ~ sd sd ~ ~> <~ ~ ~ ~ sd ~ sd ~ ~ ~ ~ ~ sd sd ~ ~>").gain(0.4),
-  // Synchronized kick drum mirroring the bass line pickup phrasing (du-du!)
-  s("<~ ~ ~ ~ bd bd ~ ~ ~ ~ bd bd ~ ~ ~ ~> <bd ~ ~ ~ bd bd ~ ~ bd ~ bd bd ~ ~ ~ ~>").gain(1.2),
-  // Occasional off-beat open hi-hat splash for color
-  s("<~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ oh ~ ~ ~ ~> <~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~>").gain(0.8)
+  // Constant driving 16th-note hi-hats - the engine of the groove
+  s("hh hh hh hh hh hh hh hh hh hh hh hh hh hh hh hh").gain(0.6),
+  // Accented snare backbeat on beats 2 and 4
+  s("~ ~ ~ ~ sd ~ ~ ~ ~ ~ ~ ~ sd ~ ~ ~").gain(1.1),
+  // Ghost notes on the "and" of each beat - the funky 16th-note texture
+  s("~ ~ sd ~ ~ ~ sd ~ ~ ~ sd ~ ~ ~ sd ~").gain(0.3),
+  // Kick: beat 1 then the signature "du-du" (a-of-2 into beat 3)
+  // Bar 2: extra hit on a-of-3 mirrors Jaco's busier bass passages
+  s("<bd ~ ~ ~ ~ ~ ~ bd bd ~ ~ ~ ~ ~ ~ ~> <bd ~ ~ ~ ~ ~ ~ bd bd ~ ~ bd ~ ~ ~ ~>").gain(1.2),
+  // Open hi-hat on the "and" of beat 4 - subtle color accent
+  s("~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ oh ~").gain(0.65)
 )
 `
   },
@@ -182,17 +184,17 @@ stack(
   {
     id: "bossa-nova",
     name: "Bossa Nova",
-    description: "Authentic Brazilian syncopation with smooth hi-hats.",
+    description: "Authentic Brazilian syncopation with smooth hi-hats. Light surdo-style kick on beats 1 and 3.",
     category: "Latin",
     code: `// Smooth Bossa Nova (16 steps)
 setcps(0.4)
 
 stack(
-  // Bossa Clave played on a cross-stick / rim
+  // 2-3 Bossa Clave on cross-stick / rim
   s("rim ~ ~ rim ~ ~ rim ~ ~ ~ rim ~ rim ~ ~ ~").gain(1.2),
-  // Kick simulating the Surdo low end pattern
-  s("bd ~ ~ bd bd ~ ~ bd bd ~ ~ bd bd ~ ~ bd").gain(1.1),
-  // Continuous smooth 8th note hi-hat
+  // Surdo-style kick: light hits on beats 1 and 3 only - bossa is NOT samba!
+  s("bd ~ ~ ~ ~ ~ ~ ~ bd ~ ~ ~ ~ ~ ~ ~").gain(0.9),
+  // Continuous smooth 8th-note hi-hat
   s("hh ~ hh ~ hh ~ hh ~ hh ~ hh ~ hh ~ hh ~").gain(0.7)
 )
 `
@@ -297,10 +299,12 @@ stack(
 setcps(0.40)
 
 stack(
-  // Deep syncopated kick
+  // Deep syncopated kick: 1, + of 2, e of 3, + of 4
   s("bd ~ ~ ~ ~ ~ bd ~ ~ bd ~ ~ ~ bd ~ ~").gain(1.1),
-  // Snare on 2 and 4, with subtle 16th ghost notes
-  s("<~ ~ ~ ~ sd ~ ~ ~ ~ ~ ~ ~ sd ~ ~ ~> <~ ~ ~ ~ sd ~ ~ sd ~ ~ ~ ~ sd ~ sd ~>"),
+  // Main backbeat snare on beats 2 and 4
+  s("~ ~ ~ ~ sd ~ ~ ~ ~ ~ ~ ~ sd ~ ~ ~").gain(1.1),
+  // Ghost notes (separate layer, quiet) on the "and" of each beat
+  s("~ ~ sd ~ ~ ~ sd ~ ~ ~ sd ~ ~ ~ sd ~").gain(0.3),
   // Crisp 16th note hi-hat
   s("hh hh hh hh hh hh hh hh hh hh hh hh hh hh hh hh").gain(0.7)
 )
