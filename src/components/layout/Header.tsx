@@ -8,12 +8,13 @@ import { ThemeToggle } from "@/components/ThemeToggle";
 import { cn } from "@/lib/utils";
 
 // 4 full periods of a sine wave in a 200×12 viewBox.
+// Amplitude ±2 (peaks y=4, troughs y=8) for a subtle wave.
 // Animating translateX(0 → -50%) scrolls exactly one seamless loop.
 const SINE_WAVE_PATH =
-  "M 0 6 C 10 2, 15 2, 25 6 C 35 10, 40 10, 50 6 " +
-  "C 60 2, 65 2, 75 6 C 85 10, 90 10, 100 6 " +
-  "C 110 2, 115 2, 125 6 C 135 10, 140 10, 150 6 " +
-  "C 160 2, 165 2, 175 6 C 185 10, 190 10, 200 6";
+  "M 0 6 C 10 4, 15 4, 25 6 C 35 8, 40 8, 50 6 " +
+  "C 60 4, 65 4, 75 6 C 85 8, 90 8, 100 6 " +
+  "C 110 4, 115 4, 125 6 C 135 8, 140 8, 150 6 " +
+  "C 160 4, 165 4, 175 6 C 185 8, 190 8, 200 6";
 
 function NavLink({ href, label, isActive }: { href: string; label: string; isActive: boolean }) {
   const [hovered, setHovered] = useState(false);

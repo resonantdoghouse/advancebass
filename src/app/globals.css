@@ -101,9 +101,9 @@ body {
   to   { transform: translateX(-50%); }
 }
 
-/* Hover: slow, gentle oscillation */
+/* Hover: gentle oscillation */
 .nav-wave-hover {
-  animation: nav-wave-travel 8s linear infinite;
+  animation: nav-wave-travel 6.8s linear infinite;
 }
 
 /* Reduced motion: no animation */
