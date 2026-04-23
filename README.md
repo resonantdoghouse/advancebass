@@ -1,4 +1,4 @@
-# Advance Bass
+# Advance Bass 🎸
 
 **Professional Bass Transcriptions & Interactive Practice Tools**
 
@@ -55,7 +55,7 @@ A complete woodshed running in the browser. All tools are free and require no ac
 
 ---
 
-## Getting Started
+## Getting Started 🚀
 
 ```bash
 npm install
@@ -107,4 +107,4 @@ Supports light and dark mode, adapting to system preferences.
 
 ---
 
-_Built for bass players, by bass players._
+_Built for bass players, by bass players._ 🎵
