@@ -103,7 +103,7 @@ body {
 
 /* Hover: slow, gentle oscillation */
 .nav-wave-hover {
-  animation: nav-wave-travel 4s linear infinite;
+  animation: nav-wave-travel 8s linear infinite;
 }
 
 /* Reduced motion: no animation */

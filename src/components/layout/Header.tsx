@@ -18,9 +18,6 @@ const SINE_WAVE_PATH =
 function NavLink({ href, label, isActive }: { href: string; label: string; isActive: boolean }) {
   const [hovered, setHovered] = useState(false);
 
-  const show    = isActive || hovered;
-  const scaleY  = hovered ? 0.5 : isActive ? 0.2 : 0;
-  // Only animate on hover; active state is static
   const animCls = hovered ? "nav-wave-hover" : "";
 
   return (
@@ -35,67 +32,70 @@ function NavLink({ href, label, isActive }: { href: string; label: string; isAct
     >
       {label}
 
-      {/* Sine-wave underline */}
+      {/* Underline: flat line when active, sine wave when hovered */}
       <span
         aria-hidden="true"
         className="absolute bottom-0 left-0 right-0 h-3 overflow-hidden pointer-events-none"
       >
+        {/* Flat line — active only, fades out on hover */}
+        {isActive && (
+          <svg
+            viewBox="0 0 100 2"
+            preserveAspectRatio="none"
+            style={{
+              position: "absolute",
+              inset: 0,
+              width: "100%",
+              height: "100%",
+              opacity: hovered ? 0 : 1,
+              transition: "opacity 0.2s ease",
+            }}
+            aria-hidden="true"
+          >
+            <line
+              x1="0" y1="1" x2="100" y2="1"
+              stroke="hsl(var(--primary))"
+              strokeWidth="2"
+              vectorEffect="non-scaling-stroke"
+            />
+          </svg>
+        )}
+
+        {/* Sine wave — hover only */}
         <svg
           className={animCls}
           viewBox="0 0 200 12"
           preserveAspectRatio="none"
           style={{
+            position: "absolute",
+            inset: 0,
             width: "200%",
             height: "100%",
-            opacity: show ? 1 : 0,
+            opacity: hovered ? 1 : 0,
             transition: "opacity 0.2s ease",
           }}
           aria-hidden="true"
         >
-          {/* Soft glow layer — wider, semi-transparent */}
-          <g
-            style={{
-              transform: `scaleY(${scaleY})`,
-              transformOrigin: "center",
-              transition: "transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1)",
-            }}
-          >
-            <path
-              d={SINE_WAVE_PATH}
-              fill="none"
-              stroke="hsl(var(--primary))"
-              strokeWidth="5"
-              strokeLinecap="round"
-              vectorEffect="non-scaling-stroke"
-              opacity={isActive ? 0.12 : 0.07}
-            />
-          </g>
-
-          {/* Main wave line */}
-          <g
-            style={{
-              transform: `scaleY(${scaleY})`,
-              transformOrigin: "center",
-              transition: "transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1)",
-            }}
-          >
-            <path
-              d={SINE_WAVE_PATH}
-              fill="none"
-              stroke="hsl(var(--primary))"
-              strokeWidth={hovered ? "2" : "1.5"}
-              strokeLinecap="round"
-              vectorEffect="non-scaling-stroke"
-              style={{
-                filter: isActive
-                  ? `drop-shadow(0 0 ${hovered ? "3px" : "2px"} hsl(var(--primary) / 0.45))`
-                  : hovered
-                  ? "drop-shadow(0 0 2px hsl(var(--primary) / 0.3))"
-                  : "none",
-                transition: "stroke-width 0.2s ease, filter 0.3s ease",
-              }}
-            />
-          </g>
+          {/* Glow layer */}
+          <path
+            d={SINE_WAVE_PATH}
+            fill="none"
+            stroke="hsl(var(--primary))"
+            strokeWidth="5"
+            strokeLinecap="round"
+            vectorEffect="non-scaling-stroke"
+            opacity="0.1"
+          />
+          {/* Main wave */}
+          <path
+            d={SINE_WAVE_PATH}
+            fill="none"
+            stroke="hsl(var(--primary))"
+            strokeWidth="2"
+            strokeLinecap="round"
+            vectorEffect="non-scaling-stroke"
+            style={{ filter: "drop-shadow(0 0 2px hsl(var(--primary) / 0.35))" }}
+          />
         </svg>
       </span>
     </Link>
