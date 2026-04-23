@@ -34,7 +34,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
             type: "article",
             publishedTime: article.date,
             authors: [article.author],
-            images: article.image ? [article.image] : [],
+            // og:image is provided by the co-located opengraph-image.tsx
         },
     };
 }

@@ -49,6 +49,14 @@ export const metadata: Metadata = {
     description:
       "Study with a professional touring bassist. Lessons in Vancouver or online. High-quality transcriptions and tools for modern bass players.",
     siteName: "Advance Bass",
+    images: [
+      {
+        url: "/opengraph-image",
+        width: 1200,
+        height: 630,
+        alt: "Advance Bass — Master the Low End",
+      },
+    ],
   },
   twitter: {
     card: "summary_large_image",
@@ -56,6 +64,7 @@ export const metadata: Metadata = {
     description:
       "Professional bass lessons and premium resources. Learn from a touring pro with millions of YouTube views.",
     creator: "@advancebass",
+    images: ["/opengraph-image"],
   },
   robots: {
     index: true,
