@@ -2,17 +2,14 @@ import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import {
   ArrowRight,
-  Timer,
-  Mic2,
-  Grid,
-  Disc,
-  MoveRight,
-  Music2,
   Repeat,
   Zap,
   FileText,
-  Volume2,
-  Crosshair,
+  MoveRight,
+  MapPin,
+  Globe,
+  Mic2,
+  Music2,
 } from "lucide-react";
 import { getAllArticles, Article } from "@/lib/data";
 import { FEATURED_TRANSCRIPTION_SLUGS } from "@/lib/featured";
@@ -35,8 +32,9 @@ export default async function Home() {
 
   return (
     <>
+      {/* Hero */}
       <section className="relative overflow-hidden py-24 lg:py-32 xl:py-40">
-        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-indigo-500/20 via-background to-background" />
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-primary/15 via-background to-background" />
         <div className="absolute inset-0 bg-[url('/noise.png')] opacity-20 mix-blend-overlay" />
 
         <div className="container relative mx-auto px-4 text-center">
@@ -46,8 +44,8 @@ export default async function Home() {
             </h1>
 
             <p className="mx-auto max-w-2xl text-lg text-muted-foreground md:text-xl leading-relaxed">
-              The ultimate suite of professional practice tools and
-              transcriptions for the modern bass player.
+              Free professional bass tools, studio-quality transcriptions, and
+              expert instruction — all in one place.
             </p>
 
             <div className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-4">
@@ -56,8 +54,8 @@ export default async function Home() {
                 size="lg"
                 className="h-12 w-full sm:w-auto rounded-full px-8 text-base shadow-lg shadow-primary/25 hover:shadow-primary/40 transition-shadow"
               >
-                <Link href="/contact">
-                  Book a Lesson <ArrowRight className="ml-2 h-4 w-4 shrink-0" />
+                <Link href="/tools">
+                  Explore Tools <ArrowRight className="ml-2 h-4 w-4 shrink-0" />
                 </Link>
               </Button>
               <Button
@@ -73,105 +71,25 @@ export default async function Home() {
         </div>
       </section>
 
-      {/* Instructor Spotlight & Lessons */}
-      <section className="container mx-auto px-4 md:px-8 py-16 md:py-24 border-b border-black/5 dark:border-white/5">
-        <div className="grid lg:grid-cols-2 gap-12 items-center">
-          <div className="space-y-8">
-            <div className="space-y-4">
-              <h2 className="text-3xl font-bold tracking-tight sm:text-5xl">
-                Learn from a <span className="text-primary">Pro</span>
-              </h2>
-              <p className="text-xl text-muted-foreground leading-relaxed">
-                Study with <strong>Jim Bennett</strong>, a professional bassist
-                and educator.
-              </p>
+      {/* Value-prop strip */}
+      <div className="border-y border-border/40 bg-muted/20">
+        <div className="container mx-auto px-4 md:px-8 py-5">
+          <div className="flex flex-wrap justify-center gap-6 md:gap-14 text-sm text-muted-foreground">
+            <div className="flex items-center gap-2">
+              <Zap className="h-4 w-4 text-primary shrink-0" />
+              <span>10 free practice tools</span>
             </div>
-
-            <div className="grid gap-6">
-              <div className="flex gap-4 items-start">
-                <div className="h-12 w-12 rounded-full bg-primary/10 flex items-center justify-center shrink-0">
-                  <Music2 className="h-6 w-6 text-primary" />
-                </div>
-                <div>
-                  <h3 className="font-bold text-lg">Proven Educator</h3>
-                  <p className="text-muted-foreground">
-                    Built a{" "}
-                    <a
-                      href="https://www.youtube.com/@JimBennettBassist"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="text-primary hover:underline"
-                    >
-                      YouTube community
-                    </a>{" "}
-                    with millions of views.
-                  </p>
-                </div>
-              </div>
-
-              <div className="flex gap-4 items-start">
-                <div className="h-12 w-12 rounded-full bg-primary/10 flex items-center justify-center shrink-0">
-                  <Crosshair className="h-6 w-6 text-primary" />
-                </div>
-                <div>
-                  <h3 className="font-bold text-lg">Technical Mastery</h3>
-                  <p className="text-muted-foreground">
-                    Specialized instruction in Slap, Tap, Fingerstyle, and
-                    advanced Jazz harmony for both Electric and Upright bass.
-                  </p>
-                </div>
-              </div>
+            <div className="flex items-center gap-2">
+              <FileText className="h-4 w-4 text-primary shrink-0" />
+              <span>Studio-quality transcriptions</span>
             </div>
-
-            <div className="flex flex-col sm:flex-row gap-4 pt-4">
-              <div className="p-6 rounded-2xl bg-muted/30 border flex-1 text-center sm:text-left hover:bg-muted/50 transition-colors">
-                <div className="font-bold text-lg mb-1">Vancouver, BC</div>
-                <div className="text-muted-foreground text-sm mb-4">
-                  In-Person Lessons
-                </div>
-                <Button
-                  asChild
-                  size="sm"
-                  variant="secondary"
-                  className="w-full"
-                >
-                  <Link href="/contact">Inquire Local</Link>
-                </Button>
-              </div>
-              <div className="p-6 rounded-2xl bg-muted/30 border flex-1 text-center sm:text-left hover:bg-muted/50 transition-colors">
-                <div className="font-bold text-lg mb-1">Online</div>
-                <div className="text-muted-foreground text-sm mb-4">
-                  Worldwide via Zoom
-                </div>
-                <Button
-                  asChild
-                  size="sm"
-                  variant="secondary"
-                  className="w-full"
-                >
-                  <Link href="/contact">Inquire Online</Link>
-                </Button>
-              </div>
-            </div>
-          </div>
-
-          <div className="relative rounded-2xl overflow-hidden aspect-square lg:aspect-[4/3] shadow-2xl border border-black/10 dark:border-white/10 bg-muted">
-            {/* Placeholder for instructor image - could use generate_image if needed, but for now using a gradient/pattern or keeping it abstract if no image provided */}
-            <div className="absolute inset-0 bg-gradient-to-br from-zinc-900 to-black" />
-            <div className="absolute inset-0 flex items-center justify-center">
-              <div className="text-center space-y-4 p-8">
-                <div className="inline-block p-4 rounded-full bg-primary/20 backdrop-blur-md mb-4 border border-primary/20">
-                  <Music2 className="h-16 w-16 text-primary" />
-                </div>
-                <div className="text-2xl font-bold text-white">Jim Bennett</div>
-                <div className="text-zinc-300">
-                  Professional Bassist & Educator
-                </div>
-              </div>
+            <div className="flex items-center gap-2">
+              <MoveRight className="h-4 w-4 text-primary shrink-0" />
+              <span>No account required</span>
             </div>
           </div>
         </div>
-      </section>
+      </div>
 
       {/* Feature Spotlight: Video Looper */}
       <section className="container mx-auto px-4 md:px-8 py-16">
@@ -189,27 +107,17 @@ export default async function Home() {
                 Video Looper
               </h2>
               <p className="text-muted-foreground text-lg leading-relaxed">
-                Transform any YouTube video into a powerful backing track. Loop
-                specific sections, slow down complex fills, and analyze harmony
+                Transform any YouTube video into a powerful practice backing track.
+                Loop specific sections, slow down complex fills, and analyze harmony
                 in real-time.
               </p>
               <ul className="grid sm:grid-cols-2 gap-3 text-muted-foreground">
-                <li className="flex items-center gap-2">
-                  <div className="h-1.5 w-1.5 rounded-full bg-primary" />
-                  <span>A/B Looping</span>
-                </li>
-                <li className="flex items-center gap-2">
-                  <div className="h-1.5 w-1.5 rounded-full bg-primary" />
-                  <span>Speed Control</span>
-                </li>
-                <li className="flex items-center gap-2">
-                  <div className="h-1.5 w-1.5 rounded-full bg-primary" />
-                  <span>Pitch Shifting</span>
-                </li>
-                <li className="flex items-center gap-2">
-                  <div className="h-1.5 w-1.5 rounded-full bg-primary" />
-                  <span>Save Favorites</span>
-                </li>
+                {["A/B Looping", "Speed Control", "Pitch Shifting", "Save Favorites"].map((f) => (
+                  <li key={f} className="flex items-center gap-2">
+                    <div className="h-1.5 w-1.5 rounded-full bg-primary shrink-0" />
+                    <span>{f}</span>
+                  </li>
+                ))}
               </ul>
               <Button asChild size="lg" className="rounded-full mt-2">
                 <Link href="/tools/video-looper">
@@ -226,102 +134,32 @@ export default async function Home() {
         </div>
       </section>
 
-      {/* Practice Tools Section */}
+      {/* All Practice Tools */}
       <section
         id="tools"
-        className="container mx-auto px-4 md:px-8 py-24 space-y-16"
+        className="container mx-auto px-4 md:px-8 py-16 md:py-24 space-y-12"
       >
-        <div className="text-center space-y-8">
+        <div className="text-center space-y-4">
           <h2 className="text-4xl font-bold tracking-tight sm:text-5xl bg-clip-text text-transparent bg-gradient-to-b from-foreground to-foreground/60 pb-2">
             Your Digital Woodshed
           </h2>
           <p className="text-muted-foreground text-lg max-w-2xl mx-auto">
-            Everything you need to practice efficiently, all in one place.
+            Everything you need to practice smarter, all free and in your browser.
           </p>
         </div>
 
         <ToolsGallery />
       </section>
 
-      {/* Why Advance Bass Section */}
-      <section className="py-20 px-4 md:px-8 bg-background">
-        <div className="container mx-auto max-w-5xl">
-          <div className="grid md:grid-cols-2 gap-12 items-center">
-            <div>
-              <h2 className="text-3xl font-bold tracking-tight mb-6">
-                Why Advance Bass?
-              </h2>
-              <div className="space-y-6">
-                <div className="flex gap-4">
-                  <div className="h-10 w-10 rounded-full bg-primary/10 flex items-center justify-center shrink-0">
-                    <FileText className="h-5 w-5 text-primary" />
-                  </div>
-                  <div>
-                    <h3 className="font-semibold text-lg">
-                      Studio-Quality Transcriptions
-                    </h3>
-                    <p className="text-muted-foreground leading-relaxed">
-                      Every tab and sheet music is meticulously transcribed and
-                      verified for accuracy. No more guessing wrong notes from
-                      crowd-sourced sites.
-                    </p>
-                  </div>
-                </div>
-                <div className="flex gap-4">
-                  <div className="h-10 w-10 rounded-full bg-primary/10 flex items-center justify-center shrink-0">
-                    <Zap className="h-5 w-5 text-primary" />
-                  </div>
-                  <div>
-                    <h3 className="font-semibold text-lg">
-                      Modern Practice Suite
-                    </h3>
-                    <p className="text-muted-foreground leading-relaxed">
-                      Built-in tools that replace expensive apps. From tuning to
-                      ear training with real-time feedback, everything runs in
-                      your browser.
-                    </p>
-                  </div>
-                </div>
-                <div className="flex gap-4">
-                  <div className="h-10 w-10 rounded-full bg-primary/10 flex items-center justify-center shrink-0">
-                    <MoveRight className="h-5 w-5 text-primary" />
-                  </div>
-                  <div>
-                    <h3 className="font-semibold text-lg">Completely Free</h3>
-                    <p className="text-muted-foreground leading-relaxed">
-                      Our mission is to make professional bass education
-                      accessible to everyone. No paywalls, no subscriptions.
-                    </p>
-                  </div>
-                </div>
-              </div>
-            </div>
-            <div className="relative h-[400px] w-full rounded-2xl overflow-hidden bg-muted/50 border flex items-center justify-center">
-              <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-primary/20 via-transparent to-transparent opacity-50" />
-              <div className="text-center p-8 space-y-4 relative z-10">
-                <Music2 className="h-20 w-20 mx-auto text-primary/80 mb-4" />
-                <h3 className="text-2xl font-bold">Ready to groove?</h3>
-                <p className="text-muted-foreground">
-                  Start exploring our library of songs and exercises.
-                </p>
-                <Button asChild className="rounded-full mt-4">
-                  <Link href="/transcriptions">Start Playing Now</Link>
-                </Button>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
       {/* Featured Transcriptions */}
-      <section className="container py-20 space-y-12 mx-auto px-4 md:px-8 border-t">
+      <section className="container mx-auto px-4 md:px-8 py-16 md:py-24 space-y-12 border-t border-border/40">
         <div className="text-center space-y-4">
           <h2 className="text-3xl font-bold tracking-tight sm:text-4xl">
             Featured Transcriptions
           </h2>
           <p className="text-muted-foreground text-lg max-w-2xl mx-auto">
-            Check out some of our most popular and interesting bass
-            transcriptions.
+            Meticulously verified bass tabs and sheet music — no guessing, no
+            crowd-sourced errors.
           </p>
         </div>
 
@@ -331,10 +169,72 @@ export default async function Home() {
           ))}
         </div>
 
-        <div className="flex justify-center pt-8">
+        <div className="flex justify-center pt-4">
           <Button asChild variant="outline" size="lg" className="rounded-full">
             <Link href="/transcriptions">View All Transcriptions</Link>
           </Button>
+        </div>
+      </section>
+
+      {/* Jim Bennett — compact strip */}
+      <section className="border-t border-border/40 bg-muted/10">
+        <div className="container mx-auto px-4 md:px-8 py-16 md:py-20">
+          <div className="max-w-5xl mx-auto grid md:grid-cols-3 gap-10 items-center">
+
+            {/* Bio */}
+            <div className="md:col-span-2 space-y-5">
+              <div className="inline-flex items-center gap-2 text-primary font-semibold tracking-wide uppercase text-xs">
+                <Music2 className="h-4 w-4" />
+                Bass Lessons &amp; More
+              </div>
+              <h2 className="text-2xl font-bold tracking-tight sm:text-3xl">
+                Study with Jim Bennett
+              </h2>
+              <p className="text-muted-foreground leading-relaxed">
+                Professional bassist, educator, and producer with a{" "}
+                <a
+                  href="https://www.youtube.com/@JimBennettBassist"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-primary hover:underline"
+                >
+                  YouTube community built on millions of views
+                </a>
+                . Specializing in Slap, Tap, Fingerstyle, Jazz harmony, and
+                advanced technique for both Electric and Upright bass.
+              </p>
+              <div className="flex flex-wrap gap-4 text-sm text-muted-foreground">
+                <span className="flex items-center gap-1.5">
+                  <MapPin className="h-4 w-4 text-primary shrink-0" />
+                  Vancouver, BC — In-person
+                </span>
+                <span className="flex items-center gap-1.5">
+                  <Globe className="h-4 w-4 text-primary shrink-0" />
+                  Online worldwide via Zoom
+                </span>
+                <span className="flex items-center gap-1.5">
+                  <Mic2 className="h-4 w-4 text-primary shrink-0" />
+                  Recording &amp; production
+                </span>
+              </div>
+            </div>
+
+            {/* CTA card */}
+            <div className="flex flex-col gap-4 p-6 rounded-2xl bg-card border shadow-sm">
+              <p className="text-sm text-muted-foreground">
+                Ready to take your playing to the next level?
+              </p>
+              <Button asChild size="lg" className="w-full rounded-full">
+                <Link href="/contact">
+                  Book a Lesson <ArrowRight className="ml-2 h-4 w-4" />
+                </Link>
+              </Button>
+              <Button asChild variant="ghost" size="sm" className="w-full">
+                <Link href="/bass-lessons">Learn More</Link>
+              </Button>
+            </div>
+
+          </div>
         </div>
       </section>
     </>
