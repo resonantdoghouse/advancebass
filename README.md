@@ -37,6 +37,20 @@ A complete woodshed running in the browser. All tools are free and require no ac
 | **Circle of Fifths** | Visual guide to key signatures, relative minors, and scale relationships |
 | **Strudel Generator** | Live-code beats, loops, and polyrhythms in the browser using Strudel JS |
 
+All tools are keyboard-accessible on desktop. Shortcuts are displayed in a **Keyboard Shortcuts** panel at the bottom of each tool. Notable bindings:
+
+| Tool | Key | Action |
+|---|---|---|
+| Metronome | `Space` | Play / Stop |
+| Metronome | `↑` / `↓` | BPM ±1 |
+| Metronome | `⇧↑` / `⇧↓` | BPM ±5 |
+| Metronome | `T` | Tap tempo |
+| Video Looper | `Space` | Play / Pause |
+| Video Looper | `←` / `→` | Seek ±5 s |
+| Video Looper | `I` / `O` | Set loop in / out point |
+| Video Looper | `[` / `]` | Cycle playback speed |
+| Video Looper | `M` | Toggle mute |
+
 ### Transcriptions
 
 - Studio-quality bass transcriptions — tabs and notation, meticulously verified

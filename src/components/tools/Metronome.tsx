@@ -16,7 +16,9 @@ import {
   Hand,
   RotateCcw,
 } from "lucide-react";
-import React, { memo, useState, useEffect } from "react";
+import React, { memo, useState, useEffect, useMemo } from "react";
+import { useToolKeyboard } from "@/hooks/useToolKeyboard";
+import { KeyboardHints } from "./KeyboardHints";
 
 interface MetronomeProps {
   compact?: boolean;
@@ -154,6 +156,27 @@ export function Metronome({ compact = false }: MetronomeProps) {
     setBeatsPerMeasure(Math.min(16, beatsPerMeasure + 1));
   const decreaseNoteValue = () => setNoteValue(Math.max(1, noteValue / 2));
   const increaseNoteValue = () => setNoteValue(Math.min(32, noteValue * 2));
+
+  const shortcuts = useMemo(
+    () => ({
+      Space: (e: KeyboardEvent) => {
+        e.preventDefault();
+        togglePlay();
+      },
+      ArrowUp: (e: KeyboardEvent) => {
+        e.preventDefault();
+        setBpm(Math.min(300, bpm + (e.shiftKey ? 5 : 1)));
+      },
+      ArrowDown: (e: KeyboardEvent) => {
+        e.preventDefault();
+        setBpm(Math.max(30, bpm - (e.shiftKey ? 5 : 1)));
+      },
+      KeyT: () => tapTempo(),
+    }),
+    [togglePlay, bpm, setBpm, tapTempo],
+  );
+
+  useToolKeyboard(shortcuts, !compact);
 
   return (
     <Card
@@ -373,6 +396,19 @@ export function Metronome({ compact = false }: MetronomeProps) {
             </div>
           </div>
         </div>
+
+        {!compact && (
+          <div className="mt-6 pt-4 border-t border-border/30">
+            <KeyboardHints
+              hints={[
+                { keys: ["Space"], label: "play / stop" },
+                { keys: ["↑", "↓"], label: "BPM ±1" },
+                { keys: ["⇧↑", "⇧↓"], label: "BPM ±5" },
+                { keys: ["T"], label: "tap tempo" },
+              ]}
+            />
+          </div>
+        )}
       </CardContent>
     </Card>
   );

@@ -1,6 +1,8 @@
 "use client";
 
-import React, { useState, useRef, useEffect, useCallback } from "react";
+import React, { useState, useRef, useEffect, useCallback, useMemo } from "react";
+import { useToolKeyboard } from "@/hooks/useToolKeyboard";
+import { KeyboardHints } from "./KeyboardHints";
 import dynamic from "next/dynamic";
 import { Mic, Activity, Info } from "lucide-react";
 import { getNoteFromFrequency, detectChord } from "@/lib/music-theory";
@@ -214,6 +216,8 @@ export default function VideoLooper() {
     }
   };
 
+  const SPEED_STEPS = [0.5, 0.75, 1, 1.25, 1.5, 2];
+
   const lastNoteUpdateRef = useRef<number>(0);
   const lastChordUpdateRef = useRef<number>(0);
 
@@ -262,6 +266,44 @@ export default function VideoLooper() {
 
     requestRef.current = requestAnimationFrame(updatePitch);
   }, []);
+
+  const videoShortcuts = useMemo(
+    () => ({
+      Space: (e: KeyboardEvent) => {
+        e.preventDefault();
+        handlePlayPause();
+      },
+      ArrowLeft: (e: KeyboardEvent) => {
+        e.preventDefault();
+        const current = playerRef.current?.getCurrentTime() ?? 0;
+        playerRef.current?.seekTo(Math.max(0, current - 5), "seconds");
+      },
+      ArrowRight: (e: KeyboardEvent) => {
+        e.preventDefault();
+        const current = playerRef.current?.getCurrentTime() ?? 0;
+        playerRef.current?.seekTo(current + 5, "seconds");
+      },
+      KeyI: () => setStartTimeToCurrent(),
+      KeyO: () => setEndTimeToCurrent(),
+      KeyM: () => handleToggleMute(),
+      BracketLeft: () => {
+        setPlaybackRate((prev) => {
+          const idx = SPEED_STEPS.indexOf(prev);
+          return idx > 0 ? SPEED_STEPS[idx - 1] : prev;
+        });
+      },
+      BracketRight: () => {
+        setPlaybackRate((prev) => {
+          const idx = SPEED_STEPS.indexOf(prev);
+          return idx < SPEED_STEPS.length - 1 ? SPEED_STEPS[idx + 1] : prev;
+        });
+      },
+    }),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [handlePlayPause, handleToggleMute],
+  );
+
+  useToolKeyboard(videoShortcuts);
 
   if (!isMounted) {
     return null;
@@ -321,6 +363,17 @@ export default function VideoLooper() {
               onVolumeChange={handleVolumeChange}
               onToggleMute={handleToggleMute}
               onPlaybackRateChange={handlePlaybackRateChange}
+            />
+
+            <KeyboardHints
+              hints={[
+                { keys: ["Space"], label: "play / pause" },
+                { keys: ["←", "→"], label: "seek 5s" },
+                { keys: ["I"], label: "set in" },
+                { keys: ["O"], label: "set out" },
+                { keys: ["[", "]"], label: "speed" },
+                { keys: ["M"], label: "mute" },
+              ]}
             />
           </div>
         </div>
