@@ -33,7 +33,7 @@ const securityHeaders = [
       "default-src 'self'",
       `script-src 'self' 'unsafe-inline'${isDev ? " 'unsafe-eval'" : ""} https://www.googletagmanager.com https://www.youtube.com https://s.ytimg.com https://unpkg.com`,
       "style-src 'self' 'unsafe-inline'",
-      "img-src 'self' data: blob: https://www.google-analytics.com https://www.googletagmanager.com",
+      "img-src 'self' data: blob: https://www.google-analytics.com https://www.googletagmanager.com https://i.ytimg.com https://www.youtube.com",
       "font-src 'self'",
       "connect-src 'self' https://www.google-analytics.com https://analytics.google.com https://www.googletagmanager.com https://api.emailjs.com",
       "media-src 'self'",
