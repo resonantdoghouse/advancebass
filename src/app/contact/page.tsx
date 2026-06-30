@@ -21,16 +21,6 @@ export const metadata: Metadata = {
 export default function ContactPage() {
   return (
     <div className="container max-w-screen-xl mx-auto px-4 py-12 md:py-20">
-      <div className="max-w-3xl mx-auto text-center mb-16 space-y-4">
-        <h1 className="text-4xl font-bold tracking-tight sm:text-6xl text-primary">
-          Bass Lessons, Recording &amp; Live Performance
-        </h1>
-        <p className="text-xl text-muted-foreground">
-          Professional bass services — private instruction in Vancouver &amp;
-          online, remote session recording, and live performance bookings.
-        </p>
-      </div>
-
       {/* General Inquiry Form */}
       <div className="max-w-xl mx-auto">
         <div className="text-center mb-10">
