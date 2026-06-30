@@ -1,8 +1,5 @@
-import { Mail, Music2, Mic2, GraduationCap } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { ObfuscatedMailto } from "@/components/ui/obfuscated-mailto";
+import { Mail } from "lucide-react";
 import { InquiryForm } from "@/components/ui/InquiryForm";
-import Link from "next/link";
 
 import { Metadata } from "next";
 
@@ -32,62 +29,6 @@ export default function ContactPage() {
           Professional bass services — private instruction in Vancouver &amp;
           online, remote session recording, and live performance bookings.
         </p>
-      </div>
-
-      <div className="grid md:grid-cols-3 gap-8 mb-20">
-        {/* Bass Lessons */}
-        <div className="flex flex-col items-center p-8 rounded-2xl border bg-card text-card-foreground shadow-sm transition-all hover:bg-muted/50">
-          <div className="p-3 rounded-full bg-primary/10 mb-6">
-            <GraduationCap className="w-8 h-8 text-primary" />
-          </div>
-          <h2 className="text-2xl font-bold mb-4">Bass Lessons</h2>
-          <p className="text-center text-muted-foreground mb-6">
-            Private instruction tailored to your goals. Specialized in{" "}
-            <strong>Electric & Upright Bass</strong>. Expert guidance in Jazz,
-            Theory, Slap, and Tapping. Available{" "}
-            <strong>in-person in Vancouver</strong> or{" "}
-            <strong>online worldwide</strong>.
-          </p>
-          <Button asChild variant="outline" className="mt-auto">
-            <Link href="/bass-lessons#inquire">Book a Lesson</Link>
-          </Button>
-        </div>
-
-        {/* Recording */}
-        <div className="flex flex-col items-center p-8 rounded-2xl border bg-card text-card-foreground shadow-sm transition-all hover:bg-muted/50">
-          <div className="p-3 rounded-full bg-primary/10 mb-6">
-            <Mic2 className="w-8 h-8 text-primary" />
-          </div>
-          <h2 className="text-2xl font-bold mb-4">Recording</h2>
-          <p className="text-center text-muted-foreground mb-6">
-            Professional remote bass tracks for your songs. High-quality audio
-            files delivered with quick turnaround times.
-          </p>
-          <Button asChild variant="outline" className="mt-auto">
-            <Link href="/recording#inquire">Book a Session</Link>
-          </Button>
-        </div>
-
-        {/* Live Performance */}
-        <div className="flex flex-col items-center p-8 rounded-2xl border bg-card text-card-foreground shadow-sm transition-all hover:bg-muted/50">
-          <div className="p-3 rounded-full bg-primary/10 mb-6">
-            <Music2 className="w-8 h-8 text-primary" />
-          </div>
-          <h2 className="text-2xl font-bold mb-4">Live Performance</h2>
-          <p className="text-center text-muted-foreground mb-6">
-            Experienced live bassist available for gigs, tours, and showcases.
-            Versatile across genres including Rock, Funk, Soul, and Jazz.
-          </p>
-          <Button asChild variant="outline" className="mt-auto">
-            <ObfuscatedMailto
-              user="jim"
-              domain="advancebass.com"
-              subject="Live Performance Booking"
-            >
-              Check Availability
-            </ObfuscatedMailto>
-          </Button>
-        </div>
       </div>
 
       {/* General Inquiry Form */}
