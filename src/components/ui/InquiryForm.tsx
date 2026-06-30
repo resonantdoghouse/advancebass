@@ -54,14 +54,10 @@ export function InquiryForm({
       if (err && typeof err === "object" && "text" in err) {
         const ejsErr = err as { status: number; text: string };
         console.error("EmailJS error:", ejsErr.status, ejsErr.text);
-        setErrorMsg(`EmailJS error ${ejsErr.status}: ${ejsErr.text}`);
       } else {
-        setErrorMsg(
-          err instanceof Error
-            ? err.message
-            : "Something went wrong. Please try emailing directly."
-        );
+        console.error("Form submission error:", err);
       }
+      setErrorMsg("Something went wrong. Please try emailing directly.");
     }
   }
 
