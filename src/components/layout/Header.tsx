@@ -57,12 +57,6 @@ export function Header() {
 
           <div className="flex items-center gap-3">
             <ThemeToggle />
-            <Link
-              href="/contact"
-              className="bg-foreground text-background text-sm font-semibold px-4 py-2 rounded-[9px] hover:opacity-90 transition-opacity"
-            >
-              Book a Lesson
-            </Link>
           </div>
         </div>
 
@@ -97,15 +91,6 @@ export function Header() {
                 {label}
               </Link>
             ))}
-            <div className="pt-4">
-              <Link
-                href="/contact"
-                onClick={closeMenu}
-                className="block w-full bg-foreground text-background text-center font-semibold py-3 rounded-[9px] hover:opacity-90 transition-opacity"
-              >
-                Book a Lesson
-              </Link>
-            </div>
           </nav>
         </div>
       )}
