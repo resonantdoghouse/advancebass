@@ -107,7 +107,7 @@ export default async function Home() {
 
             <div className="flex items-center gap-6 mt-10 text-sm text-muted-foreground font-medium flex-wrap">
               <span>
-                <b className="text-foreground font-heading text-base font-bold">10</b> free tools
+                <b className="text-foreground font-heading text-base font-bold">8</b> free tools
               </span>
               <span className="w-px h-6 bg-border" />
               <span>
@@ -185,7 +185,7 @@ export default async function Home() {
             Everything you'd open six apps for
           </h2>
           <span className="font-mono text-xs text-muted-foreground tracking-[0.05em]">
-            10 TOOLS · 01 TAB
+            08 TOOLS · 01 TAB
           </span>
         </div>
 
@@ -237,7 +237,7 @@ export default async function Home() {
             href="/tools"
             className="inline-flex items-center gap-2 font-semibold text-sm text-primary hover:underline"
           >
-            See all 10 tools <ArrowRight className="h-4 w-4" />
+            See all 8 tools <ArrowRight className="h-4 w-4" />
           </Link>
         </div>
       </section>
