@@ -10,10 +10,6 @@ import {
   Volume2,
   Ear,
   ArrowRight,
-  MapPin,
-  Globe,
-  Mic2,
-  Music2,
 } from "lucide-react";
 
 export const metadata: Metadata = {
@@ -98,10 +94,10 @@ export default async function Home() {
                 Explore Free Tools
               </Link>
               <Link
-                href="/contact"
+                href="/transcriptions"
                 className="flex items-center gap-2 font-semibold text-[15px] text-foreground px-6 py-3.5 border border-border rounded-[11px] hover:bg-muted/50 transition-colors"
               >
-                Book a Lesson <ArrowRight className="h-4 w-4" />
+                Browse Transcriptions <ArrowRight className="h-4 w-4" />
               </Link>
             </div>
 
@@ -356,66 +352,27 @@ export default async function Home() {
         </div>
       </section>
 
-      {/* ── Jim Bennett ───────────────────────────────────────────── */}
-      <section className="border-t border-border/60 bg-muted/20">
-        <div className="container mx-auto px-4 md:px-8 py-16 md:py-20">
-          <div className="max-w-5xl mx-auto grid md:grid-cols-3 gap-10 items-center">
-
-            <div className="md:col-span-2 space-y-5">
-              <div className="inline-flex items-center gap-2 text-primary font-semibold tracking-wide uppercase text-xs">
-                <Music2 className="h-4 w-4" />
-                Bass Lessons &amp; More
-              </div>
-              <h2 className="font-heading font-bold text-[26px] sm:text-[30px] tracking-[-0.02em]">
-                Study with Jim Bennett
-              </h2>
-              <p className="text-muted-foreground leading-relaxed">
-                Professional bassist, educator, and producer with a{" "}
-                <a
-                  href="https://www.youtube.com/@JimBennettBassist"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-primary hover:underline"
-                >
-                  YouTube community built on millions of views
-                </a>
-                . Specializing in Slap, Tap, Fingerstyle, Jazz harmony, and
-                advanced technique for both Electric and Upright bass.
-              </p>
-              <div className="flex flex-wrap gap-4 text-sm text-muted-foreground">
-                <span className="flex items-center gap-1.5">
-                  <MapPin className="h-4 w-4 text-primary shrink-0" />
-                  Vancouver, BC — In-person
-                </span>
-                <span className="flex items-center gap-1.5">
-                  <Globe className="h-4 w-4 text-primary shrink-0" />
-                  Online worldwide via Zoom
-                </span>
-                <span className="flex items-center gap-1.5">
-                  <Mic2 className="h-4 w-4 text-primary shrink-0" />
-                  Recording &amp; production
-                </span>
-              </div>
-            </div>
-
-            <div className="flex flex-col gap-3 p-6 rounded-2xl bg-card border border-border shadow-sm">
-              <p className="text-sm text-muted-foreground">
-                Ready to take your playing to the next level?
-              </p>
-              <Link
-                href="/contact"
-                className="w-full bg-foreground text-background font-semibold text-sm text-center py-3 rounded-[10px] hover:opacity-90 transition-opacity"
-              >
-                Book a Lesson
-              </Link>
-              <Link
-                href="/bass-lessons"
-                className="w-full text-center text-sm text-muted-foreground hover:text-foreground transition-colors py-1"
-              >
-                Learn More
-              </Link>
-            </div>
-          </div>
+      {/* ── Attribution ───────────────────────────────────────────── */}
+      <section className="border-t border-border/60">
+        <div className="container mx-auto px-4 md:px-8 py-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-sm text-muted-foreground">
+          <p>
+            Tools and transcriptions by{" "}
+            <a
+              href="https://www.youtube.com/@JimBennettBassist"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-foreground font-medium hover:text-primary transition-colors"
+            >
+              Jim Bennett
+            </a>
+            {" "}— professional bassist and educator based in Vancouver, BC.
+          </p>
+          <Link
+            href="/bass-lessons"
+            className="shrink-0 text-foreground font-medium hover:text-primary transition-colors"
+          >
+            Bass lessons →
+          </Link>
         </div>
       </section>
 
@@ -427,7 +384,7 @@ export default async function Home() {
               Start practicing tonight.
             </h2>
             <p className="text-background/70 text-[17px] leading-relaxed max-w-[420px]">
-              Free tools, no account required. Book a lesson when you're ready.
+              Free tools and studio-quality transcriptions — no account, no signup.
             </p>
           </div>
           <div className="flex gap-3 flex-shrink-0 flex-wrap">
@@ -438,10 +395,10 @@ export default async function Home() {
               Open Practice Tools
             </Link>
             <Link
-              href="/contact"
+              href="/transcriptions"
               className="border border-background/30 text-background font-bold text-[15px] px-7 py-3.5 rounded-[11px] hover:bg-background/10 transition-colors"
             >
-              Book a Lesson
+              Browse Transcriptions
             </Link>
           </div>
         </div>
