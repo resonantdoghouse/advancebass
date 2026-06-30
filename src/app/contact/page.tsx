@@ -4,13 +4,13 @@ import { InquiryForm } from "@/components/ui/InquiryForm";
 import { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Bass Lessons, Recording & Live Performance | Work With Jim Bennett",
+  title: "Contact Jim Bennett | Advance Bass",
   description:
-    "Book private bass lessons in Vancouver or online, hire Jim Bennett as a session bassist for remote recording, or book him for live performance. Get in touch to discuss your project.",
+    "Get in touch with Jim Bennett — professional bassist and educator based in Vancouver, BC. Questions about lessons, recording, or anything else.",
   openGraph: {
-    title: "Work With Jim Bennett | Bass Lessons, Recording & Live Performance",
+    title: "Contact Jim Bennett | Advance Bass",
     description:
-      "Private bass lessons in Vancouver & online, remote session recording, and live performance bookings. Professional bassist Jim Bennett — contact to get started.",
+      "Get in touch with Jim Bennett — professional bassist and educator based in Vancouver, BC.",
     url: "https://advancebass.com/contact",
   },
   alternates: {
@@ -27,7 +27,7 @@ export default function ContactPage() {
           <div className="inline-flex items-center justify-center p-3 rounded-full bg-primary/10 mb-4">
             <Mail className="w-7 h-7 text-primary" />
           </div>
-          <h2 className="text-3xl font-bold mb-3">Get in Touch</h2>
+          <h1 className="text-3xl font-bold mb-3">Get in Touch</h1>
           <p className="text-muted-foreground">
             Have a general question or not sure which service fits? Fill in the
             form and Jim will get back to you.
