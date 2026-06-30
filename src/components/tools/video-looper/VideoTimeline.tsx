@@ -103,19 +103,19 @@ export function VideoTimeline({
             <>
               {/* Start Marker */}
               <div
-                className="absolute top-0 bottom-0 w-1 bg-yellow-500 cursor-ew-resize z-20 hover:scale-x-150 transition-transform"
+                className="absolute top-0 bottom-0 w-1 bg-emerald-500 cursor-ew-resize z-20 hover:scale-x-150 transition-transform"
                 style={{ left: `${(startTime / duration) * 100}%` }}
                 onMouseDown={() => handleDragStart("start")}
                 onTouchStart={() => handleDragStart("start")}
               >
-                <div className="absolute -top-7 left-1/2 -translate-x-1/2 bg-yellow-500 text-black text-[10px] font-bold px-1.5 py-0.5 rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap shadow-sm">
+                <div className="absolute -top-7 left-1/2 -translate-x-1/2 bg-emerald-500 text-white text-[10px] font-bold px-1.5 py-0.5 rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap shadow-sm">
                   {formatTime(startTime)}
                 </div>
               </div>
 
               {/* Loop Range Highlight */}
               <div
-                className="absolute top-1/2 -translate-y-1/2 h-2 bg-yellow-500/20 pointer-events-none z-0 rounded-sm"
+                className="absolute top-1/2 -translate-y-1/2 h-2 bg-emerald-500/20 pointer-events-none z-0 rounded-sm"
                 style={{
                   left: `${(startTime / duration) * 100}%`,
                   width: `${((endTime - startTime) / duration) * 100}%`,
@@ -124,12 +124,12 @@ export function VideoTimeline({
 
               {/* End Marker */}
               <div
-                className="absolute top-0 bottom-0 w-1 bg-yellow-500 cursor-ew-resize z-20 hover:scale-x-150 transition-transform"
+                className="absolute top-0 bottom-0 w-1 bg-emerald-500 cursor-ew-resize z-20 hover:scale-x-150 transition-transform"
                 style={{ left: `${(endTime / duration) * 100}%` }}
                 onMouseDown={() => handleDragStart("end")}
                 onTouchStart={() => handleDragStart("end")}
               >
-                <div className="absolute -top-7 left-1/2 -translate-x-1/2 bg-yellow-500 text-black text-[10px] font-bold px-1.5 py-0.5 rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap shadow-sm">
+                <div className="absolute -top-7 left-1/2 -translate-x-1/2 bg-emerald-500 text-white text-[10px] font-bold px-1.5 py-0.5 rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap shadow-sm">
                   {formatTime(endTime)}
                 </div>
               </div>
@@ -146,7 +146,7 @@ export function VideoTimeline({
       <div
         className={`transition-all duration-300 rounded-lg border overflow-hidden ${
           loop
-            ? "bg-yellow-500/10 border-yellow-500/50"
+            ? "bg-emerald-500/10 border-emerald-500/50"
             : "bg-muted/20 border-border/50"
         }`}
       >
@@ -156,14 +156,14 @@ export function VideoTimeline({
               id="loop-mode"
               checked={loop}
               onCheckedChange={onLoopChange}
-              className="data-[state=checked]:bg-yellow-500"
+              className="data-[state=checked]:bg-emerald-500"
             />
             <Label htmlFor="loop-mode" className="font-semibold cursor-pointer">
               Loop Section
             </Label>
           </div>
           {loop && (
-            <span className="text-xs text-yellow-600 font-medium animate-pulse">
+            <span className="text-xs text-emerald-600 font-medium animate-pulse">
               Loop Active
             </span>
           )}

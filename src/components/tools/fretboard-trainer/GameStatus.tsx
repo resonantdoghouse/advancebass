@@ -23,9 +23,7 @@ export function GameStatus({
 }: GameStatusProps) {
   return (
     <div className="flex flex-col gap-6">
-      <div className="flex items-center justify-between bg-muted/30 p-4 rounded-xl border relative overflow-hidden">
-        {/* Background decoration */}
-        <div className="absolute inset-0 bg-primary/5 pointer-events-none" />
+      <div className="flex items-center justify-between bg-muted/20 p-5 rounded-[14px] border border-border/50 relative overflow-hidden">
 
         {gameState === "playing" ? (
           <>

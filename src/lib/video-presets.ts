@@ -179,14 +179,6 @@ export const VIDEO_PRESETS: VideoPreset[] = [
     genre: ["Funk"],
     difficulty: "Advanced",
   },
-  {
-    id: "_lIbvj2EBqM",
-    title: "Ides of March",
-    artist: "Charles Berthoud",
-    bassist: "Charles Berthoud",
-    genre: ["Solo Bass"],
-    difficulty: "Expert",
-  },
   // RHCP
   {
     id: "GLvohMXgcBo",
@@ -222,12 +214,12 @@ export const VIDEO_PRESETS: VideoPreset[] = [
     difficulty: "Advanced",
   },
   {
-    id: "3dm_5qWWDV8",
-    title: "Hysteria",
-    artist: "Muse",
-    bassist: "Chris Wolstenholme",
+    id: "YjC0vMIrOAk",
+    title: "Big Bottom",
+    artist: "Spinal Tap",
+    bassist: "Derek Smalls",
     genre: ["Rock"],
-    difficulty: "Intermediate",
+    difficulty: "Beginner",
   },
   {
     id: "57Ykv1D0qEE",

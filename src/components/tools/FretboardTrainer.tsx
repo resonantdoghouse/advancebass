@@ -1,7 +1,6 @@
 "use client";
 
 import { useState } from "react";
-import { Card, CardContent } from "@/components/ui/card";
 import { TUNING_PRESETS } from "@/lib/tuner-utils";
 import { getAllFretboardNotes } from "@/lib/music-theory";
 import { Instructions } from "@/components/tools/fretboard-trainer/Instructions";
@@ -44,9 +43,8 @@ export function FretboardTrainer() {
   });
 
   return (
-    <Card className="w-full shadow-xl border-2 bg-card/95 backdrop-blur">
-      <CardContent className="p-6 space-y-8">
-        <Instructions
+    <div className="w-full rounded-[22px] border border-border bg-card shadow-[0_24px_60px_-20px_rgba(0,0,0,0.18)] dark:shadow-[0_30px_70px_-20px_rgba(0,0,0,0.8)] p-6 md:p-8 space-y-8">
+      <Instructions
           showInstructions={showInstructions}
           setShowInstructions={setShowInstructions}
         />
@@ -71,12 +69,11 @@ export function FretboardTrainer() {
           feedback={feedback}
         />
 
-        <div className="text-center text-sm text-muted-foreground">
+        <p className="text-center text-xs text-muted-foreground/60 font-mono">
           {gameState === "menu"
-            ? "Press Start Game to begin training."
-            : "Click the fretboard location matching the requested note."}
-        </div>
-      </CardContent>
-    </Card>
+            ? "Press Start Game to begin training"
+            : "Click the fretboard location matching the requested note"}
+        </p>
+    </div>
   );
 }

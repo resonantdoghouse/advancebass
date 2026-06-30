@@ -7,12 +7,10 @@ import {
   Timer,
   Music,
   Repeat,
-  Crosshair,
   Volume2,
   Search,
   Shuffle,
   Ear,
-  Settings2,
 } from "lucide-react";
 import {
   Card,
@@ -97,14 +95,6 @@ const TOOLS: Tool[] = [
     ),
   },
   {
-    id: "fretboard-trainer",
-    title: "Fretboard Trainer",
-    description:
-      "Gamified fretboard memorization. Race against the clock to find notes.",
-    href: "/tools/fretboard-trainer",
-    icon: <Crosshair className="h-8 w-8 text-primary mb-2" />,
-  },
-  {
     id: "ear-training",
     title: "Ear Training",
     description:
@@ -123,14 +113,6 @@ const TOOLS: Tool[] = [
         5th
       </div>
     ),
-  },
-  {
-    id: "strudel-generator",
-    title: "Strudel Music Generator",
-    description:
-      "Live code beats, loops, and polyrhythms in your browser using Strudel JS.",
-    href: "/tools/strudel-generator",
-    icon: <Settings2 className="h-8 w-8 text-primary mb-2" />,
   },
 ];
 

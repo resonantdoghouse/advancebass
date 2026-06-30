@@ -30,7 +30,6 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     '/tools',
     '/tools/metronome',
     '/tools/tuner',
-    '/tools/fretboard-trainer',
     '/tools/arpeggio-visualizer',
     '/tools/scale-visualizer',
     '/tools/circle-of-fifths',

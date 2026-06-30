@@ -23,66 +23,70 @@
   --radius-lg: var(--radius);
   --radius-md: calc(var(--radius) - 2px);
   --radius-sm: calc(var(--radius) - 4px);
+  --font-sans: var(--font-manrope), system-ui, sans-serif;
+  --font-heading: var(--font-space-grotesk), system-ui, sans-serif;
+  --font-mono: var(--font-jetbrains-mono), monospace;
 }
 
-/* Base / Default Theme (Gold) */
+/* Light — editorial calm (1a) */
 :root {
-  --background: 0 0% 98%; /* Off-white */
-  --foreground: 20 10% 10%; /* Very dark grey/brown */
+  --background: 220 25% 98%;       /* #f7f8fb */
+  --foreground: 222 47% 11%;       /* #0f172a */
   --card: 0 0% 100%;
-  --card-foreground: 20 10% 10%;
+  --card-foreground: 222 47% 11%;
   --popover: 0 0% 100%;
-  --popover-foreground: 20 10% 10%;
-  --primary: 45 90% 40%; /* Classic Gold */
+  --popover-foreground: 222 47% 11%;
+  --primary: 225 62% 51%;          /* #3056d3 */
   --primary-foreground: 0 0% 100%;
-  --secondary: 45 40% 95%; /* Light Gold wash */
-  --secondary-foreground: 45 90% 30%; /* Darker Gold text */
-  --muted: 45 20% 95%;
-  --muted-foreground: 45 10% 40%;
-  --accent: 45 30% 96%;
-  --accent-foreground: 45 90% 30%;
+  --secondary: 227 71% 96%;        /* #eaeefc */
+  --secondary-foreground: 225 62% 40%;
+  --muted: 220 18% 95%;
+  --muted-foreground: 215 25% 35%; /* #475569 */
+  --accent: 227 71% 96%;
+  --accent-foreground: 225 62% 45%;
   --destructive: 0 84% 60%;
   --destructive-foreground: 0 0% 98%;
-  --border: 45 30% 85%;
-  --input: 45 30% 85%;
-  --ring: 45 90% 40%;
-  --radius: 0.5rem;
-  --fretboard: 40 5% 90%;
-  --fretboard-dot: 0 0% 20%;
+  --border: 220 18% 91%;           /* #e7eaf0 */
+  --input: 220 18% 91%;
+  --ring: 225 62% 51%;
+  --radius: 0.625rem;
+  --fretboard: 220 18% 91%;
+  --fretboard-dot: 222 47% 11%;
 }
 
+/* Dark — studio moody (1b) */
 .dark {
-  --background: 20 5% 10%; /* Dark luxury grey */
-  --foreground: 45 30% 90%; /* Pale Gold */
-  --card: 20 5% 12%;
-  --card-foreground: 45 30% 90%;
-  --popover: 20 5% 10%;
-  --popover-foreground: 45 30% 90%;
-  --primary: 45 80% 60%; /* Bright Gold */
-  --primary-foreground: 20 5% 10%;
-  --secondary: 45 15% 20%; /* Dark Gold background */
-  --secondary-foreground: 45 80% 60%; /* Bright Gold text */
-  --muted: 45 10% 15%;
-  --muted-foreground: 45 20% 65%;
-  --accent: 45 15% 18%;
-  --accent-foreground: 45 80% 60%;
+  --background: 224 52% 8%;        /* #0a0f1c */
+  --foreground: 213 26% 93%;       /* #e7ecf3 */
+  --card: 222 47% 12%;             /* #111a2e */
+  --card-foreground: 213 26% 93%;
+  --popover: 222 47% 12%;
+  --popover-foreground: 213 26% 93%;
+  --primary: 214 100% 68%;         /* #5b9bff */
+  --primary-foreground: 224 52% 8%;
+  --secondary: 222 42% 18%;
+  --secondary-foreground: 214 100% 68%;
+  --muted: 222 40% 15%;
+  --muted-foreground: 213 16% 61%; /* #8b97ac */
+  --accent: 222 42% 16%;
+  --accent-foreground: 214 100% 68%;
   --destructive: 0 62.8% 30.6%;
   --destructive-foreground: 0 0% 98%;
-  --border: 45 20% 20%;
-  --input: 45 20% 20%;
-  --ring: 45 80% 60%;
-  --fretboard: 220 10% 15%;
-  --fretboard-dot: 210 40% 98%;
+  --border: 220 30% 20%;
+  --input: 220 30% 20%;
+  --ring: 214 100% 68%;
+  --fretboard: 222 47% 15%;
+  --fretboard-dot: 213 26% 93%;
 }
 
 body {
   background-color: var(--color-background);
   color: var(--color-foreground);
-  font-family: var(--font-ghost-sans), Arial, Helvetica, sans-serif;
+  font-family: var(--font-manrope), system-ui, sans-serif;
   @apply antialiased selection:bg-primary/20 selection:text-primary;
 }
 
-/* Custom scrollbar for premium feel */
+/* Custom scrollbar */
 ::-webkit-scrollbar {
   width: 10px;
 }
@@ -95,20 +99,3 @@ body {
   @apply bg-muted rounded-full hover:bg-muted-foreground/50 transition-colors;
 }
 
-/* ── Nav link sine wave underline ─────────────────────────────── */
-@keyframes nav-wave-travel {
-  from { transform: translateX(0); }
-  to   { transform: translateX(-50%); }
-}
-
-/* Hover: gentle oscillation */
-.nav-wave-hover {
-  animation: nav-wave-travel 6.8s linear infinite;
-}
-
-/* Reduced motion: no animation */
-@media (prefers-reduced-motion: reduce) {
-  .nav-wave-hover {
-    animation: none;
-  }
-}

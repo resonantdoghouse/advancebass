@@ -1,7 +1,6 @@
 "use client";
 
 import { useState } from "react";
-import { Card, CardContent } from "@/components/ui/card";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { cn } from "@/lib/utils";
 import { NOTES, CHORDS, WESTERN_ROOTS, getChordNotes, getAllFretboardNotes, getNoteName, normalizeRoot, getInterval } from "@/lib/music-theory";
@@ -76,8 +75,8 @@ export function ArpeggioVisualizer() {
           return "bg-amber-600 text-white border-amber-700"; // 7th: Amber/Orange
       }
 
-      // Default Chord Note (if any overlap or weird extns)
-      return "bg-background text-foreground border-foreground/20"; 
+      // Default Chord Note
+      return "bg-white/15 text-white/90 border-white/20";
   };
 
 
@@ -106,13 +105,12 @@ export function ArpeggioVisualizer() {
   const openStringNotes = currentTuning.strings.map(s => s.note);
 
   return (
-    <Card className="w-full shadow-xl border-2 bg-card/95 backdrop-blur">
-      <CardContent className="p-6 space-y-6">
+    <div className="w-full rounded-[22px] border border-border bg-card shadow-[0_24px_60px_-20px_rgba(0,0,0,0.18)] dark:shadow-[0_30px_70px_-20px_rgba(0,0,0,0.8)] p-6 md:p-8 space-y-6">
 
         {/* Controls */}
-        <div className="flex flex-col md:flex-row gap-4 items-end justify-between bg-muted/30 p-4 rounded-lg border border-border/50">
+        <div className="flex flex-col md:flex-row gap-4 items-end justify-between bg-muted/20 p-5 rounded-[14px]">
             <div className="flex flex-col gap-1.5 w-full md:w-auto">
-                <span className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Bass Tuning</span>
+                <span className="font-mono text-[11px] tracking-[0.1em] text-muted-foreground uppercase">Bass Tuning</span>
                 <Select value={selectedPresetId} onValueChange={setSelectedPresetId}>
                     <SelectTrigger className="w-full md:w-[200px]">
                         <SelectValue placeholder="Select Tuning" />
@@ -126,7 +124,7 @@ export function ArpeggioVisualizer() {
             </div>
 
             <div className="flex flex-col gap-1.5 w-full md:w-auto">
-                <span className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Root Note</span>
+                <span className="font-mono text-[11px] tracking-[0.1em] text-muted-foreground uppercase">Root Note</span>
                 <Select value={rootNote} onValueChange={setRootNote}>
                     <SelectTrigger className="w-full md:w-[110px]">
                         <SelectValue />
@@ -140,7 +138,7 @@ export function ArpeggioVisualizer() {
             </div>
 
             <div className="flex flex-col gap-1.5 w-full md:w-auto">
-                <span className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Chord / Arpeggio</span>
+                <span className="font-mono text-[11px] tracking-[0.1em] text-muted-foreground uppercase">Chord / Arpeggio</span>
                 <Select value={chordType} onValueChange={(val) => setChordType(val as keyof typeof CHORDS)}>
                     <SelectTrigger className="w-full md:w-[200px]">
                         <SelectValue />
@@ -158,8 +156,8 @@ export function ArpeggioVisualizer() {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
 
           {/* Now Showing */}
-          <div className="bg-muted/20 border border-border/60 rounded-lg p-4 space-y-3">
-            <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Now Showing</p>
+          <div className="bg-muted/20 border border-border/50 rounded-[14px] p-5 space-y-3">
+            <p className="font-mono text-[11px] tracking-[0.1em] text-muted-foreground uppercase">Now Showing</p>
             <p className="text-2xl font-bold tracking-tight">
               {rootNote} <span className="text-muted-foreground font-medium">{CHORDS[chordType].name}</span>
             </p>
@@ -180,8 +178,8 @@ export function ArpeggioVisualizer() {
           </div>
 
           {/* Color Guide (Legend) */}
-          <div className="bg-muted/20 border border-border/60 rounded-lg p-4 space-y-3">
-            <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Color Guide</p>
+          <div className="bg-muted/20 border border-border/50 rounded-[14px] p-5 space-y-3">
+            <p className="font-mono text-[11px] tracking-[0.1em] text-muted-foreground uppercase">Color Guide</p>
             <div className="grid grid-cols-2 gap-2">
               {INTERVAL_LABELS.slice(0, chordNotes.length).map((label, i) => (
                 <div key={label} className="flex items-center gap-3">
@@ -200,15 +198,14 @@ export function ArpeggioVisualizer() {
         </div>
 
         {/* How to Read section */}
-        <div className="flex items-start gap-3 bg-primary/5 border border-primary/20 rounded-lg px-4 py-3 text-sm text-muted-foreground">
-          <span className="text-lg mt-0.5">🎸</span>
+        <div className="flex items-start gap-3 bg-muted/20 border border-border/50 rounded-[14px] px-5 py-4 text-sm text-muted-foreground">
           <div className="space-y-1">
-            <p className="font-medium text-foreground">How to read the fretboard</p>
-            <ul className="space-y-0.5 text-xs list-disc list-inside">
-              <li>Each row is a string — thinnest string at top, thickest at bottom. String names appear on the left.</li>
-              <li>Columns are frets. Position markers (3, 5, 7, 9, 12…) appear below the fretboard.</li>
-              <li>Colored dots are the notes of the selected arpeggio. Tap to hear them.</li>
-              <li>On mobile, swipe the fretboard left/right to see all 15 frets.</li>
+            <p className="font-mono text-[11px] tracking-[0.1em] uppercase text-muted-foreground/70 mb-2">Reading the fretboard</p>
+            <ul className="space-y-1 text-xs list-disc list-inside">
+              <li>Each row is a string — thinnest at top, thickest at bottom.</li>
+              <li>Position markers (3, 5, 7, 9, 12…) appear below the fretboard.</li>
+              <li>Colored dots are arpeggio notes — tap any to hear it.</li>
+              <li>Swipe left/right on mobile to see all 15 frets.</li>
             </ul>
           </div>
         </div>
@@ -230,21 +227,19 @@ export function ArpeggioVisualizer() {
               >
                 {[...openStringNotes].reverse().map((noteName, i) => (
                   <div key={i} className="flex items-center justify-end h-8">
-                    <span className="text-[11px] font-bold text-muted-foreground font-mono">{noteName}</span>
+                    <span className="text-[11px] font-bold font-mono" style={{ color: "#5b6b85" }}>{noteName}</span>
                   </div>
                 ))}
               </div>
 
-              {/* Container with Theme-Aware Styles (Maple/Rosewood) */}
+              {/* Always-dark fretboard */}
               <div
                   id="fretboard-container"
-                  className={cn(
-                  "flex-1 select-none pl-4 pr-4 py-8 rounded-xl border border-border shadow-inner relative transition-colors duration-300",
-                  "bg-[hsl(var(--fretboard))]"
-              )}>
+                  className="flex-1 select-none pl-4 pr-4 py-8 rounded-[14px] shadow-inner relative"
+                  style={{ background: "#0c1424" }}>
 
-                  {/* Nut (Left side bar) */}
-                  <div className="absolute left-4 top-8 bottom-8 w-3 bg-neutral-300 dark:bg-neutral-600 shadow-md z-10 border-r border-neutral-400 dark:border-neutral-800"></div>
+                  {/* Nut */}
+                  <div className="absolute left-4 top-8 bottom-8 w-3 bg-neutral-600 shadow-md z-10 border-r border-neutral-700"></div>
 
                   {/* Strings & Frets Container */}
                   <div className="relative flex flex-col justify-between" style={{ height: `${numStrings * 40}px` }}>
@@ -254,21 +249,22 @@ export function ArpeggioVisualizer() {
                            {Array.from({ length: numFrets }).map((_, i) => (
                                <div
                                   key={i}
-                                  className="absolute top-0 bottom-0 bg-neutral-400/50 dark:bg-neutral-500/30"
+                                  className="absolute top-0 bottom-0 bg-white/10"
                                   style={{
                                       left: `${(i + 1) * (100 / (numFrets + 1))}%`,
-                                      width: '2px',
+                                      width: '1px',
                                       transform: 'translateX(-50%)'
                                    }}
                                >
                                   {/* Fret Numbers */}
                                   <div className="absolute -bottom-8 left-1/2 -translate-x-1/2 flex items-center justify-center">
-                                      <span className={cn(
-                                          "w-6 h-6 flex items-center justify-center text-xs font-mono font-bold rounded-full",
-                                          [3, 5, 7, 9, 12, 15].includes(i + 1)
-                                              ? "text-primary font-extrabold scale-125"
-                                              : "text-neutral-500 dark:text-neutral-400"
-                                      )}>
+                                      <span
+                                          className="w-6 h-6 flex items-center justify-center font-mono font-bold rounded-full"
+                                          style={{
+                                              color: [3, 5, 7, 9, 12, 15].includes(i + 1) ? "#5b9bff" : "#3d4f6b",
+                                              fontSize: [3, 5, 7, 9, 12, 15].includes(i + 1) ? "11px" : "10px",
+                                          }}
+                                      >
                                           {i + 1}
                                       </span>
                                   </div>
@@ -284,8 +280,8 @@ export function ArpeggioVisualizer() {
                               <div key={actualStringIndex} className="relative w-full h-8 flex items-center">
                                   {/* String Line */}
                                   <div
-                                      className="absolute w-full shadow-sm z-0 transition-colors bg-neutral-400 dark:bg-neutral-500"
-                                      style={{ height: `${2 + (sIdx * 0.5)}px` }}
+                                      className="absolute w-full z-0"
+                                      style={{ height: `${2 + (sIdx * 0.5)}px`, background: "rgba(148,163,184,0.45)" }}
                                   ></div>
 
                                   {/* Notes */}
@@ -310,7 +306,7 @@ export function ArpeggioVisualizer() {
                                                       inChord ? cn(
                                                           getNoteColorClass(noteData.note, isRootNote),
                                                           isRootNote ? "scale-110 shadow-md" : "hover:scale-110"
-                                                      ) : "bg-transparent text-transparent border-transparent w-4 h-4 hover:w-7 hover:h-7 hover:bg-black/50 hover:text-white dark:hover:bg-white/20 dark:hover:text-white opacity-0 hover:opacity-100"
+                                                      ) : "bg-transparent text-transparent border-transparent w-4 h-4 hover:w-7 hover:h-7 hover:bg-white/20 hover:text-white opacity-0 hover:opacity-100"
                                                   )}
                                                   title={`${getNoteName(noteData.noteIndex, rootNote)}${noteData.octave} — click to hear`}
                                               >
@@ -327,7 +323,6 @@ export function ArpeggioVisualizer() {
             </div>
         </div>
 
-      </CardContent>
-    </Card>
+    </div>
   );
 }
