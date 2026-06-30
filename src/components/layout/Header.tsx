@@ -8,7 +8,6 @@ import { ThemeToggle } from "@/components/ThemeToggle";
 import { cn } from "@/lib/utils";
 
 const navLinks = [
-  { href: "/bass-lessons",    label: "Lessons"        },
   { href: "/tools",           label: "Tools"          },
   { href: "/transcriptions",  label: "Transcriptions" },
   { href: "/contact",         label: "Contact"        },
