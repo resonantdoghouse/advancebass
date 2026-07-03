@@ -223,7 +223,7 @@ export default function BassLessonsPage() {
               variant="outline"
               className="rounded-full px-8"
             >
-              <Link href="/contact">View All Services</Link>
+              <Link href="/bassist-for-hire">View All Services</Link>
             </Button>
           </div>
         </div>

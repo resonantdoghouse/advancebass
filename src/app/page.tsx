@@ -10,6 +10,8 @@ import {
   Volume2,
   Ear,
   ArrowRight,
+  Guitar,
+  RefreshCw,
 } from "lucide-react";
 
 export const metadata: Metadata = {
@@ -55,6 +57,27 @@ const FEATURED_TOOLS = [
     href: "/tools/drum-machine",
     icon: <Volume2 className="h-5 w-5" />,
   },
+  {
+    id: "scale-visualizer",
+    title: "Scale Visualizer",
+    description: "Interactive fretboard to learn scales and modes on 4, 5, or 6 string basses.",
+    href: "/tools/scale-visualizer",
+    icon: <Guitar className="h-5 w-5" />,
+  },
+  {
+    id: "arpeggio-visualizer",
+    title: "Arpeggio Visualizer",
+    description: "Visualize chord tones and arpeggios across the fretboard.",
+    href: "/tools/arpeggio-visualizer",
+    icon: <RefreshCw className="h-5 w-5" />,
+  },
+  {
+    id: "circle-of-fifths",
+    title: "Circle of Fifths",
+    description: "Visual guide to key signatures, relative minors, and scale relationships.",
+    href: "/tools/circle-of-fifths",
+    icon: <span className="text-[11px] font-bold leading-none">5ths</span>,
+  },
 ];
 
 export default async function Home() {
@@ -71,11 +94,6 @@ export default async function Home() {
 
           {/* Copy */}
           <div>
-            <div className="inline-flex items-center gap-2 text-primary bg-secondary text-xs font-semibold tracking-[0.06em] px-3.5 py-2 rounded-full mb-7">
-              <span className="w-1.5 h-1.5 rounded-full bg-primary shrink-0" />
-              FREE TOOLS · BASS LESSONS · TRANSCRIPTIONS
-            </div>
-
             <h1 className="font-heading font-bold text-[52px] sm:text-[62px] lg:text-[68px] leading-[1.0] tracking-[-0.03em] mb-6">
               Master the<br />
               <span className="text-primary">Low End.</span>
@@ -101,19 +119,6 @@ export default async function Home() {
               </Link>
             </div>
 
-            <div className="flex items-center gap-6 mt-10 text-sm text-muted-foreground font-medium flex-wrap">
-              <span>
-                <b className="text-foreground font-heading text-base font-bold">8</b> free tools
-              </span>
-              <span className="w-px h-6 bg-border" />
-              <span>
-                <b className="text-foreground font-heading text-base font-bold">100s</b> of transcriptions
-              </span>
-              <span className="w-px h-6 bg-border" />
-              <span>
-                <b className="text-foreground font-heading text-base font-bold">0</b> account required
-              </span>
-            </div>
           </div>
 
           {/* Tuner mockup card */}
@@ -181,11 +186,11 @@ export default async function Home() {
             Everything you'd open six apps for
           </h2>
           <span className="font-mono text-xs text-muted-foreground tracking-[0.05em]">
-            08 TOOLS · 01 TAB
+            08 TOOLS · IN YOUR BROWSER
           </span>
         </div>
 
-        <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
+        <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
           {FEATURED_TOOLS.map((tool, i) => {
             const isAccent = i === 2; // Video Looper gets the accent card
             return (
@@ -228,14 +233,6 @@ export default async function Home() {
           })}
         </div>
 
-        <div className="mt-6 text-center">
-          <Link
-            href="/tools"
-            className="inline-flex items-center gap-2 font-semibold text-sm text-primary hover:underline"
-          >
-            See all 8 tools <ArrowRight className="h-4 w-4" />
-          </Link>
-        </div>
       </section>
 
       {/* ── Scale / fretboard spotlight ───────────────────────────── */}

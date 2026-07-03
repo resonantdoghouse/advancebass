@@ -10,7 +10,6 @@ import { cn } from "@/lib/utils";
 const navLinks = [
   { href: "/tools",           label: "Tools"          },
   { href: "/transcriptions",  label: "Transcriptions" },
-  { href: "/contact",         label: "Contact"        },
 ];
 
 export function Header() {
