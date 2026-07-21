@@ -191,42 +191,27 @@ export default async function Home() {
         </div>
 
         <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
-          {FEATURED_TOOLS.map((tool, i) => {
-            const isAccent = i === 2; // Video Looper gets the accent card
+          {FEATURED_TOOLS.map((tool) => {
             return (
               <Link key={tool.id} href={tool.href} className="group block">
                 <div
-                  className={`h-full rounded-[16px] p-6 border transition-all duration-200 hover:-translate-y-0.5 ${
-                    isAccent
-                      ? "bg-foreground text-background border-foreground dark:bg-gradient-to-br dark:from-primary dark:to-blue-600 dark:border-primary dark:shadow-[0_0_40px_-10px_rgba(91,155,255,0.5)]"
-                      : "bg-card border-border hover:border-primary/40 hover:shadow-lg"
-                  }`}
+                  className="h-full rounded-[18px] p-6 border border-border/70 bg-card/90 backdrop-blur hover:border-primary/60 hover:shadow-[0_12px_30px_-10px_rgba(48,86,211,0.15)] dark:hover:shadow-[0_12px_35px_-10px_rgba(91,155,255,0.25)] transition-all duration-200 hover:-translate-y-1 interactive-card flex flex-col justify-between"
                 >
-                  <div
-                    className={`w-9 h-9 rounded-[10px] flex items-center justify-center mb-5 ${
-                      isAccent
-                        ? "bg-white/15"
-                        : "bg-secondary text-primary"
-                    }`}
-                  >
-                    <span className={isAccent ? "text-white dark:text-white" : "text-primary"}>
+                  <div>
+                    <div className="w-10 h-10 rounded-[12px] flex items-center justify-center mb-5 bg-secondary/80 text-primary group-hover:bg-primary group-hover:text-primary-foreground transition-all duration-200 shadow-sm">
                       {tool.icon}
-                    </span>
+                    </div>
+                    <h3 className="font-heading font-semibold text-[17px] mb-2 text-foreground group-hover:text-primary transition-colors">
+                      {tool.title}
+                    </h3>
+                    <p className="text-sm leading-relaxed text-muted-foreground">
+                      {tool.description}
+                    </p>
                   </div>
-                  <h3
-                    className={`font-semibold text-[16px] mb-2 ${
-                      isAccent ? "text-background dark:text-white" : "text-foreground"
-                    }`}
-                  >
-                    {tool.title}
-                  </h3>
-                  <p
-                    className={`text-sm leading-relaxed ${
-                      isAccent ? "text-background/70 dark:text-white/75" : "text-muted-foreground"
-                    }`}
-                  >
-                    {tool.description}
-                  </p>
+                  <div className="mt-4 pt-3 flex items-center gap-1.5 text-xs font-semibold text-primary opacity-0 group-hover:opacity-100 transition-opacity">
+                    <span>Launch tool</span>
+                    <ArrowRight className="h-3.5 w-3.5" />
+                  </div>
                 </div>
               </Link>
             );

@@ -56,27 +56,27 @@ export function ArpeggioVisualizer() {
 
   // Helper to determine note color class based on interval
   const getNoteColorClass = (note: string, isRootNote: boolean): string => {
-      if (isRootNote) return "bg-indigo-500 text-white border-indigo-500 ring-2 ring-indigo-500/30 dark:ring-indigo-400/30"; // Root: Indigo
+      if (isRootNote) return "bg-indigo-500 text-white border-indigo-400 ring-2 ring-indigo-400/30 shadow-[0_0_14px_rgba(99,102,241,0.7)] scale-110";
 
       const interval = getInterval(rootNote, note);
       
       // Major/Minor 3rd (3 or 4 semitones)
       if (interval === 3 || interval === 4) {
-          return "bg-sky-600 text-white border-sky-700"; // 3rd: Sky
+          return "bg-sky-600 text-white border-sky-500 shadow-[0_0_10px_rgba(2,132,199,0.5)]";
       }
       
       // Perfect/Diminished/Augmented 5th (6, 7, 8 semitones)
       if (interval === 6 || interval === 7 || interval === 8) {
-          return "bg-emerald-600 text-white border-emerald-700"; // 5th: Emerald
+          return "bg-emerald-600 text-white border-emerald-500 shadow-[0_0_10px_rgba(5,150,105,0.5)]";
       }
 
       // Major/Minor 7th (10 or 11 semitones) or 6th for fully dim7 (9 semitones - bb7)
       if (interval === 9 || interval === 10 || interval === 11) {
-          return "bg-amber-600 text-white border-amber-700"; // 7th: Amber/Orange
+          return "bg-amber-600 text-white border-amber-500 shadow-[0_0_10px_rgba(217,119,6,0.5)]";
       }
 
       // Default Chord Note
-      return "bg-white/15 text-white/90 border-white/20";
+      return "bg-white/20 text-white border-white/30 hover:bg-white/30";
   };
 
 
@@ -232,14 +232,14 @@ export function ArpeggioVisualizer() {
                 ))}
               </div>
 
-              {/* Always-dark fretboard */}
+              {/* Fretboard container with studio dark theme */}
               <div
                   id="fretboard-container"
-                  className="flex-1 select-none pl-4 pr-4 py-8 rounded-[14px] shadow-inner relative"
-                  style={{ background: "#0c1424" }}>
+                  className="flex-1 select-none pl-4 pr-4 py-8 rounded-[16px] relative fretboard-container border border-slate-700/60 shadow-[0_20px_50px_-15px_rgba(0,0,0,0.7)]"
+              >
 
                   {/* Nut */}
-                  <div className="absolute left-4 top-8 bottom-8 w-3 bg-neutral-600 shadow-md z-10 border-r border-neutral-700"></div>
+                  <div className="absolute left-4 top-8 bottom-8 w-3.5 bg-gradient-to-r from-neutral-500 to-neutral-400 shadow-md z-10 border-r border-neutral-700 rounded-sm"></div>
 
                   {/* Strings & Frets Container */}
                   <div className="relative flex flex-col justify-between" style={{ height: `${numStrings * 40}px` }}>

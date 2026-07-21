@@ -57,22 +57,22 @@ export function ScaleVisualizer() {
 
   // Helper to determine note color class based on interval
   const getNoteColorClass = (note: string, isRootNote: boolean): string => {
-      if (isRootNote) return "bg-indigo-500 text-white border-indigo-500 ring-2 ring-indigo-500/30 dark:ring-indigo-400/30"; // Root: Indigo (Softer border/ring)
+      if (isRootNote) return "bg-indigo-500 text-white border-indigo-400 ring-2 ring-indigo-400/30 shadow-[0_0_14px_rgba(99,102,241,0.7)] scale-110";
 
       const interval = getInterval(rootNote, note);
       
       // Major/Minor 3rd (3 or 4 semitones)
       if (interval === 3 || interval === 4) {
-          return "bg-sky-600 text-white border-sky-700"; // 3rd: Sky (Darker for A11Y)
+          return "bg-sky-600 text-white border-sky-500 shadow-[0_0_10px_rgba(2,132,199,0.5)]";
       }
       
       // Perfect 5th (7 semitones)
       if (interval === 7) {
-          return "bg-emerald-600 text-white border-emerald-700"; // 5th: Emerald (Darker for A11Y)
+          return "bg-emerald-600 text-white border-emerald-500 shadow-[0_0_10px_rgba(5,150,105,0.5)]";
       }
 
       // Default Scale Note
-      return "bg-white/15 text-white/90 border-white/20";
+      return "bg-white/20 text-white border-white/30 hover:bg-white/30";
   };
 
 
@@ -84,11 +84,11 @@ export function ScaleVisualizer() {
     <div className="w-full rounded-[22px] border border-border bg-card shadow-[0_24px_60px_-20px_rgba(0,0,0,0.18)] dark:shadow-[0_30px_70px_-20px_rgba(0,0,0,0.8)] p-6 md:p-8 space-y-8">
 
         {/* Controls */}
-        <div className="flex flex-col md:flex-row gap-4 items-end justify-between bg-muted/20 p-5 rounded-[14px]">
+        <div className="flex flex-col md:flex-row gap-4 items-end justify-between bg-muted/30 border border-border/50 p-5 rounded-[16px] backdrop-blur">
             <div className="flex flex-col gap-2 w-full md:w-auto">
-                <span className="font-mono text-[11px] tracking-[0.1em] text-muted-foreground uppercase">Base Tuning</span>
+                <span className="font-mono text-[11px] tracking-[0.1em] text-muted-foreground uppercase font-semibold">Base Tuning</span>
                 <Select value={selectedPresetId} onValueChange={setSelectedPresetId}>
-                    <SelectTrigger className="w-full md:w-[200px]">
+                    <SelectTrigger className="w-full md:w-[200px] bg-background/60">
                         <SelectValue placeholder="Select Tuning" />
                     </SelectTrigger>
                     <SelectContent>
@@ -100,9 +100,9 @@ export function ScaleVisualizer() {
             </div>
 
             <div className="flex flex-col gap-2 w-full md:w-auto">
-                <span className="font-mono text-[11px] tracking-[0.1em] text-muted-foreground uppercase">Root</span>
+                <span className="font-mono text-[11px] tracking-[0.1em] text-muted-foreground uppercase font-semibold">Root</span>
                 <Select value={rootNote} onValueChange={setRootNote}>
-                    <SelectTrigger className="w-full md:w-[100px]">
+                    <SelectTrigger className="w-full md:w-[100px] bg-background/60">
                         <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
@@ -114,9 +114,9 @@ export function ScaleVisualizer() {
             </div>
 
             <div className="flex flex-col gap-2 w-full md:w-auto">
-                <span className="font-mono text-[11px] tracking-[0.1em] text-muted-foreground uppercase">Scale</span>
+                <span className="font-mono text-[11px] tracking-[0.1em] text-muted-foreground uppercase font-semibold">Scale</span>
                 <Select value={scaleType} onValueChange={(val) => setScaleType(val as keyof typeof SCALES)}>
-                    <SelectTrigger className="w-full md:w-[200px]">
+                    <SelectTrigger className="w-full md:w-[200px] bg-background/60">
                         <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
@@ -129,16 +129,16 @@ export function ScaleVisualizer() {
         </div>
 
         {/* Interval legend */}
-        <div className="flex flex-wrap gap-4 items-center text-xs text-muted-foreground">
-            <span className="font-mono text-[11px] tracking-[0.08em] uppercase text-muted-foreground/60 mr-1">Intervals</span>
+        <div className="flex flex-wrap gap-4 items-center text-xs text-muted-foreground bg-muted/20 px-4 py-3 rounded-[12px] border border-border/40">
+            <span className="font-mono text-[11px] tracking-[0.08em] uppercase text-muted-foreground/80 font-semibold mr-1">Intervals</span>
             {[
-              { color: "bg-indigo-500", label: "Root" },
-              { color: "bg-sky-600", label: "3rd" },
-              { color: "bg-emerald-600", label: "5th" },
-              { color: "bg-white/30", label: "Other" },
+              { color: "bg-indigo-500 shadow-[0_0_8px_rgba(99,102,241,0.6)]", label: "Root" },
+              { color: "bg-sky-600 shadow-[0_0_8px_rgba(2,132,199,0.5)]", label: "3rd" },
+              { color: "bg-emerald-600 shadow-[0_0_8px_rgba(5,150,105,0.5)]", label: "5th" },
+              { color: "bg-white/30 border border-white/40", label: "Other" },
             ].map(({ color, label }) => (
-              <div key={label} className="flex items-center gap-1.5">
-                <span className={`w-2.5 h-2.5 rounded-full ${color} block`} />
+              <div key={label} className="flex items-center gap-1.5 font-medium">
+                <span className={`w-3 h-3 rounded-full ${color} block`} />
                 <span>{label}</span>
               </div>
             ))}
@@ -151,14 +151,14 @@ export function ScaleVisualizer() {
                &larr; Scroll to see higher frets &rarr;
             </div>
 
-            {/* Always-dark fretboard */}
+            {/* Fretboard container with studio dark theme */}
             <div
                 id="fretboard-container"
-                className="min-w-[800px] select-none pl-12 pr-4 py-8 rounded-[14px] shadow-inner relative"
-                style={{ background: "#0c1424" }}>
+                className="min-w-[800px] select-none pl-12 pr-4 py-8 rounded-[16px] relative fretboard-container border border-slate-700/60 shadow-[0_20px_50px_-15px_rgba(0,0,0,0.7)]"
+            >
                 
                 {/* Nut */}
-                <div className="absolute left-12 top-8 bottom-8 w-3 bg-neutral-600 shadow-md z-10 border-r border-neutral-700"></div>
+                <div className="absolute left-12 top-8 bottom-8 w-3.5 bg-gradient-to-r from-neutral-500 to-neutral-400 shadow-md z-10 border-r border-neutral-700 rounded-sm"></div>
 
                 {/* Strings & Frets Container */}
                 <div className="relative flex flex-col justify-between" style={{ height: `${numStrings * 40}px` }}> {/* 40px spacing */}
