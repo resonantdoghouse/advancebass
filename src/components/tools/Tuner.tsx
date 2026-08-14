@@ -26,8 +26,10 @@ export function Tuner() {
   const currentPreset = TUNING_PRESETS[selectedPreset as keyof typeof TUNING_PRESETS];
   const isNoteInTune = detectedNote && Math.abs(detectedNote.cents) < 5;
 
-  // Smooth gauge position
-  const [needleRotation, setNeedleRotation] = useState(-90);
+  // Smooth gauge position. Driven by rAF at up to 60fps — animating this via
+  // React state would re-render the whole card every frame, so the needle
+  // element's style is mutated directly instead.
+  const needleElRef = useRef<HTMLDivElement>(null);
   const needleRotationRef = useRef(-90);
   const detectedNoteRef = useRef(detectedNote);
   useEffect(() => { detectedNoteRef.current = detectedNote; }, [detectedNote]);
@@ -44,24 +46,30 @@ export function Tuner() {
       setSelectedPreset("guitar-standard");
   }, [instrumentMode]);
 
+  const volumeRef = useRef(volume);
+  useEffect(() => { volumeRef.current = volume; }, [volume]);
+
   useEffect(() => {
     let id: number;
     const animate = () => {
       let target = -90;
-      if (detectedNoteRef.current && volume > 0.02) {
+      if (detectedNoteRef.current && volumeRef.current > 0.02) {
         let cents = Math.max(-50, Math.min(50, detectedNoteRef.current.cents));
         target = cents * 1.8;
       }
       const diff = target - needleRotationRef.current;
       if (Math.abs(diff) > 0.1) {
         needleRotationRef.current += diff * 0.15;
-        setNeedleRotation(needleRotationRef.current);
+        const percent = Math.max(2, Math.min(98, 50 + needleRotationRef.current / 1.8));
+        if (needleElRef.current) {
+          needleElRef.current.style.left = `${percent}%`;
+        }
       }
       id = requestAnimationFrame(animate);
     };
     animate();
     return () => cancelAnimationFrame(id);
-  }, [volume]);
+  }, []);
 
   useEffect(() => {
     if (instrumentMode !== "chromatic" || mode !== "mic") {
@@ -109,8 +117,6 @@ export function Tuner() {
       setActiveString(index);
     }
   };
-
-  const gaugePercent = Math.max(2, Math.min(98, 50 + needleRotation / 1.8));
 
   const instrumentLabel =
     instrumentMode === "bass" ? "BASS TUNER"
@@ -249,9 +255,10 @@ export function Tuner() {
                 <div className="relative h-2 rounded-full bg-muted mb-2.5">
                   <div className="absolute left-0 top-0 bottom-0 w-1/2 border-r border-border/50" />
                   <div
+                    ref={needleElRef}
                     className="absolute -translate-x-1/2 -top-[5px] w-1 h-[18px] rounded-full"
                     style={{
-                      left: `${gaugePercent}%`,
+                      left: "50%",
                       background: isNoteInTune ? "#4ade80" : "hsl(var(--primary))",
                       boxShadow: isNoteInTune ? "0 0 12px rgba(74,222,128,0.65)" : "none",
                       transition: "background 0.3s, box-shadow 0.3s",

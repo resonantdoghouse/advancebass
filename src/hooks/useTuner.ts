@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState, useCallback } from "react";
 import { autoCorrelate, getNoteFromFrequency, Note } from "@/lib/tuner-utils";
+import { ensureAudioContext } from "@/lib/audio-context";
 
 export function useTuner() {
   const [isListening, setIsListening] = useState(false);
@@ -22,28 +23,41 @@ export function useTuner() {
   const toneTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
   const updatePitchRef = useRef<() => void>(() => {});
+  // Pitch detection only needs to feel responsive, not run at display refresh
+  // rate — committing React state at 60fps re-renders the whole tuner UI
+  // every frame. Throttling to ~20fps cuts both the setState calls and the
+  // (more expensive) autocorrelation work by 3x with no visible difference,
+  // since the needle animation smooths between updates independently.
+  const UPDATE_INTERVAL_MS = 50;
+  const lastUpdateRef = useRef(0);
 
   const updatePitch = useCallback(() => {
     if (!analyserRef.current || !audioContextRef.current) return;
 
-    const bufferLength = analyserRef.current.fftSize;
-    const buffer = new Float32Array(bufferLength);
-    analyserRef.current.getFloatTimeDomainData(buffer);
+    const now = performance.now();
+    if (now - lastUpdateRef.current >= UPDATE_INTERVAL_MS) {
+      lastUpdateRef.current = now;
 
-    // Calculate volume roughly for UI feedback
-    let sum = 0;
-    for (let i = 0; i < buffer.length; i++) {
-        sum += buffer[i] * buffer[i];
+      const bufferLength = analyserRef.current.fftSize;
+      const buffer = new Float32Array(bufferLength);
+      analyserRef.current.getFloatTimeDomainData(buffer);
+
+      // Calculate volume roughly for UI feedback
+      let sum = 0;
+      for (let i = 0; i < buffer.length; i++) {
+          sum += buffer[i] * buffer[i];
+      }
+      const rms = Math.sqrt(sum / buffer.length);
+      const nextVolume = Math.min(1, rms * 5); // Amplify a bit for visual
+      setVolume((prev) => (Math.abs(nextVolume - prev) < 0.01 ? prev : nextVolume));
+
+      const frequency = autoCorrelate(buffer, audioContextRef.current.sampleRate);
+
+      if (frequency !== -1) {
+        const note = getNoteFromFrequency(frequency);
+        setDetectedNote(note);
+      }
     }
-    const rms = Math.sqrt(sum / buffer.length);
-    setVolume(Math.min(1, rms * 5)); // Amplify a bit for visual
-
-    const frequency = autoCorrelate(buffer, audioContextRef.current.sampleRate);
-    
-    if (frequency !== -1) {
-      const note = getNoteFromFrequency(frequency);
-      setDetectedNote(note);
-    } 
 
     rafIdRef.current = requestAnimationFrame(() => updatePitchRef.current());
   }, []);
@@ -54,17 +68,8 @@ export function useTuner() {
 
   const startListening = async () => {
     try {
-      // Ensure we have a valid, running context
-      if (!audioContextRef.current || audioContextRef.current.state === 'closed') {
-         audioContextRef.current = new (window.AudioContext || (window as any).webkitAudioContext)();
-      }
-      const audioCtx = audioContextRef.current;
-      
-      // Resume if suspended (browser autoplay policy)
-      if (audioCtx.state === 'suspended') {
-        await audioCtx.resume();
-      }
-      
+      const audioCtx = await ensureAudioContext(audioContextRef);
+
       const analyser = audioCtx.createAnalyser();
       analyser.fftSize = 2048;
       analyserRef.current = analyser;
@@ -101,18 +106,9 @@ export function useTuner() {
     setVolume(0);
   };
 
-  const playTone = (frequency: number) => {
-    // Check if context exists and is not closed
-    if (!audioContextRef.current || audioContextRef.current.state === 'closed') {
-        audioContextRef.current = new (window.AudioContext || (window as any).webkitAudioContext)();
-    }
-    const ctx = audioContextRef.current;
-    
-    // Resume if suspended
-    if (ctx.state === 'suspended') {
-        ctx.resume();
-    }
-    
+  const playTone = async (frequency: number) => {
+    const ctx = await ensureAudioContext(audioContextRef);
+
     // Stop existing tone
     stopTone();
 

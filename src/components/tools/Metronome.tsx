@@ -91,32 +91,36 @@ const BeatsDisplay = memo(
     isPlaying: boolean;
     toggleAccent: (index: number) => void;
   }) => (
-    <div className="flex justify-center gap-2 mb-4 h-8 items-center">
-      {accentPattern.map((level, i) => (
-        <button
-          key={i}
-          onClick={() => toggleAccent(i)}
-          className={`rounded-full transition-all duration-75 flex items-center justify-center outline-none focus-visible:ring-2 focus-visible:ring-ring
-            ${
-              level === 2
-                ? "h-5 w-5 shadow-[0_0_12px_theme(colors.primary.DEFAULT)]"
-                : level === 1
-                  ? "h-4 w-4"
-                  : "h-3 w-3 opacity-30"
-            } 
-            ${
-              currentBeat === i && isPlaying && level !== 0
-                ? "bg-primary scale-125 brightness-125"
-                : level === 0
-                  ? "bg-muted-foreground"
-                  : level === 2
-                    ? "bg-primary"
-                    : "bg-primary/70"
-            }
-          `}
-          title={level === 2 ? "Accent" : level === 1 ? "Normal" : "Mute"}
-        />
-      ))}
+    <div className="flex justify-center gap-2 mb-4 h-8 items-center" role="group" aria-label="Beat accent pattern">
+      {accentPattern.map((level, i) => {
+        const levelLabel = level === 2 ? "Accent" : level === 1 ? "Normal" : "Mute";
+        return (
+          <button
+            key={i}
+            onClick={() => toggleAccent(i)}
+            aria-label={`Beat ${i + 1}: ${levelLabel}. Click to change.`}
+            className={`rounded-full transition-all duration-75 flex items-center justify-center outline-none focus-visible:ring-2 focus-visible:ring-ring
+              ${
+                level === 2
+                  ? "h-5 w-5 shadow-[0_0_12px_theme(colors.primary.DEFAULT)]"
+                  : level === 1
+                    ? "h-4 w-4"
+                    : "h-3 w-3 opacity-30"
+              }
+              ${
+                currentBeat === i && isPlaying && level !== 0
+                  ? "bg-primary scale-125 brightness-125"
+                  : level === 0
+                    ? "bg-muted-foreground"
+                    : level === 2
+                      ? "bg-primary"
+                      : "bg-primary/70"
+              }
+            `}
+            title={levelLabel}
+          />
+        );
+      })}
     </div>
   ),
 );
@@ -240,6 +244,7 @@ export function Metronome({ compact = false }: MetronomeProps) {
                 size="lg"
                 variant={isPlaying ? "destructive" : "default"}
                 onClick={togglePlay}
+                aria-pressed={isPlaying}
                 className="flex-1 h-14 text-xl rounded-xl shadow-lg hover:scale-[1.02] transition-transform active:scale-95"
               >
                 {isPlaying ? (
@@ -287,10 +292,11 @@ export function Metronome({ compact = false }: MetronomeProps) {
                     size="icon"
                     className="h-8 w-8 hover:bg-background"
                     onClick={decreaseBeats}
+                    aria-label="Decrease beats per measure"
                   >
                     -
                   </Button>
-                  <span className="font-bold tabular-nums text-lg w-8 text-center">
+                  <span className="font-bold tabular-nums text-lg w-8 text-center" aria-live="polite">
                     {beatsPerMeasure}
                   </span>
                   <Button
@@ -298,6 +304,7 @@ export function Metronome({ compact = false }: MetronomeProps) {
                     size="icon"
                     className="h-8 w-8 hover:bg-background"
                     onClick={increaseBeats}
+                    aria-label="Increase beats per measure"
                   >
                     +
                   </Button>
@@ -314,10 +321,11 @@ export function Metronome({ compact = false }: MetronomeProps) {
                     size="icon"
                     className="h-8 w-8 hover:bg-background"
                     onClick={decreaseNoteValue}
+                    aria-label="Decrease note value"
                   >
                     -
                   </Button>
-                  <span className="font-bold tabular-nums text-lg w-8 text-center">
+                  <span className="font-bold tabular-nums text-lg w-8 text-center" aria-live="polite">
                     {noteValue}
                   </span>
                   <Button
@@ -325,6 +333,7 @@ export function Metronome({ compact = false }: MetronomeProps) {
                     size="icon"
                     className="h-8 w-8 hover:bg-background"
                     onClick={increaseNoteValue}
+                    aria-label="Increase note value"
                   >
                     +
                   </Button>

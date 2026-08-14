@@ -1,13 +1,6 @@
 import { useState, useEffect, useRef, useCallback } from "react";
-
-interface MetronomeState {
-  bpm: number;
-  beatsPerMeasure: number;
-  isPlaying: boolean;
-  currentBeat: number;
-}
-
-type ToneType = "digital" | "woodblock" | "drum" | "ping" | "blip";
+import { createAudioContext } from "@/lib/audio-context";
+import { playMetronomeTick, ToneType } from "@/lib/metronome-sound";
 
 export const useMetronome = () => {
   const [isPlaying, setIsPlaying] = useState(false);
@@ -28,6 +21,7 @@ export const useMetronome = () => {
   const lookahead = 25.0;
   const scheduleAheadTime = 0.1;
   const tickRef = useRef(0);
+  const beatHighlightTimeouts = useRef<Set<number>>(new Set());
 
   // Refs for current state values to be accessed inside the scheduler closure
   const bpmRef = useRef(bpm);
@@ -88,79 +82,36 @@ export const useMetronome = () => {
     const currentSubdivision = subdivisionRef.current;
     const currentBeatsPerMeasure = beatsPerMeasureRef.current;
     const currentAccentPattern = accentPatternRef.current;
-    const currentTone = toneRef.current;
-    const currentVolume = volumeRef.current;
 
+    // Pure timing/pattern math — which beat, which subdivision, how loud.
+    // Stays identical on any platform; only playMetronomeTick below is
+    // Web Audio-specific.
     const beatIndex =
       Math.floor(tickIndex / currentSubdivision) % currentBeatsPerMeasure;
     const subIndex = tickIndex % currentSubdivision;
+    const level =
+      subIndex === 0 ? (currentAccentPattern[beatIndex] ?? 1) : 0.5;
 
-    let level = 1;
-    let frequency = 800;
-    let duration = 0.03;
+    playMetronomeTick(audioContext.current, time, {
+      subIndex,
+      level,
+      tone: toneRef.current,
+      volume: volumeRef.current,
+    });
 
-    if (subIndex === 0) {
-      level =
-        currentAccentPattern[beatIndex] !== undefined
-          ? currentAccentPattern[beatIndex]
-          : 1;
-    } else {
-      level = 0.5;
-      frequency = 600;
-    }
-
-    if (level === 0) return; // Mute
-
-    const osc = audioContext.current.createOscillator();
-    const envelope = audioContext.current.createGain();
-
-    if (currentTone === "digital") {
-      if (subIndex === 0) {
-        frequency = level === 2 ? 1000 : 800;
-      }
-      osc.frequency.value = frequency;
-      osc.type = "sine";
-    } else if (currentTone === "woodblock") {
-      osc.frequency.value = level === 2 ? 1200 : 800;
-      osc.type = "square";
-      duration = 0.01;
-    } else if (currentTone === "drum") {
-      osc.frequency.value = level === 2 ? 150 : 100;
-      osc.type = "triangle";
-    } else if (currentTone === "ping") {
-      osc.frequency.value = level === 2 ? 1400 : 1000;
-      osc.type = "sine";
-      duration = 0.08;
-    } else if (currentTone === "blip") {
-      osc.frequency.value = level === 2 ? 600 : 400;
-      osc.type = "sawtooth";
-      duration = 0.05;
-    }
-
-    const baseVolume = level === 2 ? 1.0 : 0.6;
-    const finalVolume = baseVolume * currentVolume;
-
-    if (subIndex !== 0) {
-      envelope.gain.value = 0.3 * currentVolume;
-    } else {
-      envelope.gain.value = finalVolume;
-    }
-
-    envelope.gain.exponentialRampToValueAtTime(finalVolume, time + 0.001);
-    envelope.gain.exponentialRampToValueAtTime(0.001, time + duration);
-
-    osc.connect(envelope);
-    envelope.connect(audioContext.current.destination);
-
-    osc.start(time);
-    osc.stop(time + duration);
-
-    if (subIndex === 0) {
+    if (subIndex === 0 && level !== 0) {
       const timeUntilNote = (time - audioContext.current.currentTime) * 1000;
-      setTimeout(() => {
+      const timeoutId = window.setTimeout(() => {
+        beatHighlightTimeouts.current.delete(timeoutId);
         setCurrentBeat(beatIndex);
       }, Math.max(0, timeUntilNote));
+      beatHighlightTimeouts.current.add(timeoutId);
     }
+  }, []);
+
+  const clearBeatHighlightTimeouts = useCallback(() => {
+    beatHighlightTimeouts.current.forEach((id) => window.clearTimeout(id));
+    beatHighlightTimeouts.current.clear();
   }, []);
 
   const schedulerRef = useRef<() => void>(() => {});
@@ -186,8 +137,7 @@ export const useMetronome = () => {
     if (isPlaying) return;
 
     if (!audioContext.current) {
-      audioContext.current = new (window.AudioContext ||
-        (window as any).webkitAudioContext)();
+      audioContext.current = createAudioContext();
     }
     if (audioContext.current.state === "suspended") {
       audioContext.current.resume();
@@ -206,11 +156,13 @@ export const useMetronome = () => {
       window.clearTimeout(timerID.current);
       timerID.current = null;
     }
+    clearBeatHighlightTimeouts();
     setCurrentBeat(0);
-  }, []);
+  }, [clearBeatHighlightTimeouts]);
 
   useEffect(() => {
     return () => {
+      clearBeatHighlightTimeouts();
       if (timerID.current !== null) {
         window.clearTimeout(timerID.current);
       }
@@ -218,7 +170,7 @@ export const useMetronome = () => {
         audioContext.current.close();
       }
     };
-  }, []);
+  }, [clearBeatHighlightTimeouts]);
 
   const isPlayingRef = useRef(isPlaying);
   useEffect(() => {
