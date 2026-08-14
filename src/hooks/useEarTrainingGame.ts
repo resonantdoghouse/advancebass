@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useCallback, useRef, useEffect } from "react";
+import { createAudioContext } from "@/lib/audio-context";
 
 export const GAME_DURATION = 60;
 
@@ -152,9 +153,7 @@ export function useEarTrainingGame() {
 
   const getAudioContext = useCallback(() => {
     if (!audioCtxRef.current || audioCtxRef.current.state === "closed") {
-      audioCtxRef.current = new (window.AudioContext ||
-        (window as unknown as { webkitAudioContext: typeof AudioContext })
-          .webkitAudioContext)();
+      audioCtxRef.current = createAudioContext();
     }
     if (audioCtxRef.current.state === "suspended") {
       audioCtxRef.current.resume();
