@@ -22,6 +22,7 @@ export function useFretboardGame() {
 
   const { playTone } = useBassSynth();
   const timerRef = useRef<NodeJS.Timeout | null>(null);
+  const feedbackTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
   const generateNewTarget = useCallback(() => {
     // Basic random note (0-11)
@@ -61,6 +62,12 @@ export function useFretboardGame() {
     };
   }, [gameState, endGame]);
 
+  useEffect(() => {
+    return () => {
+      if (feedbackTimeoutRef.current) clearTimeout(feedbackTimeoutRef.current);
+    };
+  }, []);
+
   const handleNoteClick = useCallback(
     (noteData: FretboardNote) => {
       playTone(noteData.frequency);
@@ -69,17 +76,18 @@ export function useFretboardGame() {
 
       setLastClickedFret({ string: noteData.stringIndex, fret: noteData.fret });
 
+      if (feedbackTimeoutRef.current) clearTimeout(feedbackTimeoutRef.current);
+
       if (noteData.noteIndex === targetNoteIndex) {
         // Correct
         setScore((s) => s + 10);
         setFeedback({ type: "correct", message: "Nice!" });
-        setTimeout(() => setFeedback(null), 800);
         generateNewTarget();
       } else {
         // Incorrect
         setFeedback({ type: "incorrect", message: "Try again!" });
-        setTimeout(() => setFeedback(null), 800);
       }
+      feedbackTimeoutRef.current = setTimeout(() => setFeedback(null), 800);
     },
     [gameState, targetNoteIndex, playTone, generateNewTarget]
   );
