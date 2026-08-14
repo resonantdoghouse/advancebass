@@ -4,7 +4,19 @@ import React, { useState, useRef, useEffect, useCallback, useMemo } from "react"
 import { useToolKeyboard } from "@/hooks/useToolKeyboard";
 import { KeyboardHints } from "./KeyboardHints";
 import dynamic from "next/dynamic";
-import { Mic, Activity, Info } from "lucide-react";
+import {
+  Mic,
+  Activity,
+  Info,
+  Maximize2,
+  Minimize2,
+  Play,
+  Square,
+  Minus,
+  Plus,
+  RefreshCw,
+} from "lucide-react";
+import { useMetronome } from "@/hooks/useMetronome";
 import { getNoteFromFrequency, detectChord } from "@/lib/music-theory";
 import { autoCorrelate } from "@/lib/tuner-utils";
 import { BPMDetector } from "@/lib/bpm-detector";
@@ -20,6 +32,8 @@ import {
   CardDescription,
 } from "@/components/ui/card";
 import { VIDEO_PRESETS, VideoPreset } from "@/lib/video-presets";
+import { extractYouTubeId } from "@/lib/youtube";
+import { loadSavedLoop, saveLoop } from "@/lib/loop-storage";
 import { VideoControls } from "./video-looper/VideoControls";
 import { VideoTimeline } from "./video-looper/VideoTimeline";
 import { VideoLibrary } from "./video-looper/VideoLibrary";
@@ -58,6 +72,9 @@ export default function VideoLooper() {
   const [startTime, setStartTime] = useState(0);
   const [endTime, setEndTime] = useState(0);
   const [isMounted, setIsMounted] = useState(false);
+  const [hasStartedPlaying, setHasStartedPlaying] = useState(false);
+  const [isFullscreen, setIsFullscreen] = useState(false);
+  const containerRef = useRef<HTMLDivElement>(null);
 
   // Audio Analysis State
   const [isAnalyzing, setIsAnalyzing] = useState(false);
@@ -66,6 +83,7 @@ export default function VideoLooper() {
   const [detectedFreq, setDetectedFreq] = useState(0);
   const [detectedBpm, setDetectedBpm] = useState(0);
   const bpmDetectorRef = useRef<BPMDetector | null>(null);
+  const metronome = useMetronome();
   const audioContextRef = useRef<AudioContext | null>(null);
   const analyserRef = useRef<AnalyserNode | null>(null);
   const mediaStreamRef = useRef<MediaStream | null>(null);
@@ -82,12 +100,30 @@ export default function VideoLooper() {
     setCurrentPreset(randomPreset);
   }, []);
 
+  // Restore a previously-saved loop for this video (if any) instead of
+  // always resetting to the full clip, so a practice loop survives reloads
+  // and revisits.
   useEffect(() => {
-    setStartTime(0);
-    setEndTime(0);
+    const saved = loadSavedLoop(videoId);
+    if (saved) {
+      setStartTime(saved.startTime);
+      setEndTime(saved.endTime);
+      setLoop(saved.loop);
+    } else {
+      setStartTime(0);
+      setEndTime(0);
+    }
     setPlayed(0);
     setPlaying(false);
+    setHasStartedPlaying(false);
   }, [videoId]);
+
+  // Persist loop points per video as they change so they're there next time
+  // this video is loaded.
+  useEffect(() => {
+    if (!isMounted) return;
+    saveLoop(videoId, { startTime, endTime, loop });
+  }, [isMounted, videoId, startTime, endTime, loop]);
 
   // Release the display-media capture and audio graph on unmount so a
   // leftover analysis session doesn't keep the tab-share indicator on.
@@ -97,6 +133,30 @@ export default function VideoLooper() {
       audioContextRef.current?.close().catch(console.error);
       mediaStreamRef.current?.getTracks().forEach((track) => track.stop());
     };
+  }, []);
+
+  // Keep isFullscreen in sync with the real Fullscreen API state so Esc,
+  // browser chrome, or the OS all correctly fall back to the normal layout.
+  useEffect(() => {
+    const handleFullscreenChange = () => {
+      setIsFullscreen(!!document.fullscreenElement);
+    };
+    document.addEventListener("fullscreenchange", handleFullscreenChange);
+    return () =>
+      document.removeEventListener("fullscreenchange", handleFullscreenChange);
+  }, []);
+
+  const toggleFullscreen = useCallback(async () => {
+    if (!containerRef.current) return;
+    if (!document.fullscreenElement) {
+      try {
+        await containerRef.current.requestFullscreen();
+      } catch (err) {
+        console.error("Error attempting to enable fullscreen:", err);
+      }
+    } else if (document.exitFullscreen) {
+      await document.exitFullscreen();
+    }
   }, []);
 
   // Use a ref to access the player instance
@@ -154,10 +214,30 @@ export default function VideoLooper() {
     setPlaybackRate(rate);
   };
 
+  const [flashMarker, setFlashMarker] = useState<"start" | "end" | null>(null);
+  const flashTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  const flashLoopMarker = (marker: "start" | "end") => {
+    setFlashMarker(marker);
+    if (flashTimeoutRef.current) clearTimeout(flashTimeoutRef.current);
+    flashTimeoutRef.current = setTimeout(() => setFlashMarker(null), 700);
+  };
+
+  useEffect(() => {
+    return () => {
+      if (flashTimeoutRef.current) clearTimeout(flashTimeoutRef.current);
+    };
+  }, []);
+
+  // Pressing I/O implies the player wants a loop, so turn it on rather than
+  // silently recording points that have no visible effect until the toggle
+  // is flipped separately.
   const setStartTimeToCurrent = () => {
     const currentTime = playerRef.current?.getCurrentTime();
     if (currentTime !== undefined) {
       setStartTime(Math.round(currentTime * 100) / 100);
+      setLoop(true);
+      flashLoopMarker("start");
     }
   };
 
@@ -165,6 +245,8 @@ export default function VideoLooper() {
     const currentTime = playerRef.current?.getCurrentTime();
     if (currentTime !== undefined) {
       setEndTime(Math.round(currentTime * 100) / 100);
+      setLoop(true);
+      flashLoopMarker("end");
     }
   };
 
@@ -328,6 +410,7 @@ export default function VideoLooper() {
       KeyI: () => setStartTimeToCurrent(),
       KeyO: () => setEndTimeToCurrent(),
       KeyM: () => handleToggleMute(),
+      KeyF: () => toggleFullscreen(),
       BracketLeft: () => {
         setPlaybackRate((prev) => {
           const idx = SPEED_STEPS.indexOf(prev);
@@ -342,7 +425,7 @@ export default function VideoLooper() {
       },
     }),
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [handlePlayPause, handleToggleMute],
+    [handlePlayPause, handleToggleMute, toggleFullscreen],
   );
 
   useToolKeyboard(videoShortcuts);
@@ -352,30 +435,112 @@ export default function VideoLooper() {
   }
 
   return (
-    <div className="container mx-auto p-4 max-w-5xl space-y-6">
-      <div className="flex flex-col md:flex-row gap-6">
+    <div
+      ref={containerRef}
+      className={
+        isFullscreen
+          ? "fixed inset-0 z-50 bg-background overflow-y-auto"
+          : "container mx-auto p-4 max-w-5xl space-y-6"
+      }
+    >
+      <div
+        className={
+          isFullscreen
+            ? "w-full max-w-[1800px] mx-auto flex flex-col xl:flex-row gap-4 p-4 xl:p-6 xl:min-h-full"
+            : "flex flex-col md:flex-row gap-6"
+        }
+      >
         {/* Left Column: Video & Controls */}
-        <div className="flex-1 space-y-4">
+        <div
+          className={
+            isFullscreen
+              ? "flex-1 min-w-0 flex flex-col gap-4 xl:justify-center"
+              : "flex-1 space-y-4"
+          }
+        >
           <div className="flex flex-col gap-4 bg-background rounded-lg border p-4 shadow-sm">
             {/* Video Player */}
-            <div className="relative pt-[56.25%] bg-black rounded-lg overflow-hidden border border-border shadow-md">
-              <div className="absolute top-0 left-0 w-full h-full">
-                <ReactPlayer
-                  ref={playerRef}
-                  url={`https://www.youtube.com/watch?v=${videoId}`}
-                  width="100%"
-                  height="100%"
-                  playing={playing}
-                  volume={volume}
-                  muted={muted}
-                  playbackRate={playbackRate}
-                  onProgress={handleProgress}
-                  onDuration={handleDuration}
-                  onPlay={() => setPlaying(true)}
-                  onPause={() => setPlaying(false)}
-                  onEnded={() => setPlaying(false)}
-                  controls={false}
-                />
+            <div
+              className={
+                isFullscreen
+                  ? "flex flex-col items-center"
+                  : undefined
+              }
+            >
+              <div
+                className={
+                  isFullscreen
+                    ? "relative bg-black rounded-lg overflow-hidden border border-border shadow-md w-full"
+                    : "relative pt-[56.25%] bg-black rounded-lg overflow-hidden border border-border shadow-md"
+                }
+                style={
+                  isFullscreen
+                    ? {
+                        aspectRatio: "16 / 9",
+                        maxHeight: "min(70vh, 850px)",
+                        maxWidth: "100%",
+                      }
+                    : undefined
+                }
+              >
+                <div className="absolute top-0 left-0 w-full h-full">
+                  <ReactPlayer
+                    ref={playerRef}
+                    url={`https://www.youtube.com/watch?v=${videoId}`}
+                    width="100%"
+                    height="100%"
+                    playing={playing}
+                    volume={volume}
+                    muted={muted}
+                    playbackRate={playbackRate}
+                    onProgress={handleProgress}
+                    onDuration={handleDuration}
+                    onPlay={() => {
+                      setPlaying(true);
+                      setHasStartedPlaying(true);
+                    }}
+                    onPause={() => setPlaying(false)}
+                    onEnded={() => setPlaying(false)}
+                    controls={false}
+                    config={{
+                      youtube: {
+                        playerVars: {
+                          modestbranding: 1,
+                          rel: 0,
+                          iv_load_policy: 3,
+                          disablekb: 1,
+                        },
+                      },
+                    }}
+                  />
+                </div>
+
+                {!hasStartedPlaying && (
+                  <button
+                    type="button"
+                    onClick={handlePlayPause}
+                    aria-label="Play video"
+                    className="absolute inset-0 z-[5] flex items-center justify-center bg-black/60 hover:bg-black/70 transition-colors group"
+                  >
+                    <span className="flex h-16 w-16 items-center justify-center rounded-full bg-primary text-primary-foreground shadow-lg transition-transform group-hover:scale-110">
+                      <Play className="h-7 w-7 fill-current ml-1" />
+                    </span>
+                  </button>
+                )}
+
+                <Button
+                  variant="secondary"
+                  size="icon"
+                  className="absolute top-2 right-2 h-8 w-8 bg-black/50 hover:bg-black/70 border border-white/10 text-white z-10"
+                  onClick={toggleFullscreen}
+                  title={isFullscreen ? "Exit Fullscreen (F)" : "Fullscreen (F)"}
+                >
+                  {isFullscreen ? (
+                    <Minimize2 className="h-4 w-4" />
+                  ) : (
+                    <Maximize2 className="h-4 w-4" />
+                  )}
+                </Button>
               </div>
             </div>
 
@@ -393,6 +558,7 @@ export default function VideoLooper() {
               onSetStartTimeToCurrent={setStartTimeToCurrent}
               onSetEndTimeToCurrent={setEndTimeToCurrent}
               formatTime={formatTime}
+              flashMarker={flashMarker}
             />
 
             <VideoControls
@@ -415,13 +581,20 @@ export default function VideoLooper() {
                 { keys: ["O"], label: "set out" },
                 { keys: ["[", "]"], label: "speed" },
                 { keys: ["M"], label: "mute" },
+                { keys: ["F"], label: "fullscreen" },
               ]}
             />
           </div>
         </div>
 
         {/* Right Column: Settings & Info */}
-        <div className="w-full md:w-80 space-y-6">
+        <div
+          className={
+            isFullscreen
+              ? "w-full xl:w-96 shrink-0 space-y-6"
+              : "w-full md:w-80 space-y-6"
+          }
+        >
           {/* Library & Info Column */}
           <Card>
             <CardHeader className="pb-3">
@@ -452,15 +625,21 @@ export default function VideoLooper() {
               {/* Custom ID Input */}
               <div className="space-y-2 pt-2 border-t">
                 <Label className="text-xs text-muted-foreground">
-                  Or load by YouTube ID
+                  Or paste a YouTube URL / ID
                 </Label>
                 <div className="flex gap-2">
                   <Input
                     type="text"
-                    placeholder="e.g. a3113eNj4IA"
+                    placeholder="e.g. a3113eNj4IA or a youtube.com link"
                     value={videoId}
                     onChange={(e) => {
                       const val = e.target.value;
+                      const extractedId = extractYouTubeId(val);
+                      if (extractedId) {
+                        setVideoId(extractedId);
+                        setCurrentPreset(null);
+                        return;
+                      }
                       if (val === "" || /^[a-zA-Z0-9_-]{0,11}$/.test(val)) {
                         setVideoId(val);
                         setCurrentPreset(null);
@@ -504,6 +683,63 @@ export default function VideoLooper() {
                     </div>
                   </div>
                 )}
+              </div>
+
+              <div className="flex items-center justify-between gap-2 p-2 bg-background/50 rounded border">
+                <div className="flex items-center gap-2 min-w-0">
+                  <Button
+                    variant={metronome.isPlaying ? "default" : "outline"}
+                    size="icon"
+                    className="h-8 w-8 shrink-0"
+                    onClick={metronome.isPlaying ? metronome.stop : metronome.start}
+                    title={metronome.isPlaying ? "Stop click track" : "Start click track"}
+                  >
+                    {metronome.isPlaying ? (
+                      <Square className="h-3.5 w-3.5 fill-current" />
+                    ) : (
+                      <Play className="h-3.5 w-3.5 fill-current ml-0.5" />
+                    )}
+                  </Button>
+                  <div className="leading-tight min-w-0">
+                    <div className="font-mono font-bold text-sm">
+                      {metronome.bpm} BPM
+                    </div>
+                    <div className="text-xs text-muted-foreground truncate">
+                      Click Track
+                    </div>
+                  </div>
+                </div>
+                <div className="flex items-center gap-1 shrink-0">
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    className="h-7 w-7"
+                    onClick={() => metronome.setBpm(Math.max(30, metronome.bpm - 1))}
+                    title="Decrease BPM"
+                  >
+                    <Minus className="h-3.5 w-3.5" />
+                  </Button>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    className="h-7 w-7"
+                    onClick={() => metronome.setBpm(Math.min(300, metronome.bpm + 1))}
+                    title="Increase BPM"
+                  >
+                    <Plus className="h-3.5 w-3.5" />
+                  </Button>
+                  {detectedBpm > 0 && (
+                    <Button
+                      variant="outline"
+                      size="icon"
+                      className="h-7 w-7"
+                      onClick={() => metronome.setBpm(Math.round(detectedBpm))}
+                      title="Sync to detected BPM"
+                    >
+                      <RefreshCw className="h-3.5 w-3.5" />
+                    </Button>
+                  )}
+                </div>
               </div>
 
               {detectedChord !== "-" && (
