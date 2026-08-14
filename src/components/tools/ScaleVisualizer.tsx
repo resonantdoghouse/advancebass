@@ -2,11 +2,11 @@
 
 import { useState } from "react";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { cn } from "@/lib/utils";
-import { NOTES, SCALES, WESTERN_ROOTS, getScaleNotes, getAllFretboardNotes, getNoteName, normalizeRoot, getInterval } from "@/lib/music-theory";
+import { SCALES, WESTERN_ROOTS, getScaleNotes, getAllFretboardNotes, normalizeRoot, getInterval } from "@/lib/music-theory";
 import { useBassSynth } from "@/hooks/useBassSynth";
 import { TUNING_PRESETS } from "@/lib/tuner-utils";
 import type { FretboardNote } from "@/components/tools/fretboard-trainer/types";
+import { ChordScaleFretboard } from "@/components/tools/shared/ChordScaleFretboard";
 
 // Map tuning preset IDs to friendly names for the selector
 const TUNING_OPTIONS = [
@@ -136,101 +136,16 @@ export function ScaleVisualizer() {
         </div>
 
         {/* Fretboard Visualizer */}
-        <div className="relative overflow-x-auto pb-4 custom-scrollbar">
-            {/* Scroll Hint */}
-            <div className="md:hidden text-xs text-center text-muted-foreground mb-2 italic">
-               &larr; Scroll to see higher frets &rarr;
-            </div>
-
-            {/* Fretboard container with studio dark theme */}
-            <div
-                id="fretboard-container"
-                className="min-w-[800px] select-none pl-12 pr-4 py-8 rounded-[16px] relative fretboard-container border border-slate-700/60 shadow-[0_20px_50px_-15px_rgba(0,0,0,0.7)]"
-            >
-                
-                {/* Nut */}
-                <div className="absolute left-12 top-8 bottom-8 w-3.5 bg-gradient-to-r from-neutral-500 to-neutral-400 shadow-md z-10 border-r border-neutral-700 rounded-sm"></div>
-
-                {/* Strings & Frets Container */}
-                <div className="relative flex flex-col justify-between" style={{ height: `${numStrings * 40}px` }}> {/* 40px spacing */}
-                    
-                    {/* Fret Markers (Background) */}
-                    <div className="absolute inset-0 w-full pointer-events-none">
-                         {Array.from({ length: numFrets }).map((_, i) => (
-                             <div
-                                key={i}
-                                className="absolute top-0 bottom-0 bg-white/10"
-                                style={{
-                                    left: `${(i + 1) * (100 / (numFrets + 1))}%`,
-                                    width: '1px',
-                                    transform: 'translateX(-50%)'
-                                 }}
-                             >
-                                {/* Fret Numbers */}
-                                <div className="absolute -bottom-8 left-1/2 -translate-x-1/2 flex items-center justify-center">
-                                    <span
-                                        className="w-6 h-6 flex items-center justify-center text-xs font-mono font-bold rounded-full"
-                                        style={{
-                                            color: [3, 5, 7, 9, 12, 15].includes(i + 1) ? "#5b9bff" : "#3d4f6b",
-                                            fontSize: [3, 5, 7, 9, 12, 15].includes(i + 1) ? "11px" : "10px",
-                                        }}
-                                    >
-                                        {i + 1}
-                                    </span>
-                                </div>
-                             </div>
-                         ))}
-                    </div>
-
-                    {/* Strings and Notes */}
-                    {stringsData.slice().reverse().map((stringVar, sIdx) => {
-                         const actualStringIndex = numStrings - 1 - sIdx;
-                         
-                         return (
-                            <div key={actualStringIndex} className="relative w-full h-8 flex items-center">
-                                {/* String Line */}
-                                <div
-                                    className="absolute w-full z-0"
-                                    style={{ height: `${2 + (sIdx * 0.5)}px`, background: "rgba(148,163,184,0.45)" }}
-                                ></div>
-                                
-                                {/* Notes */}
-                                {stringVar.map((noteData, fretIdx) => {
-                                    const inScale = isNoteInScale(noteData.note);
-                                    const isRootNote = isRoot(noteData.note);
-                                    
-                                    // Fret spacing logic
-                                    const notePercentage = fretIdx === 0 ? -2.5 : ((fretIdx - 0.5) * (100 / numFrets)); 
-                                    
-                                    return (
-                                        <div 
-                                            key={fretIdx}
-                                            className="absolute z-10 flex items-center justify-center"
-                                            style={{ left: fretIdx === 0 ? '-30px' : `${notePercentage}%` }}
-                                        >
-                                            <button
-                                                onClick={() => handleNoteClick(noteData)}
-                                                aria-label={`${getNoteName(noteData.noteIndex, rootNote)}${noteData.octave}, string ${noteData.stringIndex + 1}, ${noteData.fret === 0 ? "open" : `fret ${noteData.fret}`}${isRootNote ? ", root" : ""}`}
-                                                className={cn(
-                                                    "w-7 h-7 rounded-full flex items-center justify-center text-[10px] font-bold transition-all border shadow-sm",
-                                                    inScale ? cn(
-                                                        getNoteColorClass(noteData.note, isRootNote),
-                                                        isRootNote ? "scale-110 shadow-md" : "hover:scale-110"
-                                                    ) : "bg-transparent text-transparent border-transparent w-4 h-4 hover:w-7 hover:h-7 hover:bg-white/20 hover:text-white opacity-0 hover:opacity-100"
-                                                )}
-                                                title={`${getNoteName(noteData.noteIndex, rootNote)}${noteData.octave}`}
-                                            >
-                                                {getNoteName(noteData.noteIndex, rootNote)}
-                                            </button>
-                                        </div>
-                                    );
-                                })}
-                            </div>
-                        );
-                    })}
-                </div>
-            </div>
-        </div>
+        <ChordScaleFretboard
+            stringsData={stringsData}
+            numStrings={numStrings}
+            numFrets={numFrets}
+            rootNote={rootNote}
+            isNoteHighlighted={isNoteInScale}
+            isRoot={isRoot}
+            getNoteColorClass={getNoteColorClass}
+            onNoteClick={handleNoteClick}
+        />
 
         <p className="text-center text-xs text-muted-foreground/60 font-mono">
             Click any note to hear it · Use the controls above to change tuning, key, and scale
