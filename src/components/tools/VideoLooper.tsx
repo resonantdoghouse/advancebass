@@ -59,6 +59,7 @@ export default function VideoLooper() {
   const bpmDetectorRef = useRef<BPMDetector | null>(null);
   const audioContextRef = useRef<AudioContext | null>(null);
   const analyserRef = useRef<AnalyserNode | null>(null);
+  const mediaStreamRef = useRef<MediaStream | null>(null);
   const requestRef = useRef<number>(0);
   // We keep noteHistory in state if we want to display it, but simplified here
   // const [noteHistory, setNoteHistory] = useState<string[]>([]);
@@ -78,6 +79,16 @@ export default function VideoLooper() {
     setPlayed(0);
     setPlaying(false);
   }, [videoId]);
+
+  // Release the display-media capture and audio graph on unmount so a
+  // leftover analysis session doesn't keep the tab-share indicator on.
+  useEffect(() => {
+    return () => {
+      if (requestRef.current) cancelAnimationFrame(requestRef.current);
+      audioContextRef.current?.close().catch(console.error);
+      mediaStreamRef.current?.getTracks().forEach((track) => track.stop());
+    };
+  }, []);
 
   // Use a ref to access the player instance
   const playerRef = useRef<any>(null);
@@ -166,6 +177,13 @@ export default function VideoLooper() {
         audioContextRef.current.close().catch(console.error);
         audioContextRef.current = null;
       }
+      // Closing the AudioContext doesn't release the capture itself — the
+      // tracks must be stopped explicitly or the browser's "sharing this
+      // tab" indicator (and the underlying capture) stays active forever.
+      if (mediaStreamRef.current) {
+        mediaStreamRef.current.getTracks().forEach((track) => track.stop());
+        mediaStreamRef.current = null;
+      }
       if (requestRef.current) {
         cancelAnimationFrame(requestRef.current);
       }
@@ -187,9 +205,12 @@ export default function VideoLooper() {
 
       const audioTracks = stream.getAudioTracks();
       if (audioTracks.length === 0) {
+        stream.getTracks().forEach((track) => track.stop());
         alert("No audio track found. Please make sure to share audio.");
         return;
       }
+
+      mediaStreamRef.current = stream;
 
       const audioContext = new (window.AudioContext ||
         (window as any).webkitAudioContext)();
@@ -220,6 +241,8 @@ export default function VideoLooper() {
 
   const lastNoteUpdateRef = useRef<number>(0);
   const lastChordUpdateRef = useRef<number>(0);
+  const lastDetectedBpmRef = useRef<number>(0);
+  const bpmBufferRef = useRef<Float32Array<ArrayBuffer> | null>(null);
 
   const updatePitch = useCallback(() => {
     if (!audioContextRef.current || !analyserRef.current) return;
@@ -254,12 +277,23 @@ export default function VideoLooper() {
       lastChordUpdateRef.current = now;
     }
 
-    // BPM Detection
+    // BPM Detection. BPMDetector.process() self-throttles its expensive
+    // peak-detection work to ~2Hz internally and is cheap to call every
+    // frame otherwise, but committing React state every frame regardless of
+    // whether the estimate changed would re-render the whole tree (incl.
+    // the YouTube iframe) at 60fps — only setState when the value moves.
     if (bpmDetectorRef.current) {
-      const buf = new Float32Array(analyser.fftSize);
+      if (
+        !bpmBufferRef.current ||
+        bpmBufferRef.current.length !== analyser.fftSize
+      ) {
+        bpmBufferRef.current = new Float32Array(analyser.fftSize);
+      }
+      const buf = bpmBufferRef.current;
       analyser.getFloatTimeDomainData(buf);
       const bpm = bpmDetectorRef.current.process(buf);
-      if (bpm > 0) {
+      if (bpm > 0 && bpm !== lastDetectedBpmRef.current) {
+        lastDetectedBpmRef.current = bpm;
         setDetectedBpm(bpm);
       }
     }
