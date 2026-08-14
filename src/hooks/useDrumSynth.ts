@@ -1,6 +1,7 @@
 "use client";
 
 import { useRef, useCallback, useEffect, useState } from "react";
+import { createAudioContext } from "@/lib/audio-context";
 
 export function useDrumSynth() {
   const audioContextRef = useRef<AudioContext | null>(null);
@@ -10,8 +11,7 @@ export function useDrumSynth() {
       !audioContextRef.current ||
       audioContextRef.current.state === "closed"
     ) {
-      audioContextRef.current = new (window.AudioContext ||
-        (window as any).webkitAudioContext)();
+      audioContextRef.current = createAudioContext();
     }
     return audioContextRef.current;
   }, []);
@@ -33,7 +33,7 @@ export function useDrumSynth() {
   // Load Samples (Wes Bos Kit)
   useEffect(() => {
     const loadSamples = async () => {
-        const ctx = new (window.AudioContext || (window as any).webkitAudioContext)();
+        const ctx = getContext();
         const urls = {
             kick: "/sounds/kick.wav",
             snare: "/sounds/snare.wav",
@@ -56,7 +56,7 @@ export function useDrumSynth() {
         }
     };
     loadSamples();
-  }, []);
+  }, [getContext]);
 
   const playSample = useCallback((key: string, time: number, rate: number = 1.0) => {
       const ctx = getContext();

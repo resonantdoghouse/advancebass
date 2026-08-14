@@ -1,6 +1,5 @@
 "use client";
 
-import { useState, useEffect, useRef, useCallback } from "react";
 import {
   Card,
   CardContent,
@@ -11,199 +10,30 @@ import {
 import { Button } from "@/components/ui/button";
 import { Slider } from "@/components/ui/slider";
 import { cn } from "@/lib/utils";
-import { useDrumSynth } from "@/hooks/useDrumSynth";
-import {
-  Play,
-  Square,
-  Volume2,
-  Trash2,
-  Settings2,
-  Music2,
-  Loader2,
-} from "lucide-react";
-import {
-  Instrument,
-  Pattern,
-  MAX_STEPS,
-  INSTRUMENTS,
-  DEFAULT_PATTERN,
-  PRESETS,
-} from "@/data/drum-patterns";
+import { useDrumMachine } from "@/hooks/useDrumMachine";
+import { Play, Square, Volume2, Trash2, Music2, Loader2 } from "lucide-react";
+import { INSTRUMENTS, PRESETS } from "@/data/drum-patterns";
 import { DrumInfoDialog } from "@/components/tools/drum-machine/DrumInfoDialog";
 
 export function DrumMachine() {
   const {
-    playKick,
-    playSnare,
-    playHiHat,
-    playOpenHat,
-    playRide,
-    playTom,
-    resumeContext,
-    getCurrentTime,
+    isPlaying,
+    togglePlay,
+    bpm,
+    setBpm,
+    steps,
+    setSteps,
+    swing,
+    setSwing,
+    pattern,
+    currentStep,
+    toggleStep,
+    loadPreset,
+    clearPattern,
     currentKit,
     setKit,
     samplesLoaded,
-  } = useDrumSynth();
-
-  const [isPlaying, setIsPlaying] = useState(false);
-  const [bpm, setBpm] = useState(100);
-  const [steps, setSteps] = useState(16);
-  const [swing, setSwing] = useState(0); // 0 to 100%
-  const [pattern, setPattern] = useState<Pattern>(DEFAULT_PATTERN);
-  const [currentStep, setCurrentStep] = useState(0);
-
-  const nextNoteTimeRef = useRef(0);
-  const currentStepRef = useRef(0);
-  const timerIDRef = useRef<number | null>(null);
-
-  const lookahead = 25.0;
-  const scheduleAheadTime = 0.1;
-
-  // Refs
-  const bpmRef = useRef(bpm);
-  const stepsRef = useRef(steps);
-  const swingRef = useRef(swing);
-  const patternRef = useRef(pattern);
-
-  useEffect(() => {
-    bpmRef.current = bpm;
-  }, [bpm]);
-  useEffect(() => {
-    stepsRef.current = steps;
-  }, [steps]);
-  useEffect(() => {
-    swingRef.current = swing;
-  }, [swing]);
-  useEffect(() => {
-    patternRef.current = pattern;
-  }, [pattern]);
-
-  // Audio Scheduler
-  const nextNote = useCallback(() => {
-    const secondsPerBeat = 60.0 / bpmRef.current;
-    // Base step duration (16th note)
-    const stepDuration = 0.25 * secondsPerBeat;
-
-    // We increment TIME by the 'straight' duration + swing offset?
-    // No, 'nextNoteTimeRef' tracks the THEORETICAL grid.
-    // Swing is applied as a playback OFFSET when scheduling the specific note.
-    // The grid itself advances consistently?
-    // Actually, easier way:
-    // Step 0 -> Step 1 (straight time)
-    // Audio Event for Step 1 is delayed if it's an offbeat.
-    // So nextNoteTimeRef advances rigidly.
-
-    // Wait, if we delay the audio, we don't want to delay the grid advancement logic
-    // UNLESS we want the "next note" text call to be accurate.
-    // Let's keep nextNoteTimeRef on the STRAIGHT grid.
-    nextNoteTimeRef.current += stepDuration;
-
-    currentStepRef.current = (currentStepRef.current + 1) % stepsRef.current;
-  }, []);
-
-  const scheduleNote = useCallback(
-    (stepNumber: number, time: number) => {
-      const isOffbeat = stepNumber % 2 !== 0;
-      const secondsPerBeat = 60.0 / bpmRef.current;
-      const stepDuration = 0.25 * secondsPerBeat;
-
-      const swingDelay = isOffbeat
-        ? (swingRef.current / 100) * (stepDuration * 0.66)
-        : 0;
-
-      const playTime = time + swingDelay;
-
-      // Audio
-      if (patternRef.current.kick[stepNumber]) playKick(playTime);
-      if (patternRef.current.snare[stepNumber]) playSnare(playTime);
-      if (patternRef.current.hihat[stepNumber]) playHiHat(playTime);
-      if (patternRef.current.ride[stepNumber]) playRide(playTime);
-      if (patternRef.current.openhat[stepNumber]) playOpenHat(playTime);
-      if (patternRef.current.tom[stepNumber]) playTom(playTime);
-
-      // Visual (approximate)
-      const drawTime = (playTime - getCurrentTime()) * 1000;
-      setTimeout(
-        () => {
-          setCurrentStep(stepNumber);
-        },
-        Math.max(0, drawTime),
-      );
-    },
-    [
-      playKick,
-      playSnare,
-      playHiHat,
-      playOpenHat,
-      playRide,
-      playTom,
-      getCurrentTime,
-    ],
-  );
-
-  const scheduler = useCallback(() => {
-    const currentTime = getCurrentTime();
-
-    while (nextNoteTimeRef.current < currentTime + scheduleAheadTime) {
-      scheduleNote(currentStepRef.current, nextNoteTimeRef.current);
-      nextNote();
-    }
-    timerIDRef.current = window.setTimeout(scheduler, lookahead);
-  }, [nextNote, scheduleNote, getCurrentTime]);
-
-  const togglePlay = () => {
-    if (isPlaying) {
-      if (timerIDRef.current) clearTimeout(timerIDRef.current);
-      setIsPlaying(false);
-    } else {
-      resumeContext();
-      // Start perfectly on grid
-      nextNoteTimeRef.current = getCurrentTime() + 0.1;
-      currentStepRef.current = 0;
-      setIsPlaying(true);
-      scheduler();
-    }
-  };
-
-  useEffect(() => {
-    return () => {
-      if (timerIDRef.current) clearTimeout(timerIDRef.current);
-    };
-  }, []);
-
-  const toggleStep = (instrument: Instrument, stepIndex: number) => {
-    setPattern((prev) => ({
-      ...prev,
-      [instrument]: prev[instrument].map((val, i) =>
-        i === stepIndex ? !val : val,
-      ),
-    }));
-  };
-
-  const loadPreset = (preset: (typeof PRESETS)[0]) => {
-    const newPattern = { ...DEFAULT_PATTERN };
-    (Object.keys(preset.pattern) as Instrument[]).forEach((inst) => {
-      const p = preset.pattern[inst];
-      newPattern[inst] = newPattern[inst].map((_, i) => p[i] || false);
-    });
-
-    setPattern(newPattern);
-    setBpm(preset.bpm);
-    setSteps(preset.steps);
-    setSwing(preset.swing || 0);
-  };
-
-  const clearPattern = () => {
-    setPattern({
-      kick: Array(MAX_STEPS).fill(false),
-      snare: Array(MAX_STEPS).fill(false),
-      hihat: Array(MAX_STEPS).fill(false),
-      openhat: Array(MAX_STEPS).fill(false),
-      ride: Array(MAX_STEPS).fill(false),
-      tom: Array(MAX_STEPS).fill(false),
-    });
-  };
+  } = useDrumMachine();
 
   return (
     <Card className="w-full shadow-xl border-t-4 border-t-primary">
