@@ -139,11 +139,23 @@ export default function CircleOfFifths() {
                 const isSelected = key.root === selectedRoot;
                 const slicePath = getSlicePath(index, 12, 190, 80);
 
+                const keyLabel = key.label || key.root;
+
                 return (
                   <g
                     key={key.root}
+                    role="button"
+                    tabIndex={0}
+                    aria-label={`${keyLabel} major, ${key.relativeMinor} minor`}
+                    aria-pressed={isSelected}
                     onClick={() => handleSliceClick(key.root)}
-                    className="cursor-pointer transition-all duration-300 hover:opacity-90"
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter" || e.key === " ") {
+                        e.preventDefault();
+                        handleSliceClick(key.root);
+                      }
+                    }}
+                    className="cursor-pointer transition-all duration-300 hover:opacity-90 focus-visible:outline focus-visible:outline-2 focus-visible:outline-ring focus-visible:outline-offset-[-4px]"
                     style={{ transformOrigin: "200px 200px" }}
                   >
                     <path
@@ -167,7 +179,7 @@ export default function CircleOfFifths() {
                           : "fill-foreground"
                       }`}
                     >
-                      {key.label || key.root}
+                      {keyLabel}
                     </text>
 
                     {/* Minor Key Label (Inner Ring) */}
