@@ -189,6 +189,8 @@ export function DrumMachine() {
                   <button
                     key={step}
                     onClick={() => toggleStep(inst, step)}
+                    aria-pressed={isActive}
+                    aria-label={`${inst}, step ${step + 1}, ${isActive ? "on" : "off"}`}
                     className={cn(
                       "w-9 h-12 rounded-sm border transition-all duration-75 relative",
                       isActive

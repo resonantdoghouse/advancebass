@@ -98,6 +98,7 @@ export function EarTraining() {
                 <button
                   key={m.value}
                   onClick={() => setMode(m.value)}
+                  aria-pressed={mode === m.value}
                   className={cn(
                     "p-3 rounded-lg border-2 text-left transition-colors",
                     mode === m.value
@@ -124,6 +125,7 @@ export function EarTraining() {
                 <button
                   key={d.value}
                   onClick={() => setDifficulty(d.value)}
+                  aria-pressed={difficulty === d.value}
                   className={cn(
                     "py-2.5 rounded-lg border-2 text-center font-semibold text-sm transition-colors",
                     d.colorClass,
@@ -281,7 +283,10 @@ export function EarTraining() {
         )}
 
         {/* Feedback */}
-        <div className="h-10 flex items-center justify-center">
+        <div
+          className="h-10 flex items-center justify-center"
+          aria-live="polite"
+        >
           {feedback && (
             <p
               className={cn(

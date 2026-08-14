@@ -214,6 +214,7 @@ export function Fretboard({
                           {/* Note Indicator (Circle) */}
                           <button
                             onClick={() => onNoteClick(noteData)}
+                            aria-label={`String ${noteData.stringIndex + 1}, ${noteData.fret === 0 ? "open" : `fret ${noteData.fret}`}`}
                             className={cn(
                               "w-8 h-8 rounded-full flex items-center justify-center font-bold transition-all duration-150 relative z-30",
                               getNoteStyle(noteData),

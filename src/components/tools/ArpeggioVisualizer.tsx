@@ -293,6 +293,7 @@ export function ArpeggioVisualizer() {
                                               <button
                                                   type="button"
                                                   onClick={() => handleNoteClick(noteData)}
+                                                  aria-label={`${getNoteName(noteData.noteIndex, rootNote)}${noteData.octave}, string ${noteData.stringIndex + 1}, ${noteData.fret === 0 ? "open" : `fret ${noteData.fret}`}${isRootNote ? ", root" : ""}`}
                                                   className={cn(
                                                       "w-7 h-7 rounded-full flex items-center justify-center text-[10px] font-bold transition-all border shadow-sm",
                                                       inChord ? cn(
