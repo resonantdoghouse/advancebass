@@ -6,15 +6,7 @@ import { cn } from "@/lib/utils";
 import { NOTES, CHORDS, WESTERN_ROOTS, getChordNotes, getAllFretboardNotes, getNoteName, normalizeRoot, getInterval } from "@/lib/music-theory";
 import { useBassSynth } from "@/hooks/useBassSynth";
 import { TUNING_PRESETS } from "@/lib/tuner-utils";
-
-type FretboardNote = {
-  stringIndex: number;
-  fret: number;
-  note: string;
-  noteIndex: number; 
-  octave: number;
-  frequency: number;
-};
+import type { FretboardNote } from "@/components/tools/fretboard-trainer/types";
 
 // Map tuning preset IDs to friendly names for the selector
 const TUNING_OPTIONS = [
