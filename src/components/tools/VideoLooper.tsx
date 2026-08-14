@@ -8,6 +8,7 @@ import { Mic, Activity, Info } from "lucide-react";
 import { getNoteFromFrequency, detectChord } from "@/lib/music-theory";
 import { autoCorrelate } from "@/lib/tuner-utils";
 import { BPMDetector } from "@/lib/bpm-detector";
+import { createAudioContext } from "@/lib/audio-context";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -23,6 +24,8 @@ import { VideoControls } from "./video-looper/VideoControls";
 import { VideoTimeline } from "./video-looper/VideoTimeline";
 import { VideoLibrary } from "./video-looper/VideoLibrary";
 import { Visualizer } from "./video-looper/Visualizer";
+import type ReactPlayerType from "react-player";
+import type { ReactPlayerProps } from "react-player";
 
 interface OnProgressProps {
   played: number;
@@ -31,10 +34,16 @@ interface OnProgressProps {
   loadedSeconds: number;
 }
 
+// Chromium-only getDisplayMedia extensions not yet in lib.dom.d.ts.
+interface ChromiumDisplayMediaStreamOptions extends DisplayMediaStreamOptions {
+  selfBrowserSurface?: "include" | "exclude";
+  preferCurrentTab?: boolean;
+}
+
 // Dynamically import ReactPlayer to avoid hydration issues
 const ReactPlayer = dynamic(() => import("react-player"), {
   ssr: false,
-}) as unknown as React.ComponentType<any>;
+}) as React.ComponentType<ReactPlayerProps & { ref?: React.Ref<ReactPlayerType> }>;
 
 export default function VideoLooper() {
   const [videoId, setVideoId] = useState("a3113eNj4IA");
@@ -91,7 +100,7 @@ export default function VideoLooper() {
   }, []);
 
   // Use a ref to access the player instance
-  const playerRef = useRef<any>(null);
+  const playerRef = useRef<ReactPlayerType>(null);
   const [isSeeking, setIsSeeking] = useState(false);
 
   const handlePlayPause = () => {
@@ -201,7 +210,7 @@ export default function VideoLooper() {
         audio: true,
         selfBrowserSurface: "include",
         preferCurrentTab: true,
-      } as any);
+      } as ChromiumDisplayMediaStreamOptions);
 
       const audioTracks = stream.getAudioTracks();
       if (audioTracks.length === 0) {
@@ -212,8 +221,7 @@ export default function VideoLooper() {
 
       mediaStreamRef.current = stream;
 
-      const audioContext = new (window.AudioContext ||
-        (window as any).webkitAudioContext)();
+      const audioContext = createAudioContext();
       audioContextRef.current = audioContext;
 
       const analyser = audioContext.createAnalyser();

@@ -45,39 +45,45 @@ export function VideoTimeline({
     setDragging(type);
   };
 
-  const handleDrag = (e: React.MouseEvent | React.TouchEvent) => {
-    if (!dragging || !progressBarRef.current) return;
-
-    const rect = progressBarRef.current.getBoundingClientRect();
-    const clientX =
-      "touches" in e ? e.touches[0].clientX : (e as React.MouseEvent).clientX;
-    const Percentage =
-      Math.min(Math.max(0, clientX - rect.left), rect.width) / rect.width;
-
-    const time = Percentage * duration;
-    const roundedTime = Math.round(time * 100) / 100;
-
-    if (dragging === "start") {
-      onStartTimeChange(Math.min(roundedTime, endTime));
-    } else {
-      onEndTimeChange(Math.max(roundedTime, startTime));
-    }
-  };
-
-  const handleDragEnd = () => {
-    setDragging(null);
-  };
-
+  // Bound to window (not just the progress bar) so the drag keeps tracking
+  // even when the pointer moves faster than it stays inside the thin bar.
   useEffect(() => {
-    if (dragging) {
-      window.addEventListener("mouseup", handleDragEnd);
-      window.addEventListener("touchend", handleDragEnd);
-      return () => {
-        window.removeEventListener("mouseup", handleDragEnd);
-        window.removeEventListener("touchend", handleDragEnd);
-      };
-    }
-  }, [dragging]);
+    if (!dragging) return;
+
+    const handleDrag = (clientX: number) => {
+      if (!progressBarRef.current) return;
+
+      const rect = progressBarRef.current.getBoundingClientRect();
+      const percentage =
+        Math.min(Math.max(0, clientX - rect.left), rect.width) / rect.width;
+
+      const time = percentage * duration;
+      const roundedTime = Math.round(time * 100) / 100;
+
+      if (dragging === "start") {
+        onStartTimeChange(Math.min(roundedTime, endTime));
+      } else {
+        onEndTimeChange(Math.max(roundedTime, startTime));
+      }
+    };
+
+    const handleMouseMove = (e: MouseEvent) => handleDrag(e.clientX);
+    const handleTouchMove = (e: TouchEvent) => {
+      if (e.touches[0]) handleDrag(e.touches[0].clientX);
+    };
+    const handleDragEnd = () => setDragging(null);
+
+    window.addEventListener("mousemove", handleMouseMove);
+    window.addEventListener("touchmove", handleTouchMove);
+    window.addEventListener("mouseup", handleDragEnd);
+    window.addEventListener("touchend", handleDragEnd);
+    return () => {
+      window.removeEventListener("mousemove", handleMouseMove);
+      window.removeEventListener("touchmove", handleTouchMove);
+      window.removeEventListener("mouseup", handleDragEnd);
+      window.removeEventListener("touchend", handleDragEnd);
+    };
+  }, [dragging, duration, startTime, endTime, onStartTimeChange, onEndTimeChange]);
 
   return (
     <>
@@ -86,8 +92,6 @@ export function VideoTimeline({
         <div
           className="relative h-8 flex items-center select-none group"
           ref={progressBarRef}
-          onMouseMove={(e) => dragging && handleDrag(e)}
-          onTouchMove={(e) => dragging && handleDrag(e)}
         >
           <Slider
             value={[played]}

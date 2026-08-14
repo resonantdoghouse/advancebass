@@ -17,8 +17,8 @@ export function Visualizer({
 }: VisualizerProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const rafRef = useRef<number | null>(null);
-  const frequencyBufferRef = useRef<Uint8Array | null>(null);
-  const timeBufferRef = useRef<Uint8Array | null>(null);
+  const frequencyBufferRef = useRef<Uint8Array<ArrayBuffer> | null>(null);
+  const timeBufferRef = useRef<Uint8Array<ArrayBuffer> | null>(null);
 
   // Could be exposed as a prop if we want user to toggle
   const [visualizerMode, setVisualizerMode] = useState<
@@ -47,7 +47,7 @@ export function Visualizer({
           frequencyBufferRef.current = new Uint8Array(bufferLength);
         }
         const dataArray = frequencyBufferRef.current;
-        analyser.getByteFrequencyData(dataArray as any);
+        analyser.getByteFrequencyData(dataArray);
 
         const barWidth = (w / bufferLength) * 2.5;
         let x = 0;
@@ -68,7 +68,7 @@ export function Visualizer({
           timeBufferRef.current = new Uint8Array(bufferLength);
         }
         const dataArray = timeBufferRef.current;
-        analyser.getByteTimeDomainData(dataArray as any);
+        analyser.getByteTimeDomainData(dataArray);
 
         ctx.lineWidth = 2;
         ctx.strokeStyle = "rgb(250, 204, 21)"; // Yellow-500 equivalent

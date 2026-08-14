@@ -68,9 +68,10 @@ export function VideoLibrary({ onSelect }: VideoLibraryProps) {
         <div className="flex-1 overflow-y-auto border rounded-md">
           <div className="divide-y">
             {filteredPresets.map((preset) => (
-              <div
+              <button
                 key={preset.id}
-                className="flex items-center justify-between p-3 hover:bg-muted/50 cursor-pointer transition-colors"
+                type="button"
+                className="w-full flex items-center justify-between p-3 text-left hover:bg-muted/50 focus-visible:bg-muted/50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-inset cursor-pointer transition-colors"
                 onClick={() => handleSelect(preset)}
               >
                 <div className="space-y-1">
@@ -87,8 +88,8 @@ export function VideoLibrary({ onSelect }: VideoLibraryProps) {
                     <span className="text-primary">{preset.bassist}</span>
                   </div>
                 </div>
-                <ChevronRight className="h-4 w-4 text-muted-foreground" />
-              </div>
+                <ChevronRight className="h-4 w-4 text-muted-foreground shrink-0" />
+              </button>
             ))}
             {filteredPresets.length === 0 && (
               <div className="p-8 text-center text-muted-foreground">
