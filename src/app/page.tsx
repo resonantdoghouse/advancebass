@@ -12,6 +12,9 @@ import {
   ArrowRight,
   Guitar,
   RefreshCw,
+  GraduationCap,
+  Music2,
+  Youtube,
 } from "lucide-react";
 
 export const metadata: Metadata = {
@@ -334,27 +337,69 @@ export default async function Home() {
         </div>
       </section>
 
-      {/* ── Attribution ───────────────────────────────────────────── */}
+      {/* ── Instructor / Credibility ─────────────────────────────── */}
       <section className="border-t border-border/60">
-        <div className="container mx-auto px-4 md:px-8 py-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-sm text-muted-foreground">
-          <p>
-            Tools and transcriptions by{" "}
-            <a
-              href="https://www.youtube.com/@JimBennettBassist"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-foreground font-medium hover:text-primary transition-colors"
-            >
-              Jim Bennett
-            </a>
-            {" "}— professional bassist and educator based in Vancouver, BC.
-          </p>
-          <Link
-            href="/bass-lessons"
-            className="shrink-0 text-foreground font-medium hover:text-primary transition-colors"
-          >
-            Bass lessons →
-          </Link>
+        <div className="container mx-auto px-4 md:px-8 py-16 md:py-20">
+          <div className="grid lg:grid-cols-[0.9fr_1.1fr] gap-12 items-center">
+            <div className="relative rounded-2xl overflow-hidden aspect-[4/3] bg-muted border flex items-center justify-center order-2 lg:order-1">
+              <div className="absolute inset-0 bg-gradient-to-br from-zinc-900 to-black" />
+              <div className="relative text-center space-y-3 p-8">
+                <div className="inline-block p-4 rounded-full bg-primary/20 border border-primary/20 mb-2">
+                  <Music2 className="h-14 w-14 text-primary" />
+                </div>
+                <div className="text-xl font-bold text-white">Jim Bennett</div>
+                <div className="text-white/70 text-sm">
+                  Professional Bassist &amp; Educator
+                </div>
+              </div>
+            </div>
+
+            <div className="space-y-6 order-1 lg:order-2">
+              <span className="font-mono text-xs tracking-[0.1em] text-primary uppercase">
+                Who&apos;s Behind This
+              </span>
+              <h2 className="font-heading font-bold text-[32px] sm:text-[36px] tracking-[-0.025em] leading-[1.06]">
+                Built by a working bassist, not a startup.
+              </h2>
+              <p className="text-base text-muted-foreground leading-relaxed max-w-[480px]">
+                Every tool and transcription on this site comes from{" "}
+                <strong className="text-foreground">Jim Bennett</strong> — a
+                McGill University graduate with extensive touring and
+                recording experience, and a YouTube channel that&apos;s
+                taught bass to millions of viewers worldwide.
+              </p>
+              <div className="flex flex-wrap gap-3">
+                <div className="flex items-center gap-2 text-sm font-medium bg-secondary/60 px-3.5 py-2 rounded-full">
+                  <GraduationCap className="h-4 w-4 text-primary" />
+                  McGill University
+                </div>
+                <div className="flex items-center gap-2 text-sm font-medium bg-secondary/60 px-3.5 py-2 rounded-full">
+                  <Music2 className="h-4 w-4 text-primary" />
+                  Touring &amp; Session Bassist
+                </div>
+                <div className="flex items-center gap-2 text-sm font-medium bg-secondary/60 px-3.5 py-2 rounded-full">
+                  <Youtube className="h-4 w-4 text-primary" />
+                  Millions of Views
+                </div>
+              </div>
+              <div className="flex flex-wrap gap-4 pt-2">
+                <Link
+                  href="/bass-lessons"
+                  className="inline-flex items-center gap-2 font-semibold text-sm text-primary hover:underline"
+                >
+                  Study with Jim <ArrowRight className="h-4 w-4" />
+                </Link>
+                <a
+                  href="https://www.youtube.com/@JimBennettBassist"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-2 font-semibold text-sm text-foreground hover:text-primary transition-colors"
+                >
+                  Watch on YouTube <ArrowRight className="h-4 w-4" />
+                </a>
+              </div>
+            </div>
+          </div>
         </div>
       </section>
 
