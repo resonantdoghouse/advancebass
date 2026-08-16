@@ -8,6 +8,14 @@ import { GameStatus } from "@/components/tools/fretboard-trainer/GameStatus";
 import { Fretboard } from "@/components/tools/fretboard-trainer/Fretboard";
 import { useFretboardGame } from "@/hooks/useFretboardGame";
 import { FretboardNote } from "@/components/tools/fretboard-trainer/types";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+
+const TUNING_OPTIONS = [
+  { id: "4-string-standard", name: "4 String (Standard)" },
+  { id: "5-string-standard-low-b", name: "5 String (Low B)" },
+  { id: "5-string-standard-high-c", name: "5 String (High C)" },
+  { id: "6-string-standard", name: "6 String (Standard)" },
+];
 
 export function FretboardTrainer() {
   const [showInstructions, setShowInstructions] = useState(false);
@@ -16,6 +24,7 @@ export function FretboardTrainer() {
     score,
     timeLeft,
     tuningId,
+    setTuningId,
     lastClickedFret,
     feedback,
     startGame,
@@ -48,6 +57,26 @@ export function FretboardTrainer() {
           showInstructions={showInstructions}
           setShowInstructions={setShowInstructions}
         />
+
+        <div className="flex items-center justify-between gap-4 flex-wrap">
+          <span className="font-mono text-[11px] tracking-[0.1em] text-muted-foreground uppercase font-semibold">
+            Tuning
+          </span>
+          <Select
+            value={tuningId}
+            onValueChange={setTuningId}
+            disabled={gameState === "playing"}
+          >
+            <SelectTrigger className="w-full sm:w-[220px] bg-background/60">
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              {TUNING_OPTIONS.map((opt) => (
+                <SelectItem key={opt.id} value={opt.id}>{opt.name}</SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
 
         <GameStatus
           gameState={gameState}

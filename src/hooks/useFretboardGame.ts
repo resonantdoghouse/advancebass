@@ -10,7 +10,7 @@ export function useFretboardGame() {
   const [score, setScore] = useState(0);
   const [timeLeft, setTimeLeft] = useState(GAME_DURATION);
   const [targetNoteIndex, setTargetNoteIndex] = useState<number | null>(null);
-  const [tuningId] = useState("4-string-standard");
+  const [tuningId, setTuningId] = useState("4-string-standard");
   const [feedback, setFeedback] = useState<{
     type: "correct" | "incorrect";
     message: string;
@@ -121,6 +121,7 @@ export function useFretboardGame() {
     score,
     timeLeft,
     tuningId,
+    setTuningId,
     lastClickedFret,
     feedback,
     startGame,
