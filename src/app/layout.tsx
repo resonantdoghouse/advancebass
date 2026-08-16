@@ -31,22 +31,6 @@ export const metadata: Metadata = {
   },
   description:
     "Professional bass lessons in Vancouver and online by Jim Bennett. Learn electric and upright bass, jazz theory, slapping, tapping, and advanced techniques. McGill University graduate.",
-  keywords: [
-    "bass lessons vancouver",
-    "online bass lessons",
-    "electric bass teacher",
-    "upright bass teacher",
-    "jazz bass lessons",
-    "slap bass lessons",
-    "tapping bass lessons",
-    "bass",
-    "bass guitar",
-    "transcriptions",
-    "bass tabs",
-    "music theory",
-    "advance bass",
-    "jim bennett bass",
-  ],
   authors: [{ name: "Jim Bennett" }],
   creator: "Jim Bennett",
   openGraph: {

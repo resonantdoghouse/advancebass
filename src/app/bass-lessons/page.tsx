@@ -1,7 +1,6 @@
 import { Metadata } from "next";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
-import { ObfuscatedMailto } from "@/components/ui/obfuscated-mailto";
 import { JsonLd } from "@/components/seo/JsonLd";
 import { InquiryForm } from "@/components/ui/InquiryForm";
 import {
@@ -15,24 +14,9 @@ import {
 } from "lucide-react";
 
 export const metadata: Metadata = {
-  title: "Bass Lessons Vancouver & Online | Jim Bennett | Advance Bass",
+  title: "Bass Lessons Vancouver & Online | Jim Bennett",
   description:
     "Private bass lessons with Jim Bennett — in-person in Vancouver, BC or online worldwide via Zoom. Electric and upright bass, jazz theory, slap, tap, fingerstyle. All levels welcome.",
-  keywords: [
-    "bass lessons Vancouver",
-    "bass teacher Vancouver",
-    "electric bass lessons",
-    "upright bass lessons",
-    "online bass lessons",
-    "bass lessons online",
-    "zoom bass lessons",
-    "beginner bass lessons",
-    "jazz bass lessons",
-    "slap bass lessons",
-    "private bass teacher",
-    "bass lessons BC",
-    "adult bass lessons",
-  ],
   openGraph: {
     title: "Bass Lessons in Vancouver & Online | Jim Bennett",
     description:
@@ -209,13 +193,9 @@ export default function BassLessonsPage() {
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Button asChild size="lg" className="rounded-full px-8">
-              <ObfuscatedMailto
-                user="jim"
-                domain="advancebass.com"
-                subject="Bass Lesson Inquiry"
-              >
+              <Link href="#inquire">
                 Book a Lesson <ArrowRight className="ml-2 h-4 w-4" />
-              </ObfuscatedMailto>
+              </Link>
             </Button>
             <Button
               asChild
@@ -268,13 +248,7 @@ export default function BassLessonsPage() {
               ))}
             </ul>
             <Button asChild variant="outline" className="mt-auto">
-              <ObfuscatedMailto
-                user="jim"
-                domain="advancebass.com"
-                subject="In-Person Bass Lesson Inquiry — Vancouver"
-              >
-                Inquire About In-Person Lessons
-              </ObfuscatedMailto>
+              <Link href="#inquire">Inquire About In-Person Lessons</Link>
             </Button>
           </div>
 
@@ -303,13 +277,7 @@ export default function BassLessonsPage() {
               ))}
             </ul>
             <Button asChild variant="outline" className="mt-auto">
-              <ObfuscatedMailto
-                user="jim"
-                domain="advancebass.com"
-                subject="Online Bass Lesson Inquiry"
-              >
-                Inquire About Online Lessons
-              </ObfuscatedMailto>
+              <Link href="#inquire">Inquire About Online Lessons</Link>
             </Button>
           </div>
         </div>

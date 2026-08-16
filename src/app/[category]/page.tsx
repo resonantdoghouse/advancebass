@@ -12,6 +12,23 @@ type Props = {
     params: Promise<{ category: string }>;
 };
 
+const CATEGORY_DISPLAY: Record<string, { plural: string; description: string }> = {
+    Transcription: {
+        plural: "Transcriptions",
+        description:
+            "Bass transcriptions for classic and modern tracks — full charts, notation, and playback to learn note-for-note.",
+    },
+};
+
+function getCategoryDisplay(categoryName: string) {
+    return (
+        CATEGORY_DISPLAY[categoryName] ?? {
+            plural: `${categoryName}s`,
+            description: `Browse our ${categoryName.toLowerCase()} articles and resources.`,
+        }
+    );
+}
+
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
     const { category: categorySlug } = await params;
     const categoryName = getCategoryFromSlug(categorySlug);
@@ -22,9 +39,20 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
         }
     }
 
+    const { plural, description } = getCategoryDisplay(categoryName);
+
     return {
-        title: `${categoryName} | Advance Bass`,
-        description: `Browse our ${categoryName.toLowerCase()} articles and resources.`,
+        title: plural,
+        description,
+        openGraph: {
+            title: `${plural} | Advance Bass`,
+            description,
+            url: `/${categorySlug}`,
+        },
+        twitter: {
+            title: `${plural} | Advance Bass`,
+            description,
+        },
     };
 }
 
@@ -44,13 +72,14 @@ export default async function CategoryPage({ params }: Props) {
 
     const allArticles = await getAllArticles();
     const categoryArticles = allArticles.filter(a => a.category === categoryName);
+    const { plural, description } = getCategoryDisplay(categoryName);
 
     return (
         <div className="container py-12 mx-auto px-4 md:px-8">
             <div className="mb-10 space-y-4">
-                <h1 className="text-4xl font-bold tracking-tight">{categoryName}</h1>
+                <h1 className="text-4xl font-bold tracking-tight">{plural}</h1>
                 <p className="text-muted-foreground text-lg">
-                    Latest {categoryName.toLowerCase()} articles.
+                    {description}
                 </p>
             </div>
 

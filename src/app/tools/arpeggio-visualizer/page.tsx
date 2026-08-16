@@ -1,13 +1,22 @@
 import { ArpeggioVisualizer } from "@/components/tools/ArpeggioVisualizer";
+import { JsonLd } from "@/components/seo/JsonLd";
+import { buildToolSchema } from "@/lib/tool-schema";
+
+const title = "Bass Arpeggio Visualizer";
+const description = "Interactive bass guitar fretboard visualizer for chord tones and arpeggios. Master chord shapes on 4, 5, and 6 string basses.";
+const path = "/tools/arpeggio-visualizer";
 
 export const metadata = {
-  title: "Bass Arpeggio Visualizer | Advance Bass",
-  description: "Interactive bass guitar fretboard visualizer for chord tones and arpeggios. Master chord shapes on 4, 5, and 6 string basses.",
+  title,
+  description,
+  openGraph: { title: `${title} | Advance Bass`, description, url: path },
+  twitter: { title: `${title} | Advance Bass`, description },
 };
 
 export default function ArpeggioVisualizerPage() {
   return (
     <div className="container mx-auto px-4 md:px-8 py-12 md:py-16">
+      <JsonLd data={buildToolSchema({ name: title, description, path })} />
       <div className="max-w-6xl mx-auto">
         <ArpeggioVisualizer />
         <div className="mt-10">

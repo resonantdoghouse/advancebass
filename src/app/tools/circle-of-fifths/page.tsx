@@ -1,14 +1,23 @@
 
 import CircleOfFifths from "@/components/tools/CircleOfFifths";
+import { JsonLd } from "@/components/seo/JsonLd";
+import { buildToolSchema } from "@/lib/tool-schema";
+
+const title = "Circle of Fifths Reference";
+const description = "Interactive Circle of Fifths and Circle of Fourths tool for bass players. Learn key signatures and relative minors.";
+const path = "/tools/circle-of-fifths";
 
 export const metadata = {
-  title: "Circle of Fifths Reference | Advance Bass",
-  description: "Interactive Circle of Fifths and Circle of Fourths tool for bass players. Learn key signatures and relative minors.",
+  title,
+  description,
+  openGraph: { title: `${title} | Advance Bass`, description, url: path },
+  twitter: { title: `${title} | Advance Bass`, description },
 };
 
 export default function CircleOfFifthsPage() {
   return (
     <div className="container mx-auto py-12 px-4 space-y-8 max-w-5xl">
+      <JsonLd data={buildToolSchema({ name: title, description, path })} />
       <div className="text-center space-y-4">
         <h1 className="text-4xl font-extrabold tracking-tight lg:text-5xl">Circle of Fifths</h1>
         <p className="text-xl text-muted-foreground max-w-2xl mx-auto">

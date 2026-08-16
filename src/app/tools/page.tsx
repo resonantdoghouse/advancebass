@@ -1,9 +1,20 @@
 import { ToolsGallery } from "./ToolsGallery";
 
 export const metadata = {
-  title: "Practice Tools | Advance Bass",
+  title: "Practice Tools",
   description:
-    "Collection of free online tools for bass players including a metronome and more.",
+    "Free online tools for bass players — metronome, tuner, drum machine, ear training, scale and arpeggio visualizers, and more.",
+  openGraph: {
+    title: "Practice Tools | Advance Bass",
+    description:
+      "Free online tools for bass players — metronome, tuner, drum machine, ear training, scale and arpeggio visualizers, and more.",
+    url: "/tools",
+  },
+  twitter: {
+    title: "Practice Tools | Advance Bass",
+    description:
+      "Free online tools for bass players — metronome, tuner, drum machine, ear training, scale and arpeggio visualizers, and more.",
+  },
 };
 
 export default function ToolsPage() {

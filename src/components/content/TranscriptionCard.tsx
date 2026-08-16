@@ -2,7 +2,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Calendar, FileText } from "lucide-react";
+import { FileText } from "lucide-react";
 import { Article, getArticleUrl } from "@/lib/data";
 
 interface TranscriptionCardProps {
@@ -35,17 +35,12 @@ export function TranscriptionCard({ article, priority = false }: TranscriptionCa
                         </div>
                     )}
                     <CardTitle className="line-clamp-2 text-xl group-hover:text-primary transition-colors">{article.title}</CardTitle>
-                    <CardDescription className="flex items-center gap-2 mt-2">
-                        <Calendar className="h-3 w-3" />
-                        {article.date}
-                        {article.pages && (
-                            <>
-                                <span>•</span>
-                                <FileText className="h-3 w-3" />
-                                {article.pages} {article.pages === 1 ? 'Page' : 'Pages'}
-                            </>
-                        )}
-                    </CardDescription>
+                    {article.pages && (
+                        <CardDescription className="flex items-center gap-2 mt-2">
+                            <FileText className="h-3 w-3" />
+                            {article.pages} {article.pages === 1 ? 'Page' : 'Pages'}
+                        </CardDescription>
+                    )}
                 </CardHeader>
                 <CardContent className="flex-1">
                     <p className="text-sm text-muted-foreground line-clamp-3 leading-relaxed">

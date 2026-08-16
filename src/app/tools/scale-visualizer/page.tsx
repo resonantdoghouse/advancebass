@@ -1,13 +1,22 @@
 import { ScaleVisualizer } from "@/components/tools/ScaleVisualizer";
+import { JsonLd } from "@/components/seo/JsonLd";
+import { buildToolSchema } from "@/lib/tool-schema";
+
+const title = "Bass Scale Visualizer";
+const description = "Interactive bass guitar fretboard visualizer. Explore scales and modes on 4, 5, and 6 string basses.";
+const path = "/tools/scale-visualizer";
 
 export const metadata = {
-  title: "Bass Scale Visualizer | Advance Bass",
-  description: "Interactive bass guitar fretboard visualizer. Explore scales and modes on 4, 5, and 6 string basses.",
+  title,
+  description,
+  openGraph: { title: `${title} | Advance Bass`, description, url: path },
+  twitter: { title: `${title} | Advance Bass`, description },
 };
 
 export default function ScaleVisualizerPage() {
   return (
     <div className="container mx-auto px-4 md:px-8 py-12 md:py-16">
+      <JsonLd data={buildToolSchema({ name: title, description, path })} />
       <div className="max-w-6xl mx-auto">
         <ScaleVisualizer />
         <div className="mt-10">

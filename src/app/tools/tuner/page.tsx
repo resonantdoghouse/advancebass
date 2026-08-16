@@ -1,14 +1,23 @@
 import { Tuner } from "@/components/tools/Tuner";
+import { JsonLd } from "@/components/seo/JsonLd";
+import { buildToolSchema } from "@/lib/tool-schema";
+
+const title = "Online Tuner (Bass & Guitar)";
+const description =
+  "Free online tuner for Bass and Guitar. Features chromatic strobe mode, microphone input, and reference tones.";
+const path = "/tools/tuner";
 
 export const metadata = {
-  title: "Online Tuner (Bass & Guitar) | Advance Bass",
-  description:
-    "Free online tuner for Bass and Guitar. Features chromatic strobe mode, microphone input, and reference tones.",
+  title,
+  description,
+  openGraph: { title: `${title} | Advance Bass`, description, url: path },
+  twitter: { title: `${title} | Advance Bass`, description },
 };
 
 export default function TunerPage() {
   return (
     <div className="container mx-auto py-12 px-4">
+      <JsonLd data={buildToolSchema({ name: title, description, path })} />
       <div className="max-w-4xl mx-auto space-y-8">
         <div className="text-center space-y-4">
           <h1 className="text-4xl font-bold tracking-tight lg:text-5xl">

@@ -2,7 +2,7 @@ import Link from "next/link";
 import { getArticleBySlug, getCategorySlug } from "@/lib/data";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { ArrowLeft, Calendar, User, Tag } from "lucide-react";
+import { ArrowLeft, User, Tag } from "lucide-react";
 import { notFound, redirect } from "next/navigation";
 import { Metadata } from "next";
 import parse, { Element } from "html-react-parser";
@@ -26,15 +26,20 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     }
 
     return {
-        title: `${article.title} | Advance Bass`,
+        title: article.title,
         description: article.excerpt,
         openGraph: {
             title: article.title,
             description: article.excerpt,
             type: "article",
+            url: `/${categorySlug}/${slug}`,
             publishedTime: article.date,
             authors: [article.author],
             // og:image is provided by the co-located opengraph-image.tsx
+        },
+        twitter: {
+            title: article.title,
+            description: article.excerpt,
         },
     };
 }
@@ -86,8 +91,6 @@ export default async function ArticlePage({ params }: Props) {
                 <div className="space-y-4">
                     <div className="flex items-center gap-2 text-sm text-muted-foreground">
                         <Badge variant="secondary">{article.category}</Badge>
-                        <span>•</span>
-                        <span className="flex items-center gap-1"><Calendar className="h-3 w-3" /> {article.date}</span>
                         <span>•</span>
                         <span className="flex items-center gap-1"><User className="h-3 w-3" /> {article.author}</span>
                     </div>
