@@ -17,6 +17,7 @@ import {
   RefreshCw,
 } from "lucide-react";
 import { useMetronome } from "@/hooks/useMetronome";
+import { useWakeLock } from "@/hooks/useWakeLock";
 import { getNoteFromFrequency, detectChord } from "@/lib/music-theory";
 import { autoCorrelate } from "@/lib/tuner-utils";
 import { BPMDetector } from "@/lib/bpm-detector";
@@ -63,6 +64,7 @@ export default function VideoLooper() {
   const [videoId, setVideoId] = useState("a3113eNj4IA");
   const [currentPreset, setCurrentPreset] = useState<VideoPreset | null>(null);
   const [playing, setPlaying] = useState(false);
+  useWakeLock(playing);
   const [volume, setVolume] = useState(0.8);
   const [muted, setMuted] = useState(false);
   const [playbackRate, setPlaybackRate] = useState(1.0);

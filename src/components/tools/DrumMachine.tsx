@@ -11,6 +11,7 @@ import { Button } from "@/components/ui/button";
 import { Slider } from "@/components/ui/slider";
 import { cn } from "@/lib/utils";
 import { useDrumMachine } from "@/hooks/useDrumMachine";
+import { useWakeLock } from "@/hooks/useWakeLock";
 import { Play, Square, Volume2, Trash2, Music2, Loader2 } from "lucide-react";
 import { INSTRUMENTS, PRESETS } from "@/data/drum-patterns";
 import { DrumInfoDialog } from "@/components/tools/drum-machine/DrumInfoDialog";
@@ -34,6 +35,8 @@ export function DrumMachine() {
     setKit,
     samplesLoaded,
   } = useDrumMachine();
+
+  useWakeLock(isPlaying);
 
   return (
     <Card className="w-full shadow-xl border-t-4 border-t-primary">

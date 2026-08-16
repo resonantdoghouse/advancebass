@@ -3,6 +3,7 @@
 import { useState, useEffect, useRef } from "react";
 import { Mic, Ear, Guitar, Music, Settings2 } from "lucide-react";
 import { useTuner } from "@/hooks/useTuner";
+import { useWakeLock } from "@/hooks/useWakeLock";
 import { TUNING_PRESETS, StringConfig, InstrumentType } from "@/lib/tuner-utils";
 import {
   Select,
@@ -22,6 +23,9 @@ export function Tuner() {
   const animationRef = useRef<number | null>(null);
   const { isListening, startListening, stopListening, detectedNote, volume, playTone, stopTone, isPlayingTone } = useTuner();
   const [activeString, setActiveString] = useState<number | null>(null);
+  const [micConsentGiven, setMicConsentGiven] = useState(false);
+
+  useWakeLock(isListening || isPlayingTone);
 
   const currentPreset = TUNING_PRESETS[selectedPreset as keyof typeof TUNING_PRESETS];
   const isNoteInTune = detectedNote && Math.abs(detectedNote.cents) < 5;
@@ -35,9 +39,9 @@ export function Tuner() {
   useEffect(() => { detectedNoteRef.current = detectedNote; }, [detectedNote]);
 
   useEffect(() => {
-    if (mode === "mic" && !isListening) startListening();
+    if (mode === "mic" && micConsentGiven && !isListening) startListening();
     else if (mode === "ear" && isListening) stopListening();
-  }, [mode, isListening, startListening, stopListening]);
+  }, [mode, micConsentGiven, isListening, startListening, stopListening]);
 
   useEffect(() => {
     if (instrumentMode === "bass" && TUNING_PRESETS[selectedPreset]?.instrument !== "bass")
@@ -136,7 +140,11 @@ export function Tuner() {
         <span className="font-mono text-[11px] tracking-[0.12em] text-muted-foreground uppercase">
           {instrumentLabel}
         </span>
-        {mode === "mic" && isNoteInTune ? (
+        {mode === "mic" && !micConsentGiven ? (
+          <span className="font-mono text-[11px] font-semibold text-muted-foreground bg-muted px-3 py-1.5 rounded-full">
+            MIC ACCESS NEEDED
+          </span>
+        ) : mode === "mic" && isNoteInTune ? (
           <span className="font-mono text-[11px] font-semibold text-emerald-500 bg-emerald-500/10 px-3 py-1.5 rounded-full">
             IN TUNE
           </span>
@@ -226,7 +234,28 @@ export function Tuner() {
       )}
 
       {/* ── Main display ────────────────────────────────── */}
-      {mode === "mic" ? (
+      {mode === "mic" && !micConsentGiven ? (
+        /* Consent framing — explain why before the browser's own mic
+           permission dialog interrupts the user. */
+        <div className="flex flex-col items-center gap-4 py-10 text-center">
+          <div className="p-3 rounded-full bg-primary/10">
+            <Mic className="h-8 w-8 text-primary" />
+          </div>
+          <div className="max-w-xs space-y-1.5">
+            <p className="text-sm font-semibold">Microphone access needed</p>
+            <p className="text-xs text-muted-foreground leading-relaxed">
+              This tuner listens to your instrument's pitch in your browser.
+              Audio is analyzed locally and never recorded or uploaded.
+            </p>
+          </div>
+          <button
+            onClick={() => setMicConsentGiven(true)}
+            className="px-5 py-2.5 rounded-[10px] bg-primary text-primary-foreground text-sm font-semibold hover:opacity-90 transition-opacity"
+          >
+            Allow Microphone Access
+          </button>
+        </div>
+      ) : mode === "mic" ? (
         detectedNote ? (
           <>
             {/* Note */}

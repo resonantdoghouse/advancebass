@@ -1,6 +1,7 @@
 "use client";
 
 import { useMetronome } from "@/hooks/useMetronome";
+import { useWakeLock } from "@/hooks/useWakeLock";
 import { Button } from "@/components/ui/button";
 import { Slider } from "@/components/ui/slider";
 import { Card, CardContent } from "@/components/ui/card";
@@ -148,6 +149,8 @@ export function Metronome({ compact = false }: MetronomeProps) {
     setVolume,
     tapTempo,
   } = useMetronome();
+
+  useWakeLock(isPlaying);
 
   // Memoized handlers
   const handleBpmChange = (value: number[]) => setBpm(value[0]);

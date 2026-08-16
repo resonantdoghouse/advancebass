@@ -11,6 +11,8 @@ import {
   type Mode,
   type Difficulty,
 } from "@/hooks/useEarTrainingGame";
+import { useToolKeyboard } from "@/hooks/useToolKeyboard";
+import { KeyboardHints } from "@/components/tools/KeyboardHints";
 
 const MODE_OPTIONS: { value: Mode; label: string; description: string }[] = [
   {
@@ -58,6 +60,23 @@ export function EarTraining() {
   } = useEarTrainingGame();
 
   const timerPercent = (timeLeft / GAME_DURATION) * 100;
+
+  const selectOptionByIndex = (index: number) => {
+    if (answered || !question) return;
+    const option = question.options[index];
+    if (option) handleAnswer(option);
+  };
+
+  useToolKeyboard(
+    {
+      Digit1: () => selectOptionByIndex(0),
+      Digit2: () => selectOptionByIndex(1),
+      Digit3: () => selectOptionByIndex(2),
+      Digit4: () => selectOptionByIndex(3),
+      KeyR: () => replayAudio(),
+    },
+    gameState === "playing",
+  );
 
   const getAnswerButtonClass = (option: string) => {
     if (!answered) {
@@ -266,16 +285,17 @@ export function EarTraining() {
         {/* Answer grid */}
         {question && (
           <div className="grid grid-cols-2 gap-3">
-            {question.options.map((option) => (
+            {question.options.map((option, i) => (
               <button
                 key={option}
                 disabled={answered}
                 onClick={() => handleAnswer(option)}
                 className={cn(
-                  "p-3 rounded-lg text-sm font-medium text-center disabled:cursor-default",
+                  "p-3 rounded-lg text-sm font-medium text-center disabled:cursor-default flex items-center justify-center gap-2",
                   getAnswerButtonClass(option)
                 )}
               >
+                <span className="text-[10px] font-mono opacity-50">{i + 1}</span>
                 {option}
               </button>
             ))}
@@ -300,6 +320,13 @@ export function EarTraining() {
             </p>
           )}
         </div>
+
+        <KeyboardHints
+          hints={[
+            { keys: ["1", "2", "3", "4"], label: "select answer" },
+            { keys: ["R"], label: "replay" },
+          ]}
+        />
       </CardContent>
     </Card>
   );
