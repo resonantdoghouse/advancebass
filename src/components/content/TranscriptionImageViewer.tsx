@@ -22,7 +22,7 @@ import {
 import ReactCrop, { Crop as CropType, PixelCrop } from "react-image-crop";
 import "react-image-crop/dist/ReactCrop.css";
 import { useTheme } from "next-themes";
-import { Metronome } from "@/components/tools/Metronome";
+import { DockMetronome } from "@/components/tools/dock/DockMetronome";
 
 interface TranscriptionImageViewerProps {
   images: { src: string; alt: string }[];
@@ -479,8 +479,8 @@ export function TranscriptionImageViewer({
             onPointerUp={handleMetronomePointerUp}
             onPointerLeave={handleMetronomePointerUp}
           >
-            <div className="shadow-2xl">
-              <Metronome compact />
+            <div className="shadow-2xl rounded-[16px] border border-border bg-card px-3">
+              <DockMetronome />
             </div>
           </div>
         </div>

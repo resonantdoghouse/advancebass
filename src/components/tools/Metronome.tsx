@@ -8,7 +8,6 @@ import { Card, CardContent } from "@/components/ui/card";
 import {
   Play,
   Square,
-  GripHorizontal,
   Rewind,
   FastForward,
   Volume2,
@@ -20,10 +19,6 @@ import {
 import React, { memo, useState, useEffect, useMemo } from "react";
 import { useToolKeyboard } from "@/hooks/useToolKeyboard";
 import { KeyboardHints } from "./KeyboardHints";
-
-interface MetronomeProps {
-  compact?: boolean;
-}
 
 const TONE_OPTIONS = ["digital", "woodblock", "drum", "ping", "blip"] as const;
 
@@ -127,7 +122,7 @@ const BeatsDisplay = memo(
 );
 BeatsDisplay.displayName = "BeatsDisplay";
 
-export function Metronome({ compact = false }: MetronomeProps) {
+export function Metronome() {
   const {
     isPlaying,
     start,
@@ -183,22 +178,12 @@ export function Metronome({ compact = false }: MetronomeProps) {
     [togglePlay, bpm, setBpm, tapTempo],
   );
 
-  useToolKeyboard(shortcuts, !compact);
+  useToolKeyboard(shortcuts);
 
   return (
-    <Card
-      className={`shadow-xl border-2 transition-colors duration-300 bg-card border-border text-card-foreground ${
-        compact ? "w-64" : "w-full max-w-3xl mx-auto"
-      }`}
-    >
-      {compact && (
-        <div className="flex justify-center h-5 items-center cursor-move text-muted-foreground/50 hover:text-foreground/80">
-          <GripHorizontal className="h-4 w-4" />
-        </div>
-      )}
-
-      <CardContent className={`p-6 ${compact ? "pt-0 space-y-3" : "pt-8"}`}>
-        <div className={`grid gap-8 ${compact ? "" : "md:grid-cols-2"}`}>
+    <Card className="shadow-xl border-2 transition-colors duration-300 bg-card border-border text-card-foreground w-full max-w-3xl mx-auto">
+      <CardContent className="p-6 pt-8">
+        <div className="grid gap-8 md:grid-cols-2">
           {/* Left Column: Main Controls */}
           <div className="space-y-6">
             <div className="flex justify-between items-end">
@@ -409,18 +394,16 @@ export function Metronome({ compact = false }: MetronomeProps) {
           </div>
         </div>
 
-        {!compact && (
-          <div className="mt-6 pt-4 border-t border-border/30">
-            <KeyboardHints
-              hints={[
-                { keys: ["Space"], label: "play / stop" },
-                { keys: ["↑", "↓"], label: "BPM ±1" },
-                { keys: ["⇧↑", "⇧↓"], label: "BPM ±5" },
-                { keys: ["T"], label: "tap tempo" },
-              ]}
-            />
-          </div>
-        )}
+        <div className="mt-6 pt-4 border-t border-border/30">
+          <KeyboardHints
+            hints={[
+              { keys: ["Space"], label: "play / stop" },
+              { keys: ["↑", "↓"], label: "BPM ±1" },
+              { keys: ["⇧↑", "⇧↓"], label: "BPM ±5" },
+              { keys: ["T"], label: "tap tempo" },
+            ]}
+          />
+        </div>
       </CardContent>
     </Card>
   );
