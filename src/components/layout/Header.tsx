@@ -3,13 +3,25 @@
 import { useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Music4, Menu, X } from "lucide-react";
+import { Music4, Menu, X, ChevronDown } from "lucide-react";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import { cn } from "@/lib/utils";
+import {
+  DropdownMenu,
+  DropdownMenuTrigger,
+  DropdownMenuContent,
+  DropdownMenuItem,
+} from "@/components/ui/dropdown-menu";
 
 const navLinks = [
-  { href: "/tools",           label: "Tools"          },
+  { href: "/tools",           label: "Practice" },
   { href: "/transcriptions",  label: "Transcriptions" },
+  { href: "/bass-lessons",    label: "Lessons"  },
+];
+
+const hireLinks = [
+  { href: "/recording",          label: "Recording"        },
+  { href: "/bassist-for-hire",   label: "Bassist for Hire" },
 ];
 
 export function Header() {
@@ -19,6 +31,8 @@ export function Header() {
 
   const isActive = (href: string) =>
     pathname === href || pathname.startsWith(href + "/");
+
+  const isHireActive = hireLinks.some(({ href }) => isActive(href));
 
   return (
     <header className="sticky top-0 z-50 w-full border-b border-border/60 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/80">
@@ -34,9 +48,9 @@ export function Header() {
           </span>
         </Link>
 
-        {/* Desktop nav */}
-        <div className="hidden md:flex items-center gap-8">
-          <nav className="flex items-center gap-6">
+        <div className="flex items-center gap-3 md:gap-8">
+          {/* Desktop nav */}
+          <nav className="hidden md:flex items-center gap-6">
             {navLinks.map(({ href, label }) => (
               <Link
                 key={href}
@@ -51,18 +65,36 @@ export function Header() {
                 {label}
               </Link>
             ))}
+
+            <DropdownMenu>
+              <DropdownMenuTrigger
+                className={cn(
+                  "flex items-center gap-1 text-sm font-medium transition-colors duration-150 outline-none",
+                  isHireActive
+                    ? "text-foreground"
+                    : "text-muted-foreground hover:text-foreground",
+                )}
+              >
+                Hire
+                <ChevronDown className="h-3.5 w-3.5" />
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="start">
+                {hireLinks.map(({ href, label }) => (
+                  <DropdownMenuItem key={href} asChild>
+                    <Link href={href}>{label}</Link>
+                  </DropdownMenuItem>
+                ))}
+              </DropdownMenuContent>
+            </DropdownMenu>
           </nav>
 
-          <div className="flex items-center gap-3">
-            <ThemeToggle />
-          </div>
-        </div>
-
-        {/* Mobile toggle */}
-        <div className="flex md:hidden items-center gap-1">
+          {/* Rendered once — shared between desktop and mobile layouts so it
+              never duplicates the "Toggle theme" accessible name in the DOM. */}
           <ThemeToggle />
+
+          {/* Mobile hamburger */}
           <button
-            className="p-2 -mr-2 text-foreground/80 hover:text-foreground transition-colors flex items-center justify-center min-h-[44px] min-w-[44px]"
+            className="p-2 -mr-2 text-foreground/80 hover:text-foreground transition-colors flex items-center justify-center min-h-[44px] min-w-[44px] md:hidden"
             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
             aria-label="Toggle mobile menu"
           >
@@ -75,13 +107,30 @@ export function Header() {
       {isMobileMenuOpen && (
         <div className="md:hidden absolute top-full left-0 w-full h-[calc(100vh-4rem)] z-40 bg-background/98 backdrop-blur-md border-t border-border/60 overflow-y-auto">
           <nav className="container mx-auto px-4 py-8 flex flex-col space-y-1">
-            {navLinks.map(({ href, label }, index) => (
+            {navLinks.map(({ href, label }) => (
+              <Link
+                key={href}
+                href={href}
+                className={cn(
+                  "py-4 font-medium text-lg block w-full border-b border-border/30 transition-colors",
+                  isActive(href) ? "text-foreground" : "text-muted-foreground hover:text-foreground",
+                )}
+                onClick={closeMenu}
+              >
+                {label}
+              </Link>
+            ))}
+
+            <span className="pt-6 pb-1 text-xs font-semibold uppercase tracking-[0.1em] text-muted-foreground">
+              Hire
+            </span>
+            {hireLinks.map(({ href, label }, index) => (
               <Link
                 key={href}
                 href={href}
                 className={cn(
                   "py-4 font-medium text-lg block w-full transition-colors",
-                  index < navLinks.length - 1 ? "border-b border-border/30" : "",
+                  index < hireLinks.length - 1 ? "border-b border-border/30" : "",
                   isActive(href) ? "text-foreground" : "text-muted-foreground hover:text-foreground",
                 )}
                 onClick={closeMenu}
