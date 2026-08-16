@@ -17,11 +17,32 @@ const TUNING_OPTIONS = [
     { id: "6-string-standard", name: "6 String (Standard)" },
 ];
 
-export function ArpeggioVisualizer() {
-  const [selectedPresetId, setSelectedPresetId] = useState<string>("4-string-standard");
-  const [rootNote, setRootNote] = useState<string>("C");
+type ArpeggioVisualizerProps = {
+  rootNote?: string;
+  onRootNoteChange?: (note: string) => void;
+  tuningPresetId?: string;
+  onTuningPresetChange?: (id: string) => void;
+  hideRootControl?: boolean;
+  hideTuningControl?: boolean;
+};
+
+export function ArpeggioVisualizer({
+  rootNote: rootNoteProp,
+  onRootNoteChange,
+  tuningPresetId: tuningPresetIdProp,
+  onTuningPresetChange,
+  hideRootControl = false,
+  hideTuningControl = false,
+}: ArpeggioVisualizerProps = {}) {
+  const [internalPresetId, setInternalPresetId] = useState<string>("4-string-standard");
+  const [internalRootNote, setInternalRootNote] = useState<string>("C");
   const [chordType, setChordType] = useState<keyof typeof CHORDS>("major");
-  
+
+  const selectedPresetId = tuningPresetIdProp ?? internalPresetId;
+  const setSelectedPresetId = onTuningPresetChange ?? setInternalPresetId;
+  const rootNote = rootNoteProp ?? internalRootNote;
+  const setRootNote = onRootNoteChange ?? setInternalRootNote;
+
   const { playTone } = useBassSynth();
 
   // Get current tuning strings
@@ -102,33 +123,37 @@ export function ArpeggioVisualizer() {
 
         {/* Controls */}
         <div className="flex flex-col md:flex-row gap-4 items-end justify-between bg-muted/20 p-5 rounded-[14px]">
-            <div className="flex flex-col gap-1.5 w-full md:w-auto">
-                <span className="font-mono text-[11px] tracking-[0.1em] text-muted-foreground uppercase">Bass Tuning</span>
-                <Select value={selectedPresetId} onValueChange={setSelectedPresetId}>
-                    <SelectTrigger className="w-full md:w-[200px]">
-                        <SelectValue placeholder="Select Tuning" />
-                    </SelectTrigger>
-                    <SelectContent>
-                        {TUNING_OPTIONS.map(opt => (
-                            <SelectItem key={opt.id} value={opt.id}>{opt.name}</SelectItem>
-                        ))}
-                    </SelectContent>
-                </Select>
-            </div>
+            {!hideTuningControl && (
+              <div className="flex flex-col gap-1.5 w-full md:w-auto">
+                  <span className="font-mono text-[11px] tracking-[0.1em] text-muted-foreground uppercase">Bass Tuning</span>
+                  <Select value={selectedPresetId} onValueChange={setSelectedPresetId}>
+                      <SelectTrigger className="w-full md:w-[200px]">
+                          <SelectValue placeholder="Select Tuning" />
+                      </SelectTrigger>
+                      <SelectContent>
+                          {TUNING_OPTIONS.map(opt => (
+                              <SelectItem key={opt.id} value={opt.id}>{opt.name}</SelectItem>
+                          ))}
+                      </SelectContent>
+                  </Select>
+              </div>
+            )}
 
-            <div className="flex flex-col gap-1.5 w-full md:w-auto">
-                <span className="font-mono text-[11px] tracking-[0.1em] text-muted-foreground uppercase">Root Note</span>
-                <Select value={rootNote} onValueChange={setRootNote}>
-                    <SelectTrigger className="w-full md:w-[110px]">
-                        <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                        {WESTERN_ROOTS.map(note => (
-                            <SelectItem key={note} value={note}>{note}</SelectItem>
-                        ))}
-                    </SelectContent>
-                </Select>
-            </div>
+            {!hideRootControl && (
+              <div className="flex flex-col gap-1.5 w-full md:w-auto">
+                  <span className="font-mono text-[11px] tracking-[0.1em] text-muted-foreground uppercase">Root Note</span>
+                  <Select value={rootNote} onValueChange={setRootNote}>
+                      <SelectTrigger className="w-full md:w-[110px]">
+                          <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                          {WESTERN_ROOTS.map(note => (
+                              <SelectItem key={note} value={note}>{note}</SelectItem>
+                          ))}
+                      </SelectContent>
+                  </Select>
+              </div>
+            )}
 
             <div className="flex flex-col gap-1.5 w-full md:w-auto">
                 <span className="font-mono text-[11px] tracking-[0.1em] text-muted-foreground uppercase">Chord / Arpeggio</span>

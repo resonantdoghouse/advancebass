@@ -23,9 +23,20 @@ const FIFTHS_ORDER = [
   { root: "F", signature: "1b", relativeMinor: "D" },
 ];
 
-export default function CircleOfFifths() {
+type CircleOfFifthsProps = {
+  rootNote?: string;
+  onRootNoteChange?: (note: string) => void;
+};
+
+export default function CircleOfFifths({
+  rootNote: rootNoteProp,
+  onRootNoteChange,
+}: CircleOfFifthsProps = {}) {
   const [isFourths, setIsFourths] = useState(false);
-  const [selectedRoot, setSelectedRoot] = useState("C");
+  const [internalRoot, setInternalRoot] = useState("C");
+
+  const selectedRoot = rootNoteProp ?? internalRoot;
+  const setSelectedRoot = onRootNoteChange ?? setInternalRoot;
 
   // Reorder keys based on mode
   const currentOrder = useMemo(() => {

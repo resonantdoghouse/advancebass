@@ -16,11 +16,32 @@ const TUNING_OPTIONS = [
     { id: "6-string-standard", name: "6 String (Standard)" },
 ];
 
-export function ScaleVisualizer() {
-  const [selectedPresetId, setSelectedPresetId] = useState<string>("4-string-standard");
-  const [rootNote, setRootNote] = useState<string>("C");
+type ScaleVisualizerProps = {
+  rootNote?: string;
+  onRootNoteChange?: (note: string) => void;
+  tuningPresetId?: string;
+  onTuningPresetChange?: (id: string) => void;
+  hideRootControl?: boolean;
+  hideTuningControl?: boolean;
+};
+
+export function ScaleVisualizer({
+  rootNote: rootNoteProp,
+  onRootNoteChange,
+  tuningPresetId: tuningPresetIdProp,
+  onTuningPresetChange,
+  hideRootControl = false,
+  hideTuningControl = false,
+}: ScaleVisualizerProps = {}) {
+  const [internalPresetId, setInternalPresetId] = useState<string>("4-string-standard");
+  const [internalRootNote, setInternalRootNote] = useState<string>("C");
   const [scaleType, setScaleType] = useState<keyof typeof SCALES>("major");
-  
+
+  const selectedPresetId = tuningPresetIdProp ?? internalPresetId;
+  const setSelectedPresetId = onTuningPresetChange ?? setInternalPresetId;
+  const rootNote = rootNoteProp ?? internalRootNote;
+  const setRootNote = onRootNoteChange ?? setInternalRootNote;
+
   const { playTone } = useBassSynth();
 
   // Get current tuning strings
@@ -76,33 +97,37 @@ export function ScaleVisualizer() {
 
         {/* Controls */}
         <div className="flex flex-col md:flex-row gap-4 items-end justify-between bg-muted/30 border border-border/50 p-5 rounded-[16px] backdrop-blur">
-            <div className="flex flex-col gap-2 w-full md:w-auto">
-                <span className="font-mono text-[11px] tracking-[0.1em] text-muted-foreground uppercase font-semibold">Base Tuning</span>
-                <Select value={selectedPresetId} onValueChange={setSelectedPresetId}>
-                    <SelectTrigger className="w-full md:w-[200px] bg-background/60">
-                        <SelectValue placeholder="Select Tuning" />
-                    </SelectTrigger>
-                    <SelectContent>
-                        {TUNING_OPTIONS.map(opt => (
-                            <SelectItem key={opt.id} value={opt.id}>{opt.name}</SelectItem>
-                        ))}
-                    </SelectContent>
-                </Select>
-            </div>
+            {!hideTuningControl && (
+              <div className="flex flex-col gap-2 w-full md:w-auto">
+                  <span className="font-mono text-[11px] tracking-[0.1em] text-muted-foreground uppercase font-semibold">Base Tuning</span>
+                  <Select value={selectedPresetId} onValueChange={setSelectedPresetId}>
+                      <SelectTrigger className="w-full md:w-[200px] bg-background/60">
+                          <SelectValue placeholder="Select Tuning" />
+                      </SelectTrigger>
+                      <SelectContent>
+                          {TUNING_OPTIONS.map(opt => (
+                              <SelectItem key={opt.id} value={opt.id}>{opt.name}</SelectItem>
+                          ))}
+                      </SelectContent>
+                  </Select>
+              </div>
+            )}
 
-            <div className="flex flex-col gap-2 w-full md:w-auto">
-                <span className="font-mono text-[11px] tracking-[0.1em] text-muted-foreground uppercase font-semibold">Root</span>
-                <Select value={rootNote} onValueChange={setRootNote}>
-                    <SelectTrigger className="w-full md:w-[100px] bg-background/60">
-                        <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                        {WESTERN_ROOTS.map(note => (
-                            <SelectItem key={note} value={note}>{note}</SelectItem>
-                        ))}
-                    </SelectContent>
-                </Select>
-            </div>
+            {!hideRootControl && (
+              <div className="flex flex-col gap-2 w-full md:w-auto">
+                  <span className="font-mono text-[11px] tracking-[0.1em] text-muted-foreground uppercase font-semibold">Root</span>
+                  <Select value={rootNote} onValueChange={setRootNote}>
+                      <SelectTrigger className="w-full md:w-[100px] bg-background/60">
+                          <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                          {WESTERN_ROOTS.map(note => (
+                              <SelectItem key={note} value={note}>{note}</SelectItem>
+                          ))}
+                      </SelectContent>
+                  </Select>
+              </div>
+            )}
 
             <div className="flex flex-col gap-2 w-full md:w-auto">
                 <span className="font-mono text-[11px] tracking-[0.1em] text-muted-foreground uppercase font-semibold">Scale</span>

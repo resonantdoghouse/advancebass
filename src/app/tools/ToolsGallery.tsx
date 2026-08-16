@@ -95,6 +95,18 @@ const TOOLS: Tool[] = [
     ),
   },
   {
+    id: "fretboard-lab",
+    title: "Fretboard Lab",
+    description:
+      "Scale Visualizer, Arpeggio Visualizer, and Circle of Fifths connected — one key, one tuning, three tools.",
+    href: "/tools/fretboard-lab",
+    icon: (
+      <div className="h-6 w-6 flex items-center justify-center border-2 border-current rounded-md text-[9px] font-bold leading-none">
+        Lab
+      </div>
+    ),
+  },
+  {
     id: "ear-training",
     title: "Ear Training",
     description:
