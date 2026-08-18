@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Play, Pencil, Trash2, Plus, Clock } from "lucide-react";
+import { Play, Pencil, Trash2, Plus, Clock, Info } from "lucide-react";
 import {
   loadRoutines,
   saveRoutines,
@@ -89,6 +89,15 @@ export function PracticeRoutineBuilder() {
 
   return (
     <div className="space-y-6">
+      <div className="flex items-start gap-3 bg-muted/20 border border-border/50 rounded-[14px] px-5 py-4 text-xs text-muted-foreground leading-relaxed">
+        <Info className="h-4 w-4 shrink-0 mt-0.5" />
+        <p>
+          Routines and practice history are saved only in this browser, on
+          this device — clearing your browser data will erase them. User
+          accounts with cross-device sync are coming soon.
+        </p>
+      </div>
+
       <PracticeStats log={log} streak={streak} />
 
       <div className="flex items-center justify-between">
