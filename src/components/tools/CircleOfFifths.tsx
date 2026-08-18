@@ -262,10 +262,7 @@ export default function CircleOfFifths({
               Scale Notes
             </h3>
             <div className="flex flex-wrap gap-2">
-              {getScaleNotes(
-                selectedKeyData.root.replace("/", ""),
-                "major"
-              ).map((note, i) => (
+              {getScaleNotes(selectedKeyData.root, "major").map((note, i) => (
                 <div
                   key={i}
                   className="flex flex-col items-center p-2 bg-background rounded-md border min-w-[3rem]"

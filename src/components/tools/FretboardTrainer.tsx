@@ -44,11 +44,7 @@ export function FretboardTrainer() {
     () => [],
   );
   fretboardData.forEach((pos) => {
-    // We can cast here because we know our lib returns compatible data structure
-    // essentially matching FretboardNote but we need to ensure type safety if logic changes.
-    // Ideally update lib return type or FretboardNote to match exactly.
-    // For now assuming getAllFretboardNotes returns objects compatible with FretboardNote.
-    stringsData[pos.stringIndex][pos.fret] = pos as unknown as FretboardNote;
+    stringsData[pos.stringIndex][pos.fret] = pos;
   });
 
   return (
