@@ -22,6 +22,7 @@ const navLinks = [
 const hireLinks = [
   { href: "/recording",          label: "Recording"        },
   { href: "/bassist-for-hire",   label: "Bassist for Hire" },
+  { href: "/contact",            label: "Contact"          },
 ];
 
 export function Header() {
