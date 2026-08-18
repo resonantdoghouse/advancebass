@@ -11,6 +11,8 @@ import {
   Search,
   Shuffle,
   Ear,
+  ListChecks,
+  Scale,
 } from "lucide-react";
 import {
   Card,
@@ -113,6 +115,22 @@ const TOOLS: Tool[] = [
       "Identify intervals and chord qualities by ear. Timed game for all levels.",
     href: "/tools/ear-training",
     icon: <Ear className="h-6 w-6" />,
+  },
+  {
+    id: "practice-routine",
+    title: "Practice Routine Builder",
+    description:
+      "Chain timed practice blocks into a routine with an auto-advancing timer, streaks, and session history.",
+    href: "/tools/practice-routine",
+    icon: <ListChecks className="h-6 w-6" />,
+  },
+  {
+    id: "string-tension-calculator",
+    title: "String Tension Calculator",
+    description:
+      "Estimate string tension by gauge, scale length, and tuning before you order a custom set.",
+    href: "/tools/string-tension-calculator",
+    icon: <Scale className="h-6 w-6" />,
   },
   {
     id: "circle-of-fifths",
