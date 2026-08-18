@@ -2,7 +2,7 @@ import Link from "next/link";
 import { getArticleBySlug, getCategorySlug } from "@/lib/data";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { ArrowLeft, User, Tag } from "lucide-react";
+import { ArrowLeft, User, Tag, ArrowRight } from "lucide-react";
 import { notFound, redirect } from "next/navigation";
 import { Metadata } from "next";
 import parse, { Element } from "html-react-parser";
@@ -156,6 +156,23 @@ export default async function ArticlePage({ params }: Props) {
                             <Badge key={tag} variant="outline">{tag}</Badge>
                         ))}
                     </div>
+                </div>
+
+                <div className="border-t pt-8 mt-8">
+                    <Link
+                        href="/bass-lessons"
+                        className="group flex items-center justify-between gap-4 rounded-[16px] border border-border/70 bg-card/60 px-6 py-5 hover:border-primary/60 transition-colors"
+                    >
+                        <p className="text-sm text-muted-foreground">
+                            Stuck on a part of this transcription?{" "}
+                            <span className="text-foreground font-medium">
+                                A lesson can help you work through it.
+                            </span>
+                        </p>
+                        <span className="flex items-center gap-1.5 text-sm font-semibold text-primary shrink-0">
+                            Bass Lessons <ArrowRight className="h-3.5 w-3.5 group-hover:translate-x-1 transition-transform" />
+                        </span>
+                    </Link>
                 </div>
             </article>
         </div>

@@ -15,6 +15,9 @@ import {
   GraduationCap,
   Music2,
   Youtube,
+  FlaskConical,
+  ListChecks,
+  Scale,
 } from "lucide-react";
 
 export const metadata: Metadata = {
@@ -73,6 +76,27 @@ const FEATURED_TOOLS = [
     description: "Visualize chord tones and arpeggios across the fretboard.",
     href: "/tools/arpeggio-visualizer",
     icon: <RefreshCw className="h-5 w-5" />,
+  },
+  {
+    id: "fretboard-lab",
+    title: "Fretboard Lab",
+    description: "Scale Visualizer, Arpeggio Visualizer, and Circle of Fifths connected — one key, one tuning, three tools.",
+    href: "/tools/fretboard-lab",
+    icon: <FlaskConical className="h-5 w-5" />,
+  },
+  {
+    id: "practice-routine",
+    title: "Practice Routine Builder",
+    description: "Chain timed practice blocks into a routine with an auto-advancing timer, streaks, and session history.",
+    href: "/tools/practice-routine",
+    icon: <ListChecks className="h-5 w-5" />,
+  },
+  {
+    id: "string-tension-calculator",
+    title: "String Tension Calculator",
+    description: "Estimate string tension by gauge, scale length, and tuning before you order a custom set.",
+    href: "/tools/string-tension-calculator",
+    icon: <Scale className="h-5 w-5" />,
   },
   {
     id: "circle-of-fifths",
@@ -189,7 +213,7 @@ export default async function Home() {
             Everything you'd open six apps for
           </h2>
           <span className="font-mono text-xs text-muted-foreground tracking-[0.05em]">
-            08 TOOLS · IN YOUR BROWSER
+            11 TOOLS · IN YOUR BROWSER
           </span>
         </div>
 
