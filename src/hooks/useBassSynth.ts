@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState, useCallback } from "react";
+import { createAudioContext } from "@/lib/audio-context";
 
 export function useBassSynth() {
   const audioContextRef = useRef<AudioContext | null>(null);
@@ -13,7 +14,7 @@ export function useBassSynth() {
   // Initialize context lazily
   const getContext = useCallback(() => {
      if (!audioContextRef.current || audioContextRef.current.state === 'closed') {
-        audioContextRef.current = new (window.AudioContext || (window as any).webkitAudioContext)();
+        audioContextRef.current = createAudioContext();
      }
      return audioContextRef.current;
   }, []);
