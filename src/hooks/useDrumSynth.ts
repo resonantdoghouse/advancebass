@@ -3,6 +3,8 @@
 import { useRef, useCallback, useEffect, useState } from "react";
 import { createAudioContext } from "@/lib/audio-context";
 
+export type DrumKit = "electronic" | "techno" | "acoustic" | "funk" | "percussion";
+
 export function useDrumSynth() {
   const audioContextRef = useRef<AudioContext | null>(null);
 
@@ -16,7 +18,7 @@ export function useDrumSynth() {
     return audioContextRef.current;
   }, []);
 
-  const [currentKit, setCurrentKit] = useState<"electronic" | "techno" | "acoustic" | "funk" | "percussion">("electronic");
+  const [currentKit, setCurrentKit] = useState<DrumKit>("electronic");
   const kitRef = useRef(currentKit);
   const buffersRef = useRef<Record<string, AudioBuffer | null>>({
     kick: null,

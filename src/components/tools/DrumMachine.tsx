@@ -15,6 +15,15 @@ import { useWakeLock } from "@/hooks/useWakeLock";
 import { Play, Square, Volume2, Trash2, Music2, Loader2 } from "lucide-react";
 import { INSTRUMENTS, PRESETS } from "@/data/drum-patterns";
 import { DrumInfoDialog } from "@/components/tools/drum-machine/DrumInfoDialog";
+import type { DrumKit } from "@/hooks/useDrumSynth";
+
+const KITS: { id: DrumKit; label: string }[] = [
+  { id: "electronic", label: "808" },
+  { id: "techno", label: "909" },
+  { id: "acoustic", label: "Real" },
+  { id: "funk", label: "Funk" },
+  { id: "percussion", label: "Perc" },
+];
 
 export function DrumMachine() {
   const {
@@ -54,18 +63,12 @@ export function DrumMachine() {
           </div>
           <div className="flex items-center gap-2">
             <div className="flex bg-muted rounded-lg p-1 gap-1">
-              {[
-                { id: "electronic", label: "808" },
-                { id: "techno", label: "909" },
-                { id: "acoustic", label: "Real" },
-                { id: "funk", label: "Funk" },
-                { id: "percussion", label: "Perc" },
-              ].map((kit) => (
+              {KITS.map((kit) => (
                 <Button
                   key={kit.id}
                   variant={currentKit === kit.id ? "secondary" : "ghost"}
                   size="sm"
-                  onClick={() => setKit(kit.id as any)}
+                  onClick={() => setKit(kit.id)}
                   className={cn(
                     "text-xs px-2 h-7",
                     currentKit === kit.id &&
@@ -173,7 +176,7 @@ export function DrumMachine() {
         </div>
 
         {/* Sequencer Grid */}
-        <div className="space-y-4 overflow-x-auto pb-4 custom-scrollbar">
+        <div className="space-y-4 overflow-x-auto pt-1 pb-4 custom-scrollbar">
           {INSTRUMENTS.map((inst) => (
             <div key={inst} className="flex items-center gap-2 min-w-max">
               <div className="w-16 text-sm font-bold uppercase text-muted-foreground flex items-center gap-2">
