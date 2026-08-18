@@ -16,23 +16,13 @@ export function NewsletterSignup() {
 
     setStatus("sending");
 
-    const serviceId = process.env.NEXT_PUBLIC_EMAILJS_SERVICE_ID!;
-    const templateId = process.env.NEXT_PUBLIC_EMAILJS_TEMPLATE_ID!;
-    const publicKey = process.env.NEXT_PUBLIC_EMAILJS_PUBLIC_KEY!;
-
     try {
-      const emailjs = await import("@emailjs/browser");
-      await emailjs.send(
-        serviceId,
-        templateId,
-        {
-          from_name: "Newsletter Subscriber",
-          reply_to: email,
-          subject: "New Newsletter Signup — Advance Bass",
-          message: `${email} signed up for updates on new tools and transcriptions.`,
-        },
-        { publicKey },
-      );
+      const res = await fetch("/api/subscribe", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email }),
+      });
+      if (!res.ok) throw new Error("subscribe failed");
       setStatus("success");
       setEmail("");
     } catch (err) {
