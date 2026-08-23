@@ -10,6 +10,7 @@ const path = "/tools/circle-of-fifths";
 export const metadata = {
   title,
   description,
+  alternates: { canonical: path },
   openGraph: { title: `${title} | Advance Bass`, description, url: path },
   twitter: { title: `${title} | Advance Bass`, description },
 };

@@ -11,6 +11,7 @@ const path = "/tools/video-looper";
 export const metadata: Metadata = {
   title,
   description,
+  alternates: { canonical: path },
   openGraph: { title: `${title} | Advance Bass`, description, url: path },
   twitter: { title: `${title} | Advance Bass`, description },
 };

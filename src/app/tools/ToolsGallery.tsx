@@ -77,7 +77,7 @@ const TOOLS: Tool[] = [
     id: "scale-visualizer",
     title: "Scale Visualizer",
     description:
-      "Interactive fretboard to learn scales and modes on 4, 5, or 6 string basses.",
+      "Interactive fretboard to learn scales and modes on 4, 5, or 6 string basses. Also in Fretboard Lab, alongside arpeggios and key signatures.",
     href: "/tools/scale-visualizer",
     icon: (
       <div className="h-6 w-6 flex items-center justify-center border-2 border-current rounded-md text-[11px] font-bold leading-none">
@@ -88,7 +88,8 @@ const TOOLS: Tool[] = [
   {
     id: "arpeggio-visualizer",
     title: "Arpeggio Visualizer",
-    description: "Visualize chord tones and arpeggios across the fretboard.",
+    description:
+      "Visualize chord tones and arpeggios across the fretboard. Also in Fretboard Lab, alongside scales and key signatures.",
     href: "/tools/arpeggio-visualizer",
     icon: (
       <div className="h-6 w-6 flex items-center justify-center border-2 border-current rounded-md text-[10px] font-bold leading-none">
@@ -136,7 +137,7 @@ const TOOLS: Tool[] = [
     id: "circle-of-fifths",
     title: "Circle of Fifths",
     description:
-      "Visual guide to key signatures, relative minors, and scale relationships.",
+      "Visual guide to key signatures, relative minors, and scale relationships. Also in Fretboard Lab, alongside scales and arpeggios.",
     href: "/tools/circle-of-fifths",
     icon: (
       <div className="h-6 w-6 flex items-center justify-center border-2 border-current rounded-full text-[10px] font-bold leading-none">
