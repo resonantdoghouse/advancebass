@@ -4,7 +4,44 @@ export const runtime = "nodejs";
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
+// Simple in-memory sliding window. Good enough to stop a single abusive client
+// from hammering this endpoint within one warm server instance — it does not
+// coordinate across serverless instances, so it's a speed bump, not a hard cap.
+const RATE_LIMIT_WINDOW_MS = 10 * 60 * 1000;
+const RATE_LIMIT_MAX_REQUESTS = 5;
+const requestLog = new Map<string, number[]>();
+
+function isRateLimited(ip: string): boolean {
+  const now = Date.now();
+
+  // Opportunistic cleanup so requestLog doesn't grow unbounded on a long-lived instance.
+  for (const [key, timestamps] of requestLog) {
+    if (!timestamps.some((t) => now - t < RATE_LIMIT_WINDOW_MS)) requestLog.delete(key);
+  }
+
+  const timestamps = (requestLog.get(ip) ?? []).filter(
+    (t) => now - t < RATE_LIMIT_WINDOW_MS
+  );
+  timestamps.push(now);
+  requestLog.set(ip, timestamps);
+  return timestamps.length > RATE_LIMIT_MAX_REQUESTS;
+}
+
+function getClientIp(request: NextRequest): string {
+  const forwardedFor = request.headers.get("x-forwarded-for");
+  if (forwardedFor) return forwardedFor.split(",")[0].trim();
+  return request.headers.get("x-real-ip") ?? "unknown";
+}
+
 export async function POST(request: NextRequest) {
+  const ip = getClientIp(request);
+  if (isRateLimited(ip)) {
+    return NextResponse.json(
+      { error: "Too many requests. Please try again later." },
+      { status: 429 }
+    );
+  }
+
   const apiKey = process.env.BUTTONDOWN_API_KEY;
   if (!apiKey) {
     console.error("BUTTONDOWN_API_KEY is not set");
