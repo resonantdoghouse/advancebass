@@ -190,7 +190,7 @@ const jsonLd = {
 
 import { JsonLd } from "@/components/seo/JsonLd";
 
-import Script from "next/script";
+import { GoogleAnalytics } from "@next/third-parties/google";
 
 export default function RootLayout({
   children,
@@ -203,6 +203,12 @@ export default function RootLayout({
         className={`${spaceGrotesk.variable} ${manrope.variable} ${jetbrainsMono.variable} antialiased min-h-screen flex flex-col`}
       >
         <JsonLd data={jsonLd} />
+        <a
+          href="#main-content"
+          className="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-[100] focus:rounded-md focus:bg-primary focus:px-4 focus:py-2 focus:text-primary-foreground focus:font-medium"
+        >
+          Skip to content
+        </a>
         <GlobalThemeProvider
           attribute="class"
           defaultTheme="system"
@@ -210,24 +216,11 @@ export default function RootLayout({
           disableTransitionOnChange
         >
           <Header />
-          <main className="flex-1">{children}</main>
+          <main id="main-content" className="flex-1">{children}</main>
           <Footer />
         </GlobalThemeProvider>
 
-        {/* Google Analytics */}
-        <Script
-          src="https://www.googletagmanager.com/gtag/js?id=G-T8Z9PB8LLS"
-          strategy="afterInteractive"
-        />
-        <Script id="google-analytics" strategy="afterInteractive">
-          {`
-            window.dataLayer = window.dataLayer || [];
-            function gtag(){dataLayer.push(arguments);}
-            gtag('js', new Date());
-
-            gtag('config', 'G-T8Z9PB8LLS');
-          `}
-        </Script>
+        <GoogleAnalytics gaId="G-T8Z9PB8LLS" />
       </body>
     </html>
   );
