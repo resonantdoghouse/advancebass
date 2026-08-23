@@ -324,6 +324,7 @@ export function TranscriptionImageViewer({
                 size="icon"
                 onClick={handlePrev}
                 disabled={currentIndex === 0 || isCropMode}
+                aria-label="Previous Page"
                 title="Previous Page"
               >
                 <ChevronLeft className="h-4 w-4" />
@@ -336,6 +337,7 @@ export function TranscriptionImageViewer({
                 size="icon"
                 onClick={handleNext}
                 disabled={currentIndex === images.length - 1 || isCropMode}
+                aria-label="Next Page"
                 title="Next Page"
               >
                 <ChevronRight className="h-4 w-4" />
@@ -349,6 +351,7 @@ export function TranscriptionImageViewer({
               size="icon"
               onClick={handleZoomOut}
               disabled={isCropMode}
+              aria-label="Zoom Out"
               title="Zoom Out"
             >
               <ZoomOut className="h-4 w-4" />
@@ -361,6 +364,7 @@ export function TranscriptionImageViewer({
               size="icon"
               onClick={handleZoomIn}
               disabled={isCropMode}
+              aria-label="Zoom In"
               title="Zoom In"
             >
               <ZoomIn className="h-4 w-4" />
@@ -371,6 +375,7 @@ export function TranscriptionImageViewer({
               size="icon"
               onClick={handleRecenter}
               disabled={isCropMode || (pan.x === 0 && pan.y === 0)}
+              aria-label="Recenter Image"
               title="Recenter Image"
             >
               <Move className="h-4 w-4" />
@@ -380,6 +385,7 @@ export function TranscriptionImageViewer({
               variant="ghost"
               size="icon"
               onClick={handleReset}
+              aria-label="Reset View"
               title="Reset View"
             >
               <RotateCcw className="h-4 w-4" />
@@ -393,6 +399,7 @@ export function TranscriptionImageViewer({
             variant={isSharpened ? "default" : "outline"}
             size="icon"
             onClick={toggleSharpen}
+            aria-label="Toggle Sharpening"
             title="Toggle Sharpening"
             className={isSharpened ? "bg-blue-600 hover:bg-blue-700" : ""}
           >
@@ -403,6 +410,7 @@ export function TranscriptionImageViewer({
             variant={isDarkMode ? "default" : "outline"}
             size="icon"
             onClick={toggleDarkMode}
+            aria-label="Toggle Dark Mode"
             title="Toggle Dark Mode"
           >
             {isDarkMode ? (
@@ -416,6 +424,7 @@ export function TranscriptionImageViewer({
             variant={isFullscreen ? "default" : "outline"}
             size="icon"
             onClick={toggleFullscreen}
+            aria-label="Toggle Fullscreen"
             title="Toggle Fullscreen"
           >
             {isFullscreen ? (
@@ -429,6 +438,7 @@ export function TranscriptionImageViewer({
             variant={isMetronomeVisible ? "default" : "outline"}
             size="icon"
             onClick={() => setIsMetronomeVisible(!isMetronomeVisible)}
+            aria-label="Toggle Metronome"
             title="Toggle Metronome"
           >
             <Timer className="h-4 w-4" />
@@ -450,6 +460,7 @@ export function TranscriptionImageViewer({
                 variant="ghost"
                 size="icon"
                 onClick={toggleCropMode}
+                aria-label="Cancel Crop"
                 title="Cancel Crop"
               >
                 <X className="h-4 w-4" />
