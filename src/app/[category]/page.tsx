@@ -1,12 +1,8 @@
-import Link from "next/link";
-import Image from "next/image";
-import { getAllArticles, getCategoryFromSlug, getArticleUrl } from "@/lib/data";
-import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { Calendar, FileText } from "lucide-react";
+import { Suspense } from "react";
+import { getAllArticles, getCategoryFromSlug, getCategorySlug } from "@/lib/data";
 import { notFound } from "next/navigation";
 import { Metadata } from "next";
-import { TranscriptionCard } from "@/components/content/TranscriptionCard";
+import { TranscriptionsGrid } from "@/components/content/TranscriptionsGrid";
 
 type Props = {
     params: Promise<{ category: string }>;
@@ -27,6 +23,12 @@ function getCategoryDisplay(categoryName: string) {
             description: `Browse our ${categoryName.toLowerCase()} articles and resources.`,
         }
     );
+}
+
+export async function generateStaticParams() {
+    const articles = await getAllArticles();
+    const categorySlugs = new Set(articles.map((article) => getCategorySlug(article.category)));
+    return Array.from(categorySlugs).map((category) => ({ category }));
 }
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
@@ -83,15 +85,9 @@ export default async function CategoryPage({ params }: Props) {
                 </p>
             </div>
 
-            <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-                {categoryArticles.map((article, index) => (
-                    <TranscriptionCard key={article.id} article={article} priority={index === 0} />
-                ))}
-            </div>
-
-            {categoryArticles.length === 0 && (
-                <p className="text-muted-foreground">No articles found in this category.</p>
-            )}
+            <Suspense fallback={null}>
+                <TranscriptionsGrid articles={categoryArticles} basePath={`/${categorySlug}`} />
+            </Suspense>
         </div>
     );
 }

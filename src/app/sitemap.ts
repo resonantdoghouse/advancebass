@@ -36,6 +36,11 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     '/tools/ear-training',
     '/tools/drum-machine',
     '/tools/video-looper',
+    '/tools/fretboard-lab',
+    '/tools/fretboard-trainer',
+    '/tools/practice-routine',
+    '/tools/string-tension-calculator',
+    '/tools/strudel-generator',
   ].map((route) => ({
     url: `${baseUrl}${route}`,
     lastModified: new Date(),

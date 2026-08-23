@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { getArticleBySlug, getCategorySlug } from "@/lib/data";
+import { getAllArticles, getArticleBySlug, getCategorySlug } from "@/lib/data";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft, User, Tag, ArrowRight } from "lucide-react";
@@ -11,6 +11,14 @@ import { TranscriptionImageViewer } from "@/components/content/TranscriptionImag
 type Props = {
     params: Promise<{ category: string; slug: string }>;
 };
+
+export async function generateStaticParams() {
+    const articles = await getAllArticles();
+    return articles.map((article) => ({
+        category: getCategorySlug(article.category),
+        slug: article.slug,
+    }));
+}
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
     const { category: categorySlug, slug } = await params;
@@ -28,6 +36,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     return {
         title: article.title,
         description: article.excerpt,
+        alternates: { canonical: `/${categorySlug}/${slug}` },
         openGraph: {
             title: article.title,
             description: article.excerpt,
@@ -153,7 +162,11 @@ export default async function ArticlePage({ params }: Props) {
                     </h4>
                     <div className="flex gap-2 flex-wrap">
                         {article.tags.map(tag => (
-                            <Badge key={tag} variant="outline">{tag}</Badge>
+                            <Link key={tag} href={`/${categorySlug}?tag=${encodeURIComponent(tag)}`}>
+                                <Badge variant="outline" className="hover:bg-secondary transition-colors">
+                                    {tag}
+                                </Badge>
+                            </Link>
                         ))}
                     </div>
                 </div>

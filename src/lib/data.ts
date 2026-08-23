@@ -4,41 +4,16 @@ import path from 'path';
 import matter from 'gray-matter';
 import { remark } from 'remark';
 import html from 'remark-html';
+import { Article, getCategorySlug, getCategoryFromSlug, getArticleUrl } from './article-meta';
 
-export type Article = {
-    id: string;
-    slug: string;
-    title: string;
-    excerpt: string;
-    date: string;
-    author: string;
-    tags: string[];
-    content?: string;
-    image?: string;
-    pages?: number;
-    category: "Transcription" | "Technique" | "Gear" | "Theory";
-};
+export type { Article };
+export { getCategorySlug, getCategoryFromSlug, getArticleUrl };
 
-export function getCategorySlug(category: Article['category']): string {
-    switch (category) {
-        case 'Transcription': return 'transcriptions';
-        // Keep others simple for now, can adjust if needed
-        default: return category.toLowerCase();
-    }
-}
-
-export function getCategoryFromSlug(slug: string): Article['category'] | undefined {
-    switch (slug) {
-        case 'transcriptions': return 'Transcription';
-        case 'technique': return 'Technique';
-        case 'gear': return 'Gear';
-        case 'theory': return 'Theory';
-        default: return undefined;
-    }
-}
-
-export function getArticleUrl(article: Article): string {
-    return `/${getCategorySlug(article.category)}/${article.slug}`;
+function deriveExcerpt(content: string): string {
+    const firstParagraph = content.match(/<p>([\s\S]*?)<\/p>/);
+    if (!firstParagraph) return '';
+    const text = firstParagraph[1].replace(/<[^>]+>/g, '').trim();
+    return text.length > 160 ? `${text.slice(0, 157)}...` : text;
 }
 
 const contentDirectory = path.join(process.cwd(), 'content');
@@ -77,7 +52,7 @@ export async function getAllArticles(): Promise<Article[]> {
                 id,
                 slug,
                 title: matterResult.data.title,
-                excerpt: matterResult.data.excerpt || '',
+                excerpt: matterResult.data.excerpt || deriveExcerpt(matterResult.content),
                 date: matterResult.data.date,
                 author: matterResult.data.author,
                 tags: matterResult.data.tags || [],

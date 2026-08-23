@@ -3,7 +3,7 @@ import Image from "next/image";
 import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { FileText } from "lucide-react";
-import { Article, getArticleUrl } from "@/lib/data";
+import { Article, getArticleUrl } from "@/lib/article-meta";
 
 interface TranscriptionCardProps {
     article: Article;
