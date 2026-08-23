@@ -66,14 +66,14 @@ const FEATURED_TOOLS = [
   {
     id: "scale-visualizer",
     title: "Scale Visualizer",
-    description: "Interactive fretboard to learn scales and modes on 4, 5, or 6 string basses.",
+    description: "Interactive fretboard to learn scales and modes on 4, 5, or 6 string basses. Also in Fretboard Lab.",
     href: "/tools/scale-visualizer",
     icon: <Guitar className="h-5 w-5" />,
   },
   {
     id: "arpeggio-visualizer",
     title: "Arpeggio Visualizer",
-    description: "Visualize chord tones and arpeggios across the fretboard.",
+    description: "Visualize chord tones and arpeggios across the fretboard. Also in Fretboard Lab.",
     href: "/tools/arpeggio-visualizer",
     icon: <RefreshCw className="h-5 w-5" />,
   },
@@ -101,7 +101,7 @@ const FEATURED_TOOLS = [
   {
     id: "circle-of-fifths",
     title: "Circle of Fifths",
-    description: "Visual guide to key signatures, relative minors, and scale relationships.",
+    description: "Visual guide to key signatures, relative minors, and scale relationships. Also in Fretboard Lab.",
     href: "/tools/circle-of-fifths",
     icon: <span className="text-[11px] font-bold leading-none">5ths</span>,
   },
@@ -192,7 +192,7 @@ export default async function Home() {
                   <span
                     key={note}
                     className={`flex-1 text-center font-mono text-sm py-2.5 rounded-[8px] ${
-                      note === "D"
+                      note === "A"
                         ? "bg-primary text-primary-foreground font-semibold"
                         : "bg-muted text-muted-foreground"
                     }`}
@@ -213,7 +213,7 @@ export default async function Home() {
             Everything you'd open six apps for
           </h2>
           <span className="font-mono text-xs text-muted-foreground tracking-[0.05em]">
-            11 TOOLS · IN YOUR BROWSER
+            12 TOOLS · IN YOUR BROWSER
           </span>
         </div>
 
