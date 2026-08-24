@@ -12,9 +12,7 @@ import {
   ArrowRight,
   Guitar,
   RefreshCw,
-  GraduationCap,
   Music2,
-  Youtube,
   FlaskConical,
   ListChecks,
   Scale,
@@ -383,29 +381,15 @@ export default async function Home() {
                 Who&apos;s Behind This
               </span>
               <h2 className="font-heading font-bold text-[32px] sm:text-[36px] tracking-[-0.025em] leading-[1.06]">
-                Built by a working bassist, not a startup.
+                Built by a bassist, for bassists.
               </h2>
               <p className="text-base text-muted-foreground leading-relaxed max-w-[480px]">
                 Every tool and transcription on this site comes from{" "}
-                <strong className="text-foreground">Jim Bennett</strong> — a
-                McGill University graduate with extensive touring and
-                recording experience, and a YouTube channel that&apos;s
-                taught bass to millions of viewers worldwide.
+                <strong className="text-foreground">Jim Bennett</strong>, who
+                brings extensive touring and recording experience, plus a
+                YouTube channel that&apos;s taught bass to millions of
+                viewers worldwide.
               </p>
-              <div className="flex flex-wrap gap-3">
-                <div className="flex items-center gap-2 text-sm font-medium bg-secondary/60 px-3.5 py-2 rounded-full">
-                  <GraduationCap className="h-4 w-4 text-primary" />
-                  McGill University
-                </div>
-                <div className="flex items-center gap-2 text-sm font-medium bg-secondary/60 px-3.5 py-2 rounded-full">
-                  <Music2 className="h-4 w-4 text-primary" />
-                  Touring &amp; Session Bassist
-                </div>
-                <div className="flex items-center gap-2 text-sm font-medium bg-secondary/60 px-3.5 py-2 rounded-full">
-                  <Youtube className="h-4 w-4 text-primary" />
-                  Millions of Views
-                </div>
-              </div>
               <div className="flex flex-wrap gap-4 pt-2">
                 <Link
                   href="/bass-lessons"
