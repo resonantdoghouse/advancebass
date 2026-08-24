@@ -352,12 +352,9 @@ export default function BassLessonsPage() {
               <div className="inline-block p-4 rounded-full bg-primary/20 border border-primary/20 mb-2">
                 <Music2 className="h-14 w-14 text-primary" />
               </div>
-              <div className="text-xl font-bold">Jim Bennett</div>
-              <div className="text-muted-foreground text-sm">
+              <div className="text-xl font-bold text-white">Jim Bennett</div>
+              <div className="text-white/70 text-sm">
                 Professional Bassist &amp; Educator
-              </div>
-              <div className="text-muted-foreground text-sm">
-                McGill University Graduate
               </div>
             </div>
           </div>
