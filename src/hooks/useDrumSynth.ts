@@ -32,8 +32,16 @@ export function useDrumSynth() {
 
   useEffect(() => { kitRef.current = currentKit; }, [currentKit]);
 
-  // Load Samples (Wes Bos Kit)
+  const samplesRequestedRef = useRef(false);
+
+  // Load Samples (Wes Bos Kit) — deferred until a sample-backed kit is
+  // actually selected, since "electronic"/"techno"/"percussion" are pure
+  // synthesis and never touch buffersRef.
   useEffect(() => {
+    if (currentKit !== "acoustic" && currentKit !== "funk") return;
+    if (samplesRequestedRef.current) return;
+    samplesRequestedRef.current = true;
+
     const loadSamples = async () => {
         const ctx = getContext();
         const urls = {
@@ -58,7 +66,7 @@ export function useDrumSynth() {
         }
     };
     loadSamples();
-  }, [getContext]);
+  }, [currentKit, getContext]);
 
   const playSample = useCallback((key: string, time: number, rate: number = 1.0) => {
       const ctx = getContext();
