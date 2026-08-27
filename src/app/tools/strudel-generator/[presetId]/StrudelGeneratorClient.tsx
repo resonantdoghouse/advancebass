@@ -119,16 +119,22 @@ export default function StrudelGeneratorClient() {
   return (
     <div className="container max-w-7xl mx-auto py-8">
       {/* Script injected to enable <strudel-repl> custom element */}
-      <Script src="https://unpkg.com/@strudel/embed@1.2.4" strategy="lazyOnload" />
+      <Script src="https://unpkg.com/@strudel/embed@1.1.2" strategy="lazyOnload" />
 
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4">
         <div>
-          <h1 className="text-3xl sm:text-4xl font-extrabold tracking-tight bg-gradient-to-r from-primary to-amber-500 bg-clip-text text-transparent flex flex-wrap items-center gap-2 sm:gap-3">
-            <Settings2 className="h-8 w-8 sm:h-10 sm:w-10 text-primary shrink-0 drop-shadow-sm" />
+          <h1 className="text-3xl sm:text-4xl font-bold tracking-tight lg:text-5xl flex flex-wrap items-center gap-2 sm:gap-3">
+            <Settings2 className="h-8 w-8 sm:h-10 sm:w-10 text-primary shrink-0" />
             <span className="leading-tight">Strudel Music Generator</span>
+            <Badge variant="secondary" className="text-amber-700 dark:text-amber-400 bg-amber-500/10 border border-amber-500/30 font-semibold">
+              Experimental
+            </Badge>
           </h1>
           <p className="text-muted-foreground mt-2 text-lg">
             Live code beats, loops, and polyrhythms in your browser using Strudel JS.
+          </p>
+          <p className="text-muted-foreground/80 text-sm mt-1">
+            This tool is experimental — it embeds the third-party strudel.cc editor, so playback and mobile behavior may be rough around the edges.
           </p>
         </div>
 
@@ -159,7 +165,11 @@ export default function StrudelGeneratorClient() {
               <strong>What is this?</strong> Strudel is a live-coding environment (a port of TidalCycles) designed to generate music algorithmically using simple patterns.
             </p>
             <p>
-              <strong>Instructions:</strong> Select a template from the left library to set the basic code structure. To run the code, hit `Shift + Enter` inside the embedded Strudel window. If it is your first time interacting with the frame, you must click play manually inside the Strudel interface to allow the browser to initiate Web Audio.
+              <strong>Instructions:</strong> Select a template from the left library to set the basic code structure. To run the code, hit{" "}
+              <code className="px-1.5 py-0.5 rounded bg-muted text-foreground text-xs font-mono border border-border">
+                Shift + Enter
+              </code>{" "}
+              inside the embedded Strudel window. If it is your first time interacting with the frame, you must click play manually inside the Strudel interface to allow the browser to initiate Web Audio.
             </p>
             <p className="text-muted-foreground">Note: When switching patterns, the Strudel workspace will update automatically but you may need to evaluate it again for complex rhythm changes.</p>
           </CardContent>
@@ -260,7 +270,7 @@ export default function StrudelGeneratorClient() {
               <span className="flex h-3 w-3 rounded-full bg-green-400"></span>
             </div>
             <div className="md:ml-4 text-xs font-mono text-muted-foreground mr-auto">
-              {activePreset.name.toLowerCase().replace(/\\s+/g, '-')}.strudel
+              {activePreset.name.toLowerCase().replace(/\s+/g, '-')}.strudel
             </div>
 
             <div className="flex flex-wrap items-center justify-between md:justify-end w-full md:w-auto gap-4 lg:gap-6 border-t md:border-t-0 pt-3 md:pt-0 mt-2 md:mt-0">

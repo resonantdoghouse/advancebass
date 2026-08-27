@@ -16,6 +16,7 @@ import {
   FlaskConical,
   ListChecks,
   Scale,
+  Waves,
 } from "lucide-react";
 
 export const metadata: Metadata = {
@@ -26,6 +27,13 @@ export const metadata: Metadata = {
 };
 
 const FEATURED_TOOLS = [
+  {
+    id: "fretboard-lab",
+    title: "Fretboard Lab",
+    description: "Scale Visualizer, Arpeggio Visualizer, and Circle of Fifths connected — one key, one tuning, three tools.",
+    href: "/tools/fretboard-lab",
+    icon: <FlaskConical className="h-5 w-5" />,
+  },
   {
     id: "tuner",
     title: "Chromatic Tuner",
@@ -62,6 +70,13 @@ const FEATURED_TOOLS = [
     icon: <Volume2 className="h-5 w-5" />,
   },
   {
+    id: "strudel-generator",
+    title: "Strudel Music Generator",
+    description: "Genre-based backing loops — Teen Town, Bossa Nova, Funk, and more — built with live-coded Strudel patterns. Experimental.",
+    href: "/tools/strudel-generator/teen-town",
+    icon: <Waves className="h-5 w-5" />,
+  },
+  {
     id: "scale-visualizer",
     title: "Scale Visualizer",
     description: "Interactive fretboard to learn scales and modes on 4, 5, or 6 string basses. Also in Fretboard Lab.",
@@ -74,13 +89,6 @@ const FEATURED_TOOLS = [
     description: "Visualize chord tones and arpeggios across the fretboard. Also in Fretboard Lab.",
     href: "/tools/arpeggio-visualizer",
     icon: <RefreshCw className="h-5 w-5" />,
-  },
-  {
-    id: "fretboard-lab",
-    title: "Fretboard Lab",
-    description: "Scale Visualizer, Arpeggio Visualizer, and Circle of Fifths connected — one key, one tuning, three tools.",
-    href: "/tools/fretboard-lab",
-    icon: <FlaskConical className="h-5 w-5" />,
   },
   {
     id: "practice-routine",

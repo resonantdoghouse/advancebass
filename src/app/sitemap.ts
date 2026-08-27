@@ -37,7 +37,6 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     '/tools/drum-machine',
     '/tools/video-looper',
     '/tools/fretboard-lab',
-    '/tools/fretboard-trainer',
     '/tools/practice-routine',
     '/tools/string-tension-calculator',
     '/tools/strudel-generator',
