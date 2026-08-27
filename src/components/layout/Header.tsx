@@ -16,10 +16,10 @@ import {
 const navLinks = [
   { href: "/tools",           label: "Practice" },
   { href: "/transcriptions",  label: "Transcriptions" },
-  { href: "/bass-lessons",    label: "Lessons"  },
 ];
 
 const hireLinks = [
+  { href: "/bass-lessons",       label: "Book Lessons"     },
   { href: "/recording",          label: "Recording"        },
   { href: "/bassist-for-hire",   label: "Bassist for Hire" },
   { href: "/contact",            label: "Contact"          },
@@ -76,7 +76,7 @@ export function Header() {
                     : "text-muted-foreground hover:text-foreground",
                 )}
               >
-                Hire
+                Work with Jim
                 <ChevronDown className="h-3.5 w-3.5" />
               </DropdownMenuTrigger>
               <DropdownMenuContent align="start">
@@ -123,7 +123,7 @@ export function Header() {
             ))}
 
             <span className="pt-6 pb-1 text-xs font-semibold uppercase tracking-[0.1em] text-muted-foreground">
-              Hire
+              Work with Jim
             </span>
             {hireLinks.map(({ href, label }, index) => (
               <Link

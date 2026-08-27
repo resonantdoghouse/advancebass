@@ -3,6 +3,7 @@ import fs from 'fs';
 import path from 'path';
 import matter from 'gray-matter';
 import { remark } from 'remark';
+import remarkGfm from 'remark-gfm';
 import html from 'remark-html';
 import { Article, getCategorySlug, getCategoryFromSlug, getArticleUrl } from './article-meta';
 
@@ -28,6 +29,7 @@ export async function getAllArticles(): Promise<Article[]> {
         return [];
     }
 
+    // 'lessons' content exists on disk but is WIP and intentionally excluded from publishing.
     const categories = ['transcriptions']; // Add other folders as they are created
     let allArticles: Article[] = [];
 
@@ -81,6 +83,7 @@ export async function getArticleBySlug(slug: string): Promise<Article | null> {
 
     // Process markdown to HTML
     const processedContent = await remark()
+        .use(remarkGfm)
         .use(html, { sanitize: false })
         .process(article.content || '');
     const contentHtml = processedContent.toString();

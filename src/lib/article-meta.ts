@@ -13,12 +13,13 @@ export type Article = {
     content?: string;
     image?: string;
     pages?: number;
-    category: "Transcription" | "Technique" | "Gear" | "Theory";
+    category: "Transcription" | "Lesson" | "Technique" | "Gear" | "Theory";
 };
 
 export function getCategorySlug(category: Article['category']): string {
     switch (category) {
         case 'Transcription': return 'transcriptions';
+        case 'Lesson': return 'lessons';
         // Keep others simple for now, can adjust if needed
         default: return category.toLowerCase();
     }
@@ -27,6 +28,7 @@ export function getCategorySlug(category: Article['category']): string {
 export function getCategoryFromSlug(slug: string): Article['category'] | undefined {
     switch (slug) {
         case 'transcriptions': return 'Transcription';
+        // 'lessons' intentionally omitted: WIP content, route is hidden for now.
         case 'technique': return 'Technique';
         case 'gear': return 'Gear';
         case 'theory': return 'Theory';

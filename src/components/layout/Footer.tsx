@@ -1,5 +1,4 @@
 import Link from "next/link";
-import { NewsletterSignup } from "@/components/ui/newsletter-signup";
 
 const serviceLinks = [
   { href: "/bass-lessons", label: "Bass Lessons" },
@@ -12,18 +11,6 @@ export function Footer() {
   return (
     <footer className="border-t border-border/60">
       <div className="container mx-auto px-4 md:px-8 py-10 flex flex-col gap-8">
-        <div className="flex flex-col md:flex-row md:items-center justify-between gap-5 pb-8 border-b border-border/60">
-          <div>
-            <p className="font-heading font-semibold text-base">
-              Get new tools &amp; transcriptions in your inbox
-            </p>
-            <p className="text-sm text-muted-foreground mt-1">
-              No spam — just an email when something new ships.
-            </p>
-          </div>
-          <NewsletterSignup />
-        </div>
-
         <nav className="flex flex-wrap items-center justify-center md:justify-start gap-x-5 gap-y-2">
           {serviceLinks.map(({ href, label }) => (
             <Link
