@@ -14,6 +14,11 @@ const CATEGORY_DISPLAY: Record<string, { plural: string; description: string }> 
         description:
             "Bass transcriptions for classic and modern tracks — full charts, notation, and playback to learn note-for-note.",
     },
+    Lesson: {
+        plural: "Lessons",
+        description:
+            "Free bass lessons covering technique, fretboard geography, and fundamentals — with notation, tab, and practice tips for every level.",
+    },
 };
 
 function getCategoryDisplay(categoryName: string) {

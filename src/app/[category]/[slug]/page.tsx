@@ -107,7 +107,7 @@ export default async function ArticlePage({ params }: Props) {
                     <p className="text-xl text-muted-foreground leading-relaxed">{article.excerpt}</p>
                 </div>
 
-                <div className="prose prose-invert max-w-none border-t pt-8">
+                <div className="prose max-w-none border-t pt-8">
                     {/* 
                       In a real app, this would be MDX. 
                       For now we just render the raw HTML content if available, or placeholder.
@@ -177,10 +177,21 @@ export default async function ArticlePage({ params }: Props) {
                         className="group flex items-center justify-between gap-4 rounded-[16px] border border-border/70 bg-card/60 px-6 py-5 hover:border-primary/60 transition-colors"
                     >
                         <p className="text-sm text-muted-foreground">
-                            Stuck on a part of this transcription?{" "}
-                            <span className="text-foreground font-medium">
-                                A lesson can help you work through it.
-                            </span>
+                            {article.category === "Lesson" ? (
+                                <>
+                                    Want feedback on your progress?{" "}
+                                    <span className="text-foreground font-medium">
+                                        Private lessons build on exactly this.
+                                    </span>
+                                </>
+                            ) : (
+                                <>
+                                    Stuck on a part of this transcription?{" "}
+                                    <span className="text-foreground font-medium">
+                                        A lesson can help you work through it.
+                                    </span>
+                                </>
+                            )}
                         </p>
                         <span className="flex items-center gap-1.5 text-sm font-semibold text-primary shrink-0">
                             Bass Lessons <ArrowRight className="h-3.5 w-3.5 group-hover:translate-x-1 transition-transform" />

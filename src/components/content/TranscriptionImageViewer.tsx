@@ -53,6 +53,12 @@ export function TranscriptionImageViewer({
   const imgRef = useRef<HTMLImageElement>(null);
   const { resolvedTheme } = useTheme();
 
+  // Active touch points, keyed by pointerId — tracked to detect a two-finger pinch
+  // and to fall back to a single-finger pan when one finger lifts off mid-gesture.
+  const pointersRef = useRef<Map<number, { x: number; y: number }>>(new Map());
+  const pinchStartDistRef = useRef<number | null>(null);
+  const pinchStartZoomRef = useRef(1);
+
   const currentImage = images[currentIndex] || { src: "", alt: "" };
 
   // Load metronome position from local storage
@@ -213,27 +219,78 @@ export function TranscriptionImageViewer({
     }
   };
 
-  // Panning Event Handlers
+  // Panning & pinch-zoom Event Handlers
+  const getDistance = (a: { x: number; y: number }, b: { x: number; y: number }) =>
+    Math.hypot(a.x - b.x, a.y - b.y);
+
   const handlePointerDown = (e: React.PointerEvent) => {
     if (isCropMode) return;
-    setIsDragging(true);
-    setDragStart({ x: e.clientX - pan.x, y: e.clientY - pan.y });
-    // Capture pointer to track movement outside container
-    (e.target as Element).setPointerCapture(e.pointerId);
+    pointersRef.current.set(e.pointerId, { x: e.clientX, y: e.clientY });
+    try {
+      (e.target as Element).setPointerCapture(e.pointerId);
+    } catch {
+      // Capture can legitimately fail (e.g. synthetic events, already-released
+      // pointers); gesture tracking below doesn't depend on it succeeding.
+    }
+
+    if (pointersRef.current.size === 2) {
+      // Second finger down — switch from panning to pinch-zoom.
+      setIsDragging(false);
+      const [p1, p2] = Array.from(pointersRef.current.values());
+      pinchStartDistRef.current = getDistance(p1, p2);
+      pinchStartZoomRef.current = zoom;
+    } else if (pointersRef.current.size === 1) {
+      setIsDragging(true);
+      setDragStart({ x: e.clientX - pan.x, y: e.clientY - pan.y });
+    }
   };
 
   const handlePointerMove = (e: React.PointerEvent) => {
-    if (!isDragging || isCropMode) return;
+    if (isCropMode) return;
+    if (pointersRef.current.has(e.pointerId)) {
+      pointersRef.current.set(e.pointerId, { x: e.clientX, y: e.clientY });
+    }
+    if (pointersRef.current.size === 2 && pinchStartDistRef.current) {
+      const [p1, p2] = Array.from(pointersRef.current.values());
+      const scale = getDistance(p1, p2) / pinchStartDistRef.current;
+      const newZoom = Math.min(Math.max(pinchStartZoomRef.current * scale, 0.5), 3);
+      setZoom(newZoom);
+      if (newZoom <= 1) setPan({ x: 0, y: 0 });
+      return;
+    }
+
+    if (!isDragging) return;
     setPan({
       x: e.clientX - dragStart.x,
       y: e.clientY - dragStart.y,
     });
   };
 
-  const handlePointerUp = (e: React.PointerEvent) => {
-    setIsDragging(false);
-    (e.target as Element).releasePointerCapture(e.pointerId);
+  const endPointer = (e: React.PointerEvent) => {
+    pointersRef.current.delete(e.pointerId);
+
+    if (pointersRef.current.size === 1) {
+      // One finger remains mid-gesture — resume panning from here instead of
+      // jumping, so lifting the second finger doesn't snap the image.
+      const [pos] = Array.from(pointersRef.current.values());
+      setDragStart({ x: pos.x - pan.x, y: pos.y - pan.y });
+      setIsDragging(true);
+    } else {
+      setIsDragging(false);
+    }
+
+    if (pointersRef.current.size < 2) {
+      pinchStartDistRef.current = null;
+    }
+
+    try {
+      (e.target as Element).releasePointerCapture(e.pointerId);
+    } catch {
+      // Pointer capture may already be released (e.g. pointercancel).
+    }
   };
+
+  const handlePointerUp = (e: React.PointerEvent) => endPointer(e);
 
   const downloadCroppedImage = async () => {
     if (!completedCrop || !imgRef.current) return;
@@ -508,6 +565,7 @@ export function TranscriptionImageViewer({
         onPointerMove={handlePointerMove}
         onPointerUp={handlePointerUp}
         onPointerLeave={handlePointerUp}
+        onPointerCancel={handlePointerUp}
       >
         <div
           style={{
